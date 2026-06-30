@@ -9,8 +9,10 @@ const animeClient: AxiosInstance = axios.create({
   timeout: 15000,
   headers: {
     'Accept': 'application/json',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
     'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
+    'Referer': 'https://www.sankavollerei.web.id/',
+    'Origin': 'https://www.sankavollerei.web.id',
   },
 })
 
@@ -372,8 +374,8 @@ function extractComics(raw: any): Comic[] {
   if (!Array.isArray(arr)) return []
   return arr.map((item: any) => ({
     title: item.title || item.name || '',
-    slug: item.slug || cleanSlug(item.href || item.url || ''),
-    image: item.poster || item.image || item.thumbnail || '',
+    slug: item.slug || cleanSlug(item.link || item.href || item.url || ''),
+    image: item.poster || item.image || item.thumbnail || item.cover || '',
     chapter: item.chapter || item.latestChapter || '',
     score: item.score || item.rating || '',
     type: item.type || 'Manga',
