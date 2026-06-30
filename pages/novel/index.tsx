@@ -4,7 +4,6 @@ import Link from 'next/link'
 
 export default function NovelPage() {
   const [trending, setTrending] = useState<any[]>([])
-  const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -15,26 +14,10 @@ export default function NovelPage() {
         setLoading(false)
       })
       .catch(err => {
-        console.error(err)
+        console.error('Novel fetch error:', err)
         setLoading(false)
       })
   }, [])
-
-  const doSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!query.trim()) return
-    setLoading(true)
-    fetch(`/api/novel?action=search&query=${encodeURIComponent(query.trim())}`)
-      .then(res => res.json())
-      .then(data => {
-        setTrending(data.items || [])
-        setLoading(false)
-      })
-      .catch(err => {
-        console.error(err)
-        setLoading(false)
-      })
-  }
 
   return (
     <>
@@ -45,13 +28,10 @@ export default function NovelPage() {
           <p className="text-pearl/60">Baca novel webtoon favorit kamu~ 🌸</p>
         </div>
 
-        <form onSubmit={doSearch} className="card p-4 flex gap-2">
-          <input value={query} onChange={(e) => setQuery(e.target.value)} className="input-field" placeholder="Cari novel..." />
-          <button className="btn-primary">Cari</button>
-        </form>
-
         {loading ? (
           <div className="text-center py-12 text-pearl/60">Loading novel...</div>
+        ) : trending.length === 0 ? (
+          <div className="card p-6 text-center text-pearl/60">Belum ada novel tersedia. Coba lagi nanti ya! 🌸</div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {trending.map((item, i) => (
