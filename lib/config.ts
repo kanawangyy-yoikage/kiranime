@@ -49,4 +49,12 @@ export const ENDPOINTS = {
   JIKAN_TOP: (filter = 'airing') => `/top/anime?filter=${filter}`,
   JIKAN_SEARCH: (query: string) => `/anime?q=${encodeURIComponent(query)}&limit=10`,
   JIKAN_DETAIL: (malId: number) => `/anime/${malId}/full`,
+
+  // Comic / Manga (Sankavollerei)
+  COMIC_LATEST: (page = 1) => `/comic/terbaru?page=${page}`,
+  COMIC_POPULAR: (page = 1) => `/comic/populer?page=${page}`,
+  COMIC_SEARCH: (q: string, page = 1) => `/comic/search?q=${encodeURIComponent(q)}&page=${page}`,
+  COMIC_DETAIL: (slug: string) => `/comic/comic/${slug}`,
+  COMIC_CHAPTER: (slug: string) => `/comic/chapter/${slug}`,
+  COMIC_UNLIMITED: (page = 1) => `/comic/unlimited?page=${page}`,
 } as const

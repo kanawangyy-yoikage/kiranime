@@ -19,6 +19,8 @@ export default function Sidebar({ isOpen, theme, toggleTheme }: SidebarProps) {
     { icon: '📺', label: 'Ongoing', href: '/ongoing' },
     { icon: '✅', label: 'Selesai', href: '/completed' },
     { icon: '🏷️', label: 'Genres', href: '/genres' },
+    { icon: '📖', label: 'Manga', href: '/manga' },
+    { icon: '📚', label: 'Novel', href: '/novel' },
     { icon: '📅', label: 'Jadwal', href: '/schedule' },
     { icon: '🔍', label: 'Pencarian', href: '/search' },
   ]

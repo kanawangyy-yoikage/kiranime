@@ -323,6 +323,130 @@ export async function searchMAL(query: string): Promise<MALAnime[]> {
 
 // ─── HELPERS ─────────────────────────────────────────────────
 
+// ─── COMIC / MANGA TYPES ─────────────────────────────────────
+
+export interface Comic {
+  title: string
+  slug: string
+  image: string
+  chapter?: string
+  score?: string
+  type?: string
+  status?: string
+}
+
+export interface ComicDetail {
+  title: string
+  image: string
+  description: string
+  status?: string
+  author?: string
+  artist?: string
+  released?: string
+  type?: string
+  genres: string[]
+  chapters: ComicChapter[]
+}
+
+export interface ComicChapter {
+  title: string
+  slug: string
+  date?: string
+}
+
+export interface ChapterPages {
+  title: string
+  pages: string[]
+}
+
+// ─── COMIC / MANGA API FUNCTIONS ─────────────────────────────
+
+const comicClient: AxiosInstance = axios.create({
+  baseURL: 'https://www.sankavollerei.web.id',
+  timeout: 15000,
+  headers: { 'Accept': 'application/json' },
+})
+
+function extractComics(raw: any): Comic[] {
+  const arr = raw.comics || raw.data?.comics || raw.data || (Array.isArray(raw) ? raw : [])
+  if (!Array.isArray(arr)) return []
+  return arr.map((item: any) => ({
+    title: item.title || item.name || '',
+    slug: item.slug || cleanSlug(item.href || item.url || ''),
+    image: item.poster || item.image || item.thumbnail || '',
+    chapter: item.chapter || item.latestChapter || '',
+    score: item.score || item.rating || '',
+    type: item.type || 'Manga',
+    status: item.status || '',
+  }))
+}
+
+export async function fetchComicLatest(page = 1): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_LATEST(page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+export async function fetchComicPopular(page = 1): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_POPULAR(page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+export async function fetchComicAll(page = 1): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_UNLIMITED(page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+export async function searchComic(keyword: string, page = 1): Promise<Comic[]> {
+  if (!keyword.trim()) return []
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_SEARCH(keyword, page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+export async function fetchComicDetail(slug: string): Promise<ComicDetail | null> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_DETAIL(slug))
+    const d = data.detail || data.data || data
+    const chapters = (d.chapters || d.chapterList || []).map((ch: any) => ({
+      title: ch.title || ch.name || ch.chapter || '',
+      slug: ch.slug || cleanSlug(ch.href || ch.url || ''),
+      date: ch.date || ch.updatedAt || '',
+    }))
+    return {
+      title: d.title || '',
+      image: d.poster || d.image || d.thumbnail || '',
+      description: d.synopsis || d.description || '',
+      status: d.status || '',
+      author: d.author || '',
+      artist: d.artist || '',
+      released: d.released || d.year || '',
+      type: d.type || 'Manga',
+      genres: (d.genres || d.genreList || []).map((g: any) => typeof g === 'object' ? g.name || '' : g).filter(Boolean),
+      chapters,
+    }
+  } catch { return null }
+}
+
+export async function fetchChapterPages(chapterSlug: string): Promise<ChapterPages | null> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_CHAPTER(chapterSlug))
+    const d = data.data || data
+    return {
+      title: d.title || d.chapter || '',
+      pages: d.pages || d.images || d.imagesUrl || [],
+    }
+  } catch { return null }
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────
+
 function extractAnimes(raw: any): Anime[] {
   const arr = raw.animes || raw.animeList || raw.data?.animes || raw.data?.animeList || raw.data || (Array.isArray(raw) ? raw : [])
   
