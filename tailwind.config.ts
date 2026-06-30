@@ -14,16 +14,23 @@ const config: Config = {
         pearl: '#FBF9E4',
         noir: '#000000',
         ocean: '#5B88B2',
-        accent: {
+        oceanAccent: {
           primary: '#5B88B2',
           secondary: '#7BA3C9',
           light: '#A8C7FA',
         },
         surface: {
-          dark: '#0a1f35',
+          DEFAULT: '#FFFFFF',
+          dark: '#122C4F',
           card: '#1a3a5c',
           hover: '#234b73',
-        }
+        },
+        'bg-light': '#F5F7FA',
+        'bg-dark': '#0D1B2A',
+        'text-light': '#122C4F',
+        'text-dark': '#FBF9E4',
+        primary: '#122C4F',
+        accent: '#5B88B2'
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

@@ -1,157 +1,143 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useAuth } from '@/contexts/AuthContext'
+import { useEffect, useState } from 'react'
+import {
+  Home,
+  Flame,
+  Film,
+  PlayCircle,
+  CheckCircle,
+  Tags,
+  BookOpen,
+  Library,
+  Calendar,
+  Search,
+  Moon,
+  Sun,
+  Menu,
+  X
+} from 'lucide-react'
 
-interface SidebarProps {
-  isOpen: boolean
-  theme: 'dark' | 'light'
-  toggleTheme: () => void
-}
-
-export default function Sidebar({ isOpen, theme, toggleTheme }: SidebarProps) {
+export default function Sidebar() {
   const router = useRouter()
-  const { user, logout } = useAuth()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isDark, setIsDark] = useState(true)
+
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark')
+    setIsDark(isDark)
+  }, [])
+
+  const toggleTheme = () => {
+    const root = document.documentElement
+    if (root.classList.contains('dark')) {
+      root.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+      setIsDark(false)
+    } else {
+      root.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+      setIsDark(true)
+    }
+  }
 
   const navItems = [
-    { icon: '🏠', label: 'Beranda', href: '/' },
-    { icon: '🔥', label: 'Populer', href: '/popular' },
-    { icon: '🎬', label: 'Movies', href: '/movies' },
-    { icon: '📺', label: 'Ongoing', href: '/ongoing' },
-    { icon: '✅', label: 'Selesai', href: '/completed' },
-    { icon: '🏷️', label: 'Genres', href: '/genres' },
-    { icon: '📖', label: 'Manga', href: '/manga' },
-    { icon: '📚', label: 'Novel', href: '/novel' },
-    { icon: '📅', label: 'Jadwal', href: '/schedule' },
-    { icon: '🔍', label: 'Pencarian', href: '/search' },
+    { icon: <Home size={20} />, label: 'Beranda', href: '/' },
+    { icon: <Flame size={20} />, label: 'Populer', href: '/popular' },
+    { icon: <Film size={20} />, label: 'Movies', href: '/movies' },
+    { icon: <PlayCircle size={20} />, label: 'Ongoing', href: '/ongoing' },
+    { icon: <CheckCircle size={20} />, label: 'Selesai', href: '/completed' },
+    { icon: <Tags size={20} />, label: 'Genres', href: '/genres' },
+    { icon: <BookOpen size={20} />, label: 'Manga', href: '/manga' },
+    { icon: <Library size={20} />, label: 'Novel', href: '/novel' },
+    { icon: <Calendar size={20} />, label: 'Jadwal', href: '/schedule' },
+    { icon: <Search size={20} />, label: 'Pencarian', href: '/search' },
   ]
 
-  const userItems = user ? [
-    { icon: '👤', label: 'Profil', href: '/profile' },
-    { icon: '❤️', label: 'Favorit', href: '/favorites' },
-    { icon: '📝', label: 'Watchlist', href: '/watchlist' },
-    { icon: '🕒', label: 'History', href: '/history' },
-  ] : []
-
-  const isActive = (href: string) => router.pathname === href
+  // Close sidebar on route change for mobile
+  useEffect(() => {
+    setIsOpen(false)
+  }, [router.pathname])
 
   return (
     <>
-      <aside
-        id="sidebar"
-        className={`
-          fixed left-0 top-16 bottom-0 w-64 glass border-r border-ocean/20 z-50
-          transition-transform duration-300 overflow-y-auto
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0
-        `}
-      >
-        <div className="p-4 space-y-6">
-          {/* User Section */}
-          {user ? (
-            <div className="card p-4">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-ocean flex items-center justify-center text-xl font-bold text-pearl">
-                  {user.displayName?.[0]?.toUpperCase() || '?'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-pearl truncate">
-                    {user.displayName || 'KiraFan'}
-                  </p>
-                  <p className="text-xs text-pearl/60 truncate">
-                    {user.email}
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/profile"
-                className="block w-full text-center py-2 bg-ocean/20 hover:bg-ocean/30 rounded-lg text-sm font-medium text-pearl transition-colors"
-              >
-                Lihat Profil
-              </Link>
-            </div>
-          ) : (
-            <div className="card p-4 text-center">
-              <p className="text-sm text-pearl/60 mb-3">
-                Login untuk menyimpan favorit & watchlist
-              </p>
-              <Link
-                href="/login"
-                className="block w-full py-2 bg-ocean hover:bg-accent-secondary rounded-lg text-sm font-medium text-pearl transition-colors"
-              >
-                Login / Register
-              </Link>
-            </div>
-          )}
+      {/* Mobile Header Toggle */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-md z-40 flex items-center justify-between px-4 border-b border-pearl/10 shadow-sm">
+        <span className="font-bold text-xl text-primary flex items-center gap-2">
+          <PlayCircle className="text-accent" />
+          KiraNime
+        </span>
+        <button onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors">
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
 
-          {/* Navigation */}
-          <nav className="space-y-1">
-            <p className="text-xs font-semibold text-pearl/40 uppercase tracking-wide px-3 mb-2">
-              Menu
-            </p>
-            {navItems.map((item) => (
+      {/* Backdrop for mobile */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-noir/50 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Sidebar Container */}
+      <aside className={`
+        fixed top-0 left-0 h-screen w-64 bg-surface dark:bg-surface-dark z-50 
+        flex flex-col border-r border-pearl/10 shadow-xl lg:shadow-none
+        transition-transform duration-300 ease-spring
+        ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        
+        {/* Brand */}
+        <div className="h-16 flex items-center px-6 border-b border-pearl/10 shrink-0">
+          <Link href="/" className="font-bold text-2xl text-primary flex items-center gap-2 transition-transform hover:scale-105">
+            <PlayCircle className="text-accent fill-accent/20" />
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">KiraNime</span>
+          </Link>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">
+          {navItems.map((item) => {
+            const isActive = router.pathname === item.href
+            return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`nav-item ${isActive(item.href) ? 'active' : ''}`}
+                className={`
+                  flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group font-medium
+                  ${isActive 
+                    ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm' 
+                    : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/5 hover:text-primary'}
+                `}
               >
-                <span className="text-xl">{item.icon}</span>
-                <span className="font-medium text-pearl">{item.label}</span>
+                <div className={`transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>
+                  {item.icon}
+                </div>
+                {item.label}
               </Link>
-            ))}
-          </nav>
+            )
+          })}
+        </nav>
 
-          {/* User Items */}
-          {userItems.length > 0 && (
-            <nav className="space-y-1">
-              <p className="text-xs font-semibold text-pearl/40 uppercase tracking-wide px-3 mb-2">
-                Saya
-              </p>
-              {userItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`nav-item ${isActive(item.href) ? 'active' : ''}`}
-                >
-                  <span className="text-xl">{item.icon}</span>
-                  <span className="font-medium text-pearl">{item.label}</span>
-                </Link>
-              ))}
-            </nav>
-          )}
-
-          {/* Settings */}
-          <div className="space-y-1 pt-4 border-t border-ocean/20">
-            <button
-              onClick={toggleTheme}
-              className="nav-item w-full text-left"
-            >
-              <span className="text-xl">
-                {theme === 'dark' ? '🌙' : '☀️'}
-              </span>
-              <span className="font-medium text-pearl">
-                {theme === 'dark' ? 'Mode Gelap' : 'Mode Terang'}
-              </span>
-            </button>
-
-            {user && (
-              <button
-                onClick={() => logout()}
-                className="nav-item w-full text-left hover:bg-red-500/10"
-              >
-                <span className="text-xl">🚪</span>
-                <span className="font-medium text-pearl">Logout</span>
-              </button>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div className="pt-4 border-t border-ocean/20">
-            <p className="text-xs text-pearl/40 text-center">
-              Made with 💖 by Kira~ 🌸
-            </p>
-            <p className="text-xs text-pearl/40 text-center mt-1">
-              v1.0.0 • © 2026 KiraNime
-            </p>
+        {/* Footer Actions */}
+        <div className="p-4 border-t border-pearl/10 shrink-0 space-y-3">
+          <button
+            onClick={toggleTheme}
+            className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-pearl/5 hover:bg-pearl/10 text-text-light dark:text-text-dark transition-colors font-medium border border-transparent hover:border-pearl/10"
+          >
+            <span className="flex items-center gap-3">
+              {isDark ? <Moon size={20} className="text-indigo-400" /> : <Sun size={20} className="text-amber-500" />}
+              Tema
+            </span>
+            <span className="text-xs uppercase tracking-wider opacity-60 font-bold">
+              {isDark ? 'Dark' : 'Light'}
+            </span>
+          </button>
+          
+          <div className="text-center">
+            <p className="text-xs text-text-light/40 dark:text-text-dark/40 font-medium">Made with ❤️ by Kira</p>
+            <p className="text-[10px] text-text-light/30 dark:text-text-dark/30 mt-1">v1.1.0 &copy; 2026 KiraNime</p>
           </div>
         </div>
       </aside>
