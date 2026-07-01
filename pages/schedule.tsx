@@ -72,8 +72,8 @@ export default function SchedulePage() {
                           <Image src={imageProxy(anime.image)} alt={anime.title} fill className="object-cover group-hover:scale-105 transition-transform" />
                           {anime.episode && <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-[10px] text-center py-1">Episode {anime.episode}</div>}
                         </div>
-                        <div className="p-2.5">
-                          <h3 className="text-xs font-semibold line-clamp-2 text-[var(--color-text)]">{anime.title}</h3>
+                        <div className="p-2.5 min-h-[3.5rem] flex items-start">
+                          <h3 className="text-xs font-semibold line-clamp-2 leading-tight text-[var(--color-text)]">{anime.title}</h3>
                         </div>
                       </Link>
                     ))}
