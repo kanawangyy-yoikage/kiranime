@@ -1,28 +1,40 @@
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+// pages/novel/read/[slug].tsx
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
-import { getNovelPages } from '@/lib/novel'
+import { useRouter } from 'next/router'
 
-export default function NovelReadPage() {
+export default function NovelReader() {
   const router = useRouter()
   const { slug } = router.query
-  const [images, setImages] = useState<string[]>([])
+  const [content, setContent] = useState<string>('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!slug || typeof slug !== 'string') return
-    getNovelPages(decodeURIComponent(slug)).then(setImages).finally(() => setLoading(false))
+    if (!slug) return
+    // KiraNime API
+    fetch(`/api/novel?action=read&slug=${slug}`)
+      .then(res => res.json())
+      .then(data => {
+        setContent(data.content || 'Konten tidak tersedia.')
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Reader error:', err)
+        setLoading(false)
+      })
   }, [slug])
-
-  if (loading) return <div className="text-center py-12 text-pearl/60">Loading reader...</div>
 
   return (
     <>
-      <Head><title>Reader - KiraNime</title></Head>
-      <div className="space-y-4 max-w-3xl mx-auto">
-        {images.length === 0 ? (
-          <div className="card p-6 text-center text-pearl/60">Tidak ada gambar chapter yang bisa di-scrape dari source ini.</div>
-        ) : images.map((img, idx) => <img key={idx} src={img} alt={`page ${idx+1}`} className="w-full h-auto" />)}
+      <Head><title>Membaca Novel - KiraNime</title></Head>
+      <div className="card p-6 max-w-3xl mx-auto">
+        {loading ? (
+          <div className="text-center py-12">Loading...</div>
+        ) : (
+          <div className="prose dark:prose-invert max-w-none">
+            <p className="whitespace-pre-wrap leading-relaxed">{content}</p>
+          </div>
+        )}
       </div>
     </>
   )
