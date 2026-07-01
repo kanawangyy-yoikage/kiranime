@@ -108,7 +108,7 @@ export default function Home() {
               {data.novels.slice(0, 8).map((item) => (
                 <Link key={item.url} href={`/novel/${encodeURIComponent(item.url)}`} className="anime-card group">
                   <div className="relative aspect-[3/4] bg-[var(--color-surface-alt)]">
-                    <img src={safeImage(item.thumbnail)} alt={item.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <Image src={`/api/proxy?url=${encodeURIComponent(item.thumbnail || '')}`} alt={item.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                   </div>
                   <div className="p-2.5">
                     <h3 className="line-clamp-2 text-xs font-semibold sm:text-sm" style={textStyle()}>{item.title}</h3>
@@ -132,7 +132,7 @@ export default function Home() {
                     {animes.slice(0, 3).map((anime) => (
                       <Link key={anime.slug} href={`/anime/${anime.slug}`} className="group">
                         <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-[var(--color-surface-alt)]">
-                          <Image src={safeImage(anime.image)} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                          <Image src={`/api/mal-image?url=${encodeURIComponent(anime.image || '')}`} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                           {anime.episode && <div className="absolute inset-x-0 bottom-0 bg-black/65 px-1 py-1 text-center text-[10px] font-bold text-white">Ep {anime.episode}</div>}
                         </div>
                         <p className="mt-1 line-clamp-2 text-center text-[11px] font-medium" style={textStyle()}>{anime.title}</p>
@@ -150,8 +150,8 @@ export default function Home() {
             <div className="anime-grid">
               {data.malSeason.slice(0, 8).map((anime) => (
                 <Link key={anime.mal_id} href={`/mal/${anime.mal_id}`} className="anime-card group">
-                  <div className="relative aspect-[3/4]">
-                    <Image src={anime.images.jpg.large_image_url || anime.images.jpg.image_url} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                  <div className="relative aspect-[3/4] bg-[var(--color-surface-alt)]">
+                    <Image src={`/api/mal-image?url=${encodeURIComponent(anime.images.jpg.large_image_url || anime.images.jpg.image_url || '')}`} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                     <div className="absolute right-2 top-2 rounded-full bg-black/70 px-2 py-1 text-xs font-bold text-white">{anime.score?.toFixed(1) || 'N/A'}</div>
                   </div>
                   <div className="p-2.5">
