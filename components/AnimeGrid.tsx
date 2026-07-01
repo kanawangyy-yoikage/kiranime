@@ -4,7 +4,7 @@ import Image from 'next/image'
 import type { Anime } from '@/lib/api'
 
 // Helper untuk proxy gambar
-const imageProxy = (url: string) => `/api/proxy?url=${encodeURIComponent(url)}`
+const imageProxy = (url: string) => `/api/mal-image?url=${encodeURIComponent(url)}`
 
 const AnimeCard = ({ anime }: { anime: Anime }) => {
   return (
