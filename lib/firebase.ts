@@ -50,7 +50,8 @@ const firebaseConfig = {
 // ─── INITIALIZATION ──────────────────────────────────────────
 
 const app = initializeApp(firebaseConfig)
-export const auth = getAuth(app)
+const authInstance = typeof window !== 'undefined' ? getAuth(app) : undefined
+export const auth = authInstance!
 export const db = getFirestore(app)
 export const storage = getStorage(app)
 export const googleProvider = new GoogleAuthProvider()
