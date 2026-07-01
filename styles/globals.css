@@ -2,12 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── GOOGLE FONTS ─────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import './components.css';
 
-/* ─── BASE THEME ────────────────────────────────────────────── */
 :root {
-  /* Light mode palette */
   --color-bg: #F5F7FA;
   --color-surface: #FFFFFF;
   --color-surface-alt: #EEF1F6;
@@ -20,7 +17,6 @@
 }
 
 html.dark {
-  /* Dark mode palette */
   --color-bg: #0D1B2A;
   --color-surface: #122C4F;
   --color-surface-alt: #1A3A60;
@@ -30,6 +26,11 @@ html.dark {
   --color-text: #FBF9E4;
   --color-text-muted: rgba(251, 249, 228, 0.55);
   --color-pearl: #FBF9E4;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 /* ─── GLOBAL RESET ──────────────────────────────────────────── */
