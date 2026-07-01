@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       responseType: 'arraybuffer',
     })
 
-    const contentType = response.headers['content-type']
+    const contentType = response.headers['content-type'] as string | undefined
     res.setHeader('Content-Type', contentType || 'image/jpeg')
     res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate')
     res.send(response.data)
