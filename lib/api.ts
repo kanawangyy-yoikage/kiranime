@@ -366,7 +366,15 @@ const comicClient: AxiosInstance = axios.create({
 })
 
 function extractComics(raw: any): Comic[] {
-  const arr = raw.comics || raw.data?.comics || raw.data || (Array.isArray(raw) ? raw : [])
+  const arr =
+    raw?.komikList ||
+    raw?.komiklist ||
+    raw?.results ||
+    raw?.comics ||
+    raw?.data?.komikList ||
+    raw?.data?.comics ||
+    raw?.data ||
+    (Array.isArray(raw) ? raw : [])
   if (!Array.isArray(arr)) return []
   return arr.map((item: any) => ({
     title: item.title || item.name || '',
@@ -436,9 +444,14 @@ export async function fetchChapterPages(chapterSlug: string): Promise<ChapterPag
   try {
     const { data } = await comicClient.get(ENDPOINTS.COMIC_CHAPTER(chapterSlug))
     const d = data.data || data
+    const rawPages = d.images || d.pages || d.imagesUrl || (Array.isArray(d) ? d : [])
+    // Beberapa response ngasih array of object ({url, src, image}) bukan array of string
+    const pages: string[] = (Array.isArray(rawPages) ? rawPages : [])
+      .map((p: any) => (typeof p === 'string' ? p : p?.url || p?.src || p?.image || ''))
+      .filter(Boolean)
     return {
       title: d.title || d.chapter || '',
-      pages: d.pages || d.images || d.imagesUrl || [],
+      pages,
     }
   } catch { return null }
 }
