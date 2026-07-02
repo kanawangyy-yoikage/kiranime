@@ -190,7 +190,16 @@ export async function fetchAnimeList(letter: string, page = 1): Promise<Anime[]>
 export async function fetchSchedule(): Promise<Record<string, Anime[]>> {
   try {
     const { data } = await animeClient.get(ENDPOINTS.SCHEDULE)
-    return data.schedule || data.data || {}
+    const raw = data.schedule || data.data || data || {}
+    // Sebelumnya raw item per hari langsung di-cast ke tipe Anime tanpa normalisasi,
+    // padahal field mentahnya beda nama (poster/href dll) — makanya anime.image selalu
+    // kosong dan proxy gambar selalu gagal (400 "URL missing"). Disamain pakai extractAnimes
+    // biar konsisten sama endpoint lain (latest/popular/dst).
+    const result: Record<string, Anime[]> = {}
+    for (const day of Object.keys(raw)) {
+      result[day] = extractAnimes(raw[day])
+    }
+    return result
   } catch {
     return {}
   }
