@@ -9,10 +9,6 @@ const animeClient: AxiosInstance = axios.create({
   timeout: 15000,
   headers: {
     'Accept': 'application/json',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
-    'Referer': 'https://www.sankavollerei.web.id/',
-    'Origin': 'https://www.sankavollerei.web.id',
   },
 })
 
