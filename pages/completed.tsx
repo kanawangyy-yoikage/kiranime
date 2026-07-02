@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import { CheckCircle } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import { fetchCompleted, type Anime } from '@/lib/api'
 
@@ -23,7 +24,7 @@ export default function CompletedPage() {
       <Head><title>Anime Selesai - KiraNime</title></Head>
       <div className="space-y-6">
         <div className="card p-6">
-          <h1 className="section-title">✅ Anime Selesai</h1>
+          <h1 className="section-title flex items-center gap-2"><CheckCircle size={22} className="text-ocean" /> Anime Selesai</h1>
           <p className="text-pearl/60">Koleksi anime yang sudah selesai tayang.</p>
         </div>
         {loading && page === 1 ? (

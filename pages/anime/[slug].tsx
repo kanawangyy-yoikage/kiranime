@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { Download, Heart, ListPlus, ChevronDown } from 'lucide-react'
 import { fetchDetail, fetchEpisode, type AnimeDetail, type StreamData } from '@/lib/api'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
@@ -188,8 +189,8 @@ export default function AnimeDetailPage() {
                     onClick={() => setSelectedServer(idx)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       selectedServer === idx
-                        ? 'bg-ocean text-white'
-                        : 'bg-surface-dark text-white/70 hover:bg-surface-hover'
+                        ? 'bg-ocean text-pearl'
+                        : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
                     }`}
                   >
                     {stream.server}
@@ -201,13 +202,13 @@ export default function AnimeDetailPage() {
             {/* Download Links */}
             {streamData.downloads && streamData.downloads.length > 0 && (
               <details className="mt-4">
-                <summary className="cursor-pointer text-pearl font-medium hover:text-ocean transition-colors">
-                  📥 Download Links
+                <summary className="cursor-pointer text-pearl font-medium hover:text-ocean transition-colors flex items-center gap-2">
+                  <Download size={16} /> Download Links
                 </summary>
                 <div className="mt-3 space-y-2">
                   {streamData.downloads.map((dl, idx) => (
                     <div key={idx} className="bg-surface-dark rounded-lg p-3">
-                      <p className="text-sm font-medium text-white mb-2">
+                      <p className="text-sm font-medium text-pearl mb-2">
                         {dl.resolution} - {dl.format}
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -217,7 +218,7 @@ export default function AnimeDetailPage() {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 rounded text-xs text-white transition-colors"
+                            className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 rounded text-xs text-pearl transition-colors"
                           >
                             {link.host}
                           </a>
@@ -303,14 +304,15 @@ export default function AnimeDetailPage() {
               <>
                 <button
                   onClick={handleToggleFavorite}
-                  className={`btn-secondary ${isFavorited ? 'bg-red-500/20 border-red-500' : ''}`}
+                  className={`btn-secondary inline-flex items-center gap-2 ${isFavorited ? 'bg-red-500/20 border-red-500' : ''}`}
                 >
-                  {isFavorited ? '❤️ Favorit' : '🤍 Tambah Favorit'}
+                  <Heart size={16} className={isFavorited ? 'fill-red-400 text-red-400' : ''} />
+                  {isFavorited ? 'Favorit' : 'Tambah Favorit'}
                 </button>
 
                 <div className="relative group">
-                  <button className="btn-secondary">
-                    📝 Watchlist ▼
+                  <button className="btn-secondary inline-flex items-center gap-2">
+                    <ListPlus size={16} /> Watchlist <ChevronDown size={14} />
                   </button>
                   <div className="absolute top-full left-0 mt-2 hidden group-hover:block dropdown min-w-[150px]">
                     <button
@@ -384,8 +386,8 @@ export default function AnimeDetailPage() {
                   onClick={() => handlePlayEpisode(episode.slug)}
                   className={`p-3 rounded-lg font-medium transition-all ${
                     playingEpisode === episode.slug
-                      ? 'bg-ocean text-white'
-                      : 'bg-surface-dark text-white/70 hover:bg-surface-hover'
+                      ? 'bg-ocean text-pearl'
+                      : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
                   }`}
                 >
                   {episode.title}

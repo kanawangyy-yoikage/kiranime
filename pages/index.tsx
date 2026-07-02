@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { BookOpen, CalendarDays, Clapperboard, Compass, Flame, Play, Search } from 'lucide-react'
+import { BookOpen, CalendarDays, Clapperboard, Compass, Flame, ImageOff, Play, ScrollText, Search } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import Section from '@/components/Section'
 import { fetchLatest, fetchPopular, fetchSchedule, fetchMALSeason } from '@/lib/api'
 import type { Anime, MALAnime } from '@/lib/api'
 
-interface NovelItem {
+interface WebtoonItem {
   title: string
   thumbnail?: string
   url: string
@@ -19,7 +19,7 @@ interface HomeData {
   popular: Anime[]
   schedule: Record<string, Anime[]>
   malSeason: MALAnime[]
-  novels: NovelItem[]
+  webtoons: WebtoonItem[]
 }
 
 function textStyle(muted = false) {
@@ -31,18 +31,18 @@ function safeImage(src?: string) {
 }
 
 export default function Home() {
-  const [data, setData] = useState<HomeData>({ latest: [], popular: [], schedule: {}, malSeason: [], novels: [] })
+  const [data, setData] = useState<HomeData>({ latest: [], popular: [], schedule: {}, malSeason: [], webtoons: [] })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [latest, popular, schedule, malSeason, novelRes] = await Promise.allSettled([
+        const [latest, popular, schedule, malSeason, webtoonRes] = await Promise.allSettled([
           fetchLatest(),
           fetchPopular(),
           fetchSchedule(),
           fetchMALSeason(),
-          fetch('/api/novel?action=trending&day=trending').then((res) => res.json()),
+          fetch('/api/webtoon?action=trending&day=trending').then((res) => res.json()),
         ])
 
         setData({
@@ -50,7 +50,7 @@ export default function Home() {
           popular: popular.status === 'fulfilled' ? popular.value : [],
           schedule: schedule.status === 'fulfilled' ? schedule.value : {},
           malSeason: malSeason.status === 'fulfilled' ? malSeason.value : [],
-          novels: novelRes.status === 'fulfilled' ? novelRes.value.items || [] : [],
+          webtoons: webtoonRes.status === 'fulfilled' ? webtoonRes.value.items || [] : [],
         })
       } finally {
         setLoading(false)
@@ -64,7 +64,7 @@ export default function Home() {
     <>
       <Head>
         <title>KiraNime - Streaming Anime Subtitle Indonesia</title>
-        <meta name="description" content="Streaming anime subtitle Indonesia dengan UI modern, manga, novel, dan jadwal rilis." />
+        <meta name="description" content="Streaming anime subtitle Indonesia dengan UI modern, manga, webtoon, dan jadwal rilis." />
       </Head>
 
       <div className="space-y-10">
@@ -84,7 +84,7 @@ export default function Home() {
                 <Play size={18} /> Mulai Nonton
               </Link>
               <Link href="/manga" className="btn-secondary inline-flex items-center gap-2">
-                <BookOpen size={18} /> Manga & Novel
+                <BookOpen size={18} /> Manga & Webtoon
               </Link>
             </div>
           </div>
@@ -98,17 +98,23 @@ export default function Home() {
           {loading ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div> : <AnimeGrid animes={data.popular.slice(0, 8)} />}
         </Section>
 
-        <Section title="Novel" viewAll="/novel">
+        <Section title="Webtoon" viewAll="/webtoon">
           {loading ? (
             <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
-          ) : data.novels.length === 0 ? (
-            <div className="card p-5 text-sm" style={textStyle(true)}>Novel belum tersedia dari source saat ini.</div>
+          ) : data.webtoons.length === 0 ? (
+            <div className="card p-5 text-sm" style={textStyle(true)}>Webtoon belum tersedia dari source saat ini.</div>
           ) : (
             <div className="anime-grid">
-              {data.novels.slice(0, 8).map((item) => (
-                <Link key={item.url} href={`/novel/${encodeURIComponent(item.url)}`} className="anime-card group">
+              {data.webtoons.slice(0, 8).map((item) => (
+                <Link key={item.url} href={`/webtoon/${encodeURIComponent(item.url)}`} className="anime-card group">
                   <div className="relative aspect-[3/4] bg-[var(--color-surface-alt)]">
-                    <Image src={`/api/proxy?url=${encodeURIComponent(item.thumbnail || '')}`} alt={item.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                    {item.thumbnail ? (
+                      <Image src={`/api/proxy?url=${encodeURIComponent(item.thumbnail || '')}`} alt={item.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center" style={textStyle(true)}>
+                        <ImageOff size={20} />
+                      </div>
+                    )}
                   </div>
                   <div className="p-2.5">
                     <h3 className="line-clamp-2 text-xs font-semibold sm:text-sm" style={textStyle()}>{item.title}</h3>

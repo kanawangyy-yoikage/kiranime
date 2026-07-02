@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import { Clapperboard } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import { fetchMovies, type Anime } from '@/lib/api'
 
@@ -23,7 +24,7 @@ export default function MoviesPage() {
       <Head><title>Anime Movies - KiraNime</title></Head>
       <div className="space-y-6">
         <div className="card p-6">
-          <h1 className="section-title">🎬 Anime Movies</h1>
+          <h1 className="section-title flex items-center gap-2"><Clapperboard size={22} className="text-ocean" /> Anime Movies</h1>
           <p className="text-pearl/60">Koleksi anime movie terlengkap.</p>
         </div>
         {loading && page === 1 ? (

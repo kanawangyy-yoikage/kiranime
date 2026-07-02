@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import { ArrowLeft, Frown } from 'lucide-react'
 import { fetchChapterPages, ChapterPages } from '@/lib/api'
 
 export default function ChapterReaderPage() {
@@ -38,7 +39,8 @@ export default function ChapterReaderPage() {
   if (!chapter || !chapter.pages || chapter.pages.length === 0) {
     return (
       <div className="text-center py-20 card p-6">
-        <p className="text-xl text-pearl mb-4">Yah... Halaman chapter kosong atau gagal dimuat 😭</p>
+        <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
+        <p className="text-xl text-pearl mb-4">Yah... Halaman chapter kosong atau gagal dimuat</p>
         <button onClick={() => router.back()} className="btn-primary">Kembali</button>
       </div>
     )
@@ -47,14 +49,14 @@ export default function ChapterReaderPage() {
   return (
     <>
       <Head>
-        <title>{chapter.title || 'Baca Manga'} - KiraNime 🌸</title>
+        <title>{chapter.title || 'Baca Manga'} - KiraNime</title>
       </Head>
 
       <div className="space-y-6 max-w-4xl mx-auto">
         {/* Navigation Top */}
         <div className="card p-4 flex justify-between items-center">
-          <button onClick={() => router.back()} className="btn-secondary text-sm">
-            ← Detail Komik
+          <button onClick={() => router.back()} className="btn-secondary text-sm inline-flex items-center gap-1.5">
+            <ArrowLeft size={16} /> Detail Komik
           </button>
           <h1 className="text-sm md:text-lg font-bold text-pearl text-center px-4 truncate flex-1">
             {chapter.title}
@@ -71,7 +73,7 @@ export default function ChapterReaderPage() {
                 className="w-full h-auto select-none"
                 loading={index < 3 ? 'eager' : 'lazy'}
               />
-              <div className="absolute bottom-2 right-2 bg-noir/70 text-white text-xs px-2 py-1 rounded">
+              <div className="absolute bottom-2 right-2 bg-noir/70 text-pearl text-xs px-2 py-1 rounded">
                 {index + 1} / {chapter.pages.length}
               </div>
             </div>

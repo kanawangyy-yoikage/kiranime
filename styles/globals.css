@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,7 +5,7 @@
 @import './components.css';
 
 :root {
-  /* Light Mode - "Pearl Perfect" theme: cream background, Midnight text */
+  /* Light Mode - Pearl Perfect theme */
   --color-bg: #FBF9E4;
   --color-surface: #FFFFFF;
   --color-surface-alt: #F0EDE0;
@@ -16,20 +14,11 @@
   --color-accent: #5B88B2;
   --color-text: #122C4F;
   --color-text-muted: rgba(18, 44, 79, 0.65);
-  /* Text color to place on top of a --color-primary (Midnight) surface, e.g. buttons.
-     Was incorrectly set equal to --color-primary before, making button text invisible. */
-  --color-pearl: #FBF9E4;
-
-  /* RGB-channel versions of the tokens above, used by Tailwind's adaptive
-     primary / accent / pearl color utilities so opacity modifiers (e.g. bg-primary/10)
-     keep working while the base color still flips with the theme. */
-  --primary-rgb: 18 44 79;     /* Midnight #122C4F */
-  --accent-rgb: 91 136 178;    /* Ocean #5B88B2 */
-  --text-rgb: 18 44 79;        /* Midnight #122C4F */
+  --color-pearl: #122C4F;
 }
 
 html.dark {
-  /* Dark Mode - "Noir + Ocean" theme: black background, Ocean/Pearl text */
+  /* Dark Mode - Noir + Ocean theme */
   --color-bg: #000000;
   --color-surface: #122C4F;
   --color-surface-alt: #1A3A60;
@@ -38,11 +27,7 @@ html.dark {
   --color-accent: #7BAFD4;
   --color-text: #FBF9E4;
   --color-text-muted: rgba(251, 249, 228, 0.60);
-  --color-pearl: #122C4F;
-
-  --primary-rgb: 91 136 178;   /* Ocean #5B88B2 */
-  --accent-rgb: 123 175 212;   /* Lighter Ocean #7BAFD4 */
-  --text-rgb: 251 249 228;     /* Pearl #FBF9E4 */
+  --color-pearl: #FBF9E4;
 }
 
 body {
@@ -59,13 +44,6 @@ html {
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
-}
-
-/* Headings use the serif "Lora" display font, matching the Midnight/Pearl/Ocean
-   palette reference (Midnight, Pearl Perfect, Noir, Ocean titles). */
-h1, h2, h3, .font-display {
-  font-family: 'Lora', Georgia, serif;
-  letter-spacing: -0.01em;
 }
 
 body {
@@ -227,19 +205,6 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-accent) transparent; 
 /* ─── HERO GRADIENT ─────────────────────────────────────────── */
 .hero-gradient {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-}
-
-/* ─── HERO PANEL (homepage banner) ──────────────────────────── */
-.hero-panel {
-  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
-  border-color: var(--color-border);
-}
-.hero-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 85% 20%, rgba(91, 136, 178, 0.18), transparent 60%);
-  pointer-events: none;
 }
 
 /* ─── IMAGE CARD ────────────────────────────────────────────── */

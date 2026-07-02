@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
+import { Pencil, Clapperboard, Clock, Star, BookmarkPlus, PlayCircle, CheckCircle, Ban } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { getUserFirestore, uploadAvatar, uploadBanner, updateUserFirestore } from '@/lib/firebase'
 import { getHistory, getFavorites, getWatchlistByStatus, getContinueWatching } from '@/lib/firebase'
@@ -206,9 +207,9 @@ export default function ProfilePage() {
                     )}
                     <button
                       onClick={() => setEditMode(true)}
-                      className="mt-2 text-sm text-ocean hover:text-accent-secondary transition-colors"
+                      className="mt-2 text-sm text-ocean hover:text-accent-secondary transition-colors inline-flex items-center gap-1.5"
                     >
-                      ✏️ Edit Profil
+                      <Pencil size={14} /> Edit Profil
                     </button>
                   </>
                 )}
@@ -266,7 +267,7 @@ export default function ProfilePage() {
                 {/* Continue Watching */}
                 {continueWatching.length > 0 && (
                   <div>
-                    <h3 className="font-bold text-pearl mb-3">🎬 Lanjutkan Nonton</h3>
+                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Clapperboard size={18} className="text-ocean" /> Lanjutkan Nonton</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {continueWatching.slice(0, 4).map((item) => (
                         <a
@@ -297,7 +298,7 @@ export default function ProfilePage() {
                 {/* Recent History */}
                 {history.length > 0 && (
                   <div>
-                    <h3 className="font-bold text-pearl mb-3">🕒 Riwayat Terakhir</h3>
+                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Clock size={18} className="text-ocean" /> Riwayat Terakhir</h3>
                     <div className="space-y-2">
                       {history.slice(0, 5).map((item) => (
                         <a
@@ -377,7 +378,7 @@ export default function ProfilePage() {
                       />
                       <div className="flex-1">
                         <p className="font-medium text-pearl">{item.title}</p>
-                        <p className="text-sm text-pearl/60">⭐ {item.score || 'N/A'}</p>
+                        <p className="text-sm text-pearl/60 flex items-center gap-1"><Star size={12} className="fill-yellow-500 text-yellow-500" /> {item.score || 'N/A'}</p>
                       </div>
                     </a>
                   ))
@@ -406,11 +407,11 @@ export default function ProfilePage() {
                       />
                       <div className="flex-1">
                         <p className="font-medium text-pearl">{item.title}</p>
-                        <p className="text-sm text-pearl/60 capitalize">
-                          {item.status === 'planning' && '📝 Mau Nonton'}
-                          {item.status === 'watching' && '📺 Sedang Nonton'}
-                          {item.status === 'completed' && '✅ Selesai'}
-                          {item.status === 'dropped' && '🚫 Dropped'}
+                        <p className="text-sm text-pearl/60 capitalize inline-flex items-center gap-1.5">
+                          {item.status === 'planning' && (<><BookmarkPlus size={14} /> Mau Nonton</>)}
+                          {item.status === 'watching' && (<><PlayCircle size={14} /> Sedang Nonton</>)}
+                          {item.status === 'completed' && (<><CheckCircle size={14} /> Selesai</>)}
+                          {item.status === 'dropped' && (<><Ban size={14} /> Dropped</>)}
                         </p>
                         {item.totalEpisodes > 0 && (
                           <p className="text-xs text-pearl/60">

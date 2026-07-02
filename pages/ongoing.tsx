@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import { PlayCircle } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import { fetchOngoing, type Anime } from '@/lib/api'
 
@@ -23,7 +24,7 @@ export default function OngoingPage() {
       <Head><title>Anime Ongoing - KiraNime</title></Head>
       <div className="space-y-6">
         <div className="card p-6">
-          <h1 className="section-title">📺 Sedang Tayang</h1>
+          <h1 className="section-title flex items-center gap-2"><PlayCircle size={22} className="text-ocean" /> Sedang Tayang</h1>
           <p className="text-pearl/60">Anime yang sedang tayang sekarang.</p>
         </div>
         {loading && page === 1 ? (

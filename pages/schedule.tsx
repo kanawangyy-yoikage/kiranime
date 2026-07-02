@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Calendar } from 'lucide-react'
 import { fetchSchedule, type Anime } from '@/lib/api'
 
 export default function SchedulePage() {
@@ -34,7 +35,7 @@ export default function SchedulePage() {
 
       <div className="space-y-6">
         <div className="card px-5 py-4">
-          <h1 className="section-title">📅 Jadwal Rilis Anime</h1>
+          <h1 className="section-title flex items-center gap-2"><Calendar size={22} className="text-ocean" /> Jadwal Rilis Anime</h1>
           <p className="mt-1 text-sm text-[var(--color-text-muted)]">Jadwal anime yang tayang setiap hari</p>
         </div>
 

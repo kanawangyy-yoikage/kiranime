@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Sparkles } from 'lucide-react'
 
 interface NavbarProps {
   theme: 'dark' | 'light'
@@ -37,7 +38,7 @@ export default function Navbar({ theme, toggleTheme, toggleSidebar }: NavbarProp
           <Link href="/" className="flex items-center gap-2 font-display font-bold text-xl">
             <span className="text-pearl">Kira</span>
             <span className="text-ocean">Nime</span>
-            <span className="text-2xl">🌸</span>
+            <Sparkles size={20} className="text-ocean" />
           </Link>
         </div>
 
@@ -48,7 +49,7 @@ export default function Navbar({ theme, toggleTheme, toggleSidebar }: NavbarProp
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari anime..."
+              placeholder="Cari anime, manga, webtoon..."
               className="w-full bg-surface dark:bg-surface-dark border border-ocean/30 rounded-full px-4 py-2 pl-10 text-pearl placeholder-pearl/50 focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean transition-all"
             />
             <svg 
@@ -118,7 +119,7 @@ export default function Navbar({ theme, toggleTheme, toggleSidebar }: NavbarProp
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari anime..."
+                placeholder="Cari anime, manga, webtoon..."
                 className="w-full bg-surface dark:bg-surface-dark border border-ocean/30 rounded-full px-4 py-2 pl-10 text-pearl placeholder-pearl/50 focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean"
                 autoFocus
               />

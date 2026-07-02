@@ -1,7 +1,7 @@
 {
   "name": "kiranime",
   "version": "1.0.0",
-  "description": "Modern Anime Streaming Platform - Powered by Kira~ 🌸",
+  "description": "Modern Anime Streaming Platform - Powered by Kira~",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

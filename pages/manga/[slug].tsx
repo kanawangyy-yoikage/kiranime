@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import { BookOpen, Frown } from 'lucide-react'
 import { fetchComicDetail, ComicDetail } from '@/lib/api'
 
 export default function ComicDetailPage() {
@@ -38,7 +39,8 @@ export default function ComicDetailPage() {
   if (!comic) {
     return (
       <div className="text-center py-20 card p-6">
-        <p className="text-xl text-pearl mb-4">Yah... Komik tidak ditemukan 😭</p>
+        <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
+        <p className="text-xl text-pearl mb-4">Yah... Komik tidak ditemukan</p>
         <Link href="/manga" className="btn-primary">Kembali ke Manga</Link>
       </div>
     )
@@ -47,7 +49,7 @@ export default function ComicDetailPage() {
   return (
     <>
       <Head>
-        <title>{comic.title} - KiraNime 🌸</title>
+        <title>{comic.title} - KiraNime</title>
       </Head>
 
       <div className="space-y-6">
@@ -86,7 +88,7 @@ export default function ComicDetailPage() {
 
         {/* Chapter list */}
         <div className="card p-6">
-          <h2 className="text-xl font-bold text-pearl mb-4">📖 Daftar Chapter ({comic.chapters.length})</h2>
+          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2"><BookOpen size={20} className="text-ocean" /> Daftar Chapter ({comic.chapters.length})</h2>
           
           {comic.chapters.length === 0 ? (
             <p className="text-pearl/60">Tidak ada chapter tersedia.</p>
@@ -98,11 +100,11 @@ export default function ComicDetailPage() {
                   href={`/manga/read/${ch.slug}`}
                   className="flex items-center justify-between p-3 bg-surface-dark hover:bg-surface-hover rounded-lg transition-colors group"
                 >
-                  <span className="text-sm font-medium text-white group-hover:text-ocean transition-colors truncate">
+                  <span className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors truncate">
                     {ch.title}
                   </span>
                   {ch.date && (
-                    <span className="text-xs text-white/50 shrink-0 ml-2">{ch.date}</span>
+                    <span className="text-xs text-pearl/50 shrink-0 ml-2">{ch.date}</span>
                   )}
                 </Link>
               ))}

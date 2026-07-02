@@ -71,8 +71,8 @@ export default function GenresPage() {
                   onClick={() => loadAnimesByGenre(genre.slug)}
                   className={`px-4 py-2 rounded-full font-medium transition-all ${
                     selectedGenre === genre.slug
-                      ? 'bg-ocean text-white'
-                      : 'bg-surface-dark text-white/70 hover:bg-surface-hover'
+                      ? 'bg-ocean text-pearl'
+                      : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
                   }`}
                 >
                   {genre.name}

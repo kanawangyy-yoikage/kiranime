@@ -9,13 +9,14 @@ import {
   CheckCircle,
   Tags,
   BookOpen,
-  Library,
+  ScrollText,
   Calendar,
   Search,
   Moon,
   Sun,
   Menu,
-  X
+  X,
+  Heart
 } from 'lucide-react'
 
 export default function Sidebar() {
@@ -49,7 +50,7 @@ export default function Sidebar() {
     { icon: <CheckCircle size={20} />, label: 'Selesai', href: '/completed' },
     { icon: <Tags size={20} />, label: 'Genres', href: '/genres' },
     { icon: <BookOpen size={20} />, label: 'Manga', href: '/manga' },
-    { icon: <Library size={20} />, label: 'Novel', href: '/novel' },
+    { icon: <ScrollText size={20} />, label: 'Webtoon', href: '/webtoon' },
     { icon: <Calendar size={20} />, label: 'Jadwal', href: '/schedule' },
     { icon: <Search size={20} />, label: 'Pencarian', href: '/search' },
   ]
@@ -63,7 +64,7 @@ export default function Sidebar() {
     <>
       {/* Mobile Header Toggle */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-md z-40 flex items-center justify-between px-4 border-b border-pearl/10 shadow-sm">
-        <span className="font-display font-bold text-xl text-primary flex items-center gap-2">
+        <span className="font-bold text-xl text-primary flex items-center gap-2">
           <PlayCircle className="text-accent" />
           KiraNime
         </span>
@@ -90,7 +91,7 @@ export default function Sidebar() {
         
         {/* Brand */}
         <div className="h-16 flex items-center px-6 border-b border-pearl/10 shrink-0">
-          <Link href="/" className="font-display font-bold text-2xl text-primary flex items-center gap-2 transition-transform hover:scale-105">
+          <Link href="/" className="font-bold text-2xl text-primary flex items-center gap-2 transition-transform hover:scale-105">
             <PlayCircle className="text-accent fill-accent/20" />
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">KiraNime</span>
           </Link>
@@ -127,7 +128,7 @@ export default function Sidebar() {
             className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-pearl/5 hover:bg-pearl/10 text-text-light dark:text-text-dark transition-colors font-medium border border-transparent hover:border-pearl/10"
           >
             <span className="flex items-center gap-3">
-              {isDark ? <Moon size={20} className="text-accent" /> : <Sun size={20} className="text-accent" />}
+              {isDark ? <Moon size={20} className="text-indigo-400" /> : <Sun size={20} className="text-amber-500" />}
               Tema
             </span>
             <span className="text-xs uppercase tracking-wider opacity-60 font-bold">
@@ -136,7 +137,9 @@ export default function Sidebar() {
           </button>
           
           <div className="text-center">
-            <p className="text-xs text-text-light/40 dark:text-text-dark/40 font-medium">Made with ❤️ by Kira</p>
+            <p className="text-xs text-text-light/40 dark:text-text-dark/40 font-medium inline-flex items-center justify-center gap-1">
+              Made with <Heart size={12} className="fill-red-400 text-red-400" /> by Kira
+            </p>
             <p className="text-[10px] text-text-light/30 dark:text-text-dark/30 mt-1">v1.1.0 &copy; 2026 KiraNime</p>
           </div>
         </div>

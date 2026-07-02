@@ -10,8 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Fixed brand swatches (same in both light & dark — the 4 quadrants of the palette)
         midnight: '#122C4F',
+        pearl: '#FBF9E4',
         noir: '#000000',
         ocean: '#5B88B2',
         oceanAccent: {
@@ -19,7 +19,6 @@ const config: Config = {
           secondary: '#7BA3C9',
           light: '#A8C7FA',
         },
-        'accent-secondary': '#7BA3C9',
         surface: {
           DEFAULT: '#FFFFFF',
           dark: '#122C4F',
@@ -30,19 +29,12 @@ const config: Config = {
         'bg-dark': '#000000',
         'text-light': '#122C4F',
         'text-dark': '#FBF9E4',
-        // Adaptive tokens — resolve through CSS variables so they automatically
-        // flip between Midnight(light)/Ocean(dark) etc. without needing dark: prefixes.
-        // Support opacity modifiers (e.g. bg-primary/10) via the rgb()/<alpha-value> pattern.
-        primary: 'rgb(var(--primary-rgb) / <alpha-value>)',
-        accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
-        // "pearl" is used across the app as the main on-surface text color; make it
-        // adaptive (Midnight text in light mode, Pearl-cream text in dark mode) so it
-        // always stays readable on the adaptive card/surface background.
-        pearl: 'rgb(var(--text-rgb) / <alpha-value>)',
+        primary: '#122C4F',
+        accent: '#5B88B2'
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Lora', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Poppins', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

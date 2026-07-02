@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import { Heart, HeartCrack } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { getFavorites } from '@/lib/firebase'
 import AnimeGrid from '@/components/AnimeGrid'
@@ -52,7 +53,7 @@ export default function FavoritesPage() {
 
       <div className="space-y-6">
         <div className="card p-6">
-          <h1 className="section-title">❤️ Anime Favorit</h1>
+          <h1 className="section-title flex items-center gap-2"><Heart size={22} className="fill-red-400 text-red-400" /> Anime Favorit</h1>
           <p className="text-pearl/60">
             {favorites.length} anime dalam daftar favorit
           </p>
@@ -62,7 +63,7 @@ export default function FavoritesPage() {
           <AnimeGrid animes={favorites} />
         ) : (
           <div className="text-center py-12 card p-6">
-            <p className="text-4xl mb-4">💔</p>
+            <HeartCrack className="mx-auto mb-4 text-pearl/40" size={40} />
             <h2 className="text-xl font-bold text-pearl mb-2">Belum ada favorit</h2>
             <p className="text-pearl/60 mb-4">Tambahkan anime ke favorit untuk melihatnya di sini</p>
             <button

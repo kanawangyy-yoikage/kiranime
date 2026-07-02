@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
+import { ArrowLeft, Sparkles } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginPage() {
@@ -80,8 +81,8 @@ export default function LoginPage() {
           <div className="card p-8">
             {/* Logo */}
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-display font-bold text-pearl mb-2">
-                Kira<span className="text-ocean">Nime</span> 🌸
+              <h1 className="text-3xl font-display font-bold text-pearl mb-2 inline-flex items-center justify-center gap-2">
+                Kira<span className="text-ocean">Nime</span> <Sparkles size={22} className="text-ocean" />
               </h1>
               <p className="text-pearl/60">
                 {mode === 'login' ? 'Login ke akun kamu' : 'Buat akun baru'}
@@ -115,7 +116,7 @@ export default function LoginPage() {
                 <div className="w-full border-t border-ocean/20" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-surface-card text-white/60">atau</span>
+                <span className="px-2 bg-surface-card text-pearl/60">atau</span>
               </div>
             </div>
 
@@ -189,9 +190,9 @@ export default function LoginPage() {
             <div className="mt-4 text-center">
               <button
                 onClick={() => router.push('/')}
-                className="text-sm text-pearl/60 hover:text-pearl transition-colors"
+                className="text-sm text-pearl/60 hover:text-pearl transition-colors inline-flex items-center gap-1.5"
               >
-                ← Kembali ke Beranda
+                <ArrowLeft size={14} /> Kembali ke Beranda
               </button>
             </div>
           </div>
