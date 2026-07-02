@@ -237,21 +237,21 @@ export default function AnimeDetailPage() {
           animate={{ opacity: 1 }}
           className="card overflow-hidden"
         >
-          <div className="relative h-64 md:h-96">
+          <div className="relative h-64 md:h-80 bg-[var(--color-surface-alt)]">
             <Image
-              src={anime.image}
+              src={`/api/mal-image?url=${encodeURIComponent(anime.image)}`}
               alt={anime.title}
               fill
-              className="object-cover blur-sm scale-110"
+              className="object-cover opacity-30"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-surface-card via-surface-card/80 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-surface)] via-[var(--color-surface)]/80 to-transparent" />
             
             <div className="absolute bottom-0 left-0 right-0 p-6">
-              <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex flex-col md:flex-row gap-6 items-end">
                 {/* Poster */}
-                <div className="relative w-32 h-48 md:w-40 md:h-60 flex-shrink-0 rounded-lg overflow-hidden shadow-2xl">
+                <div className="relative w-32 h-48 md:w-40 md:h-60 flex-shrink-0 rounded-lg overflow-hidden border border-[var(--color-border)] shadow-2xl">
                   <Image
-                    src={anime.image}
+                    src={`/api/mal-image?url=${encodeURIComponent(anime.image)}`}
                     alt={anime.title}
                     fill
                     className="object-cover"
@@ -259,8 +259,8 @@ export default function AnimeDetailPage() {
                 </div>
 
                 {/* Info */}
-                <div className="flex-1">
-                  <h1 className="text-2xl md:text-4xl font-display font-bold text-pearl mb-2">
+                <div className="flex-1 pb-2">
+                  <h1 className="text-2xl md:text-4xl font-bold mb-2 text-[var(--color-text)]">
                     {anime.title}
                   </h1>
                   
