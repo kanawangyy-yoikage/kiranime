@@ -38,13 +38,13 @@ export default function MangaListPage() {
           <div className="flex gap-2">
             <button
               onClick={() => switchTab('popular')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'popular' ? 'bg-ocean text-pearl' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'popular' ? 'bg-ocean text-white' : 'bg-surface-dark text-white/70 hover:bg-surface-hover'}`}
             >
               🔥 Populer
             </button>
             <button
               onClick={() => switchTab('latest')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'latest' ? 'bg-ocean text-pearl' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'latest' ? 'bg-ocean text-white' : 'bg-surface-dark text-white/70 hover:bg-surface-hover'}`}
             >
               🆕 Terbaru
             </button>

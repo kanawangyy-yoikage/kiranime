@@ -115,7 +115,7 @@ export default function LoginPage() {
                 <div className="w-full border-t border-ocean/20" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-surface-card text-pearl/60">atau</span>
+                <span className="px-2 bg-surface-card text-white/60">atau</span>
               </div>
             </div>
 

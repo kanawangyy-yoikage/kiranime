@@ -92,7 +92,7 @@ export default function NovelDetailPage() {
                   href={`/novel/read/${encodeURIComponent(ep.url)}`}
                   className="flex items-center justify-between p-3 bg-surface-dark hover:bg-surface-hover rounded-lg transition-colors group"
                 >
-                  <span className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors truncate">
+                  <span className="text-sm font-medium text-white group-hover:text-ocean transition-colors truncate">
                     {ep.title || `Episode ${i + 1}`}
                   </span>
                 </Link>

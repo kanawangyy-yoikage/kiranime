@@ -188,8 +188,8 @@ export default function AnimeDetailPage() {
                     onClick={() => setSelectedServer(idx)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       selectedServer === idx
-                        ? 'bg-ocean text-pearl'
-                        : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
+                        ? 'bg-ocean text-white'
+                        : 'bg-surface-dark text-white/70 hover:bg-surface-hover'
                     }`}
                   >
                     {stream.server}
@@ -207,7 +207,7 @@ export default function AnimeDetailPage() {
                 <div className="mt-3 space-y-2">
                   {streamData.downloads.map((dl, idx) => (
                     <div key={idx} className="bg-surface-dark rounded-lg p-3">
-                      <p className="text-sm font-medium text-pearl mb-2">
+                      <p className="text-sm font-medium text-white mb-2">
                         {dl.resolution} - {dl.format}
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -217,7 +217,7 @@ export default function AnimeDetailPage() {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 rounded text-xs text-pearl transition-colors"
+                            className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 rounded text-xs text-white transition-colors"
                           >
                             {link.host}
                           </a>
@@ -384,8 +384,8 @@ export default function AnimeDetailPage() {
                   onClick={() => handlePlayEpisode(episode.slug)}
                   className={`p-3 rounded-lg font-medium transition-all ${
                     playingEpisode === episode.slug
-                      ? 'bg-ocean text-pearl'
-                      : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
+                      ? 'bg-ocean text-white'
+                      : 'bg-surface-dark text-white/70 hover:bg-surface-hover'
                   }`}
                 >
                   {episode.title}

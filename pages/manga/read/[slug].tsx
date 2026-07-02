@@ -71,7 +71,7 @@ export default function ChapterReaderPage() {
                 className="w-full h-auto select-none"
                 loading={index < 3 ? 'eager' : 'lazy'}
               />
-              <div className="absolute bottom-2 right-2 bg-noir/70 text-pearl text-xs px-2 py-1 rounded">
+              <div className="absolute bottom-2 right-2 bg-noir/70 text-white text-xs px-2 py-1 rounded">
                 {index + 1} / {chapter.pages.length}
               </div>
             </div>

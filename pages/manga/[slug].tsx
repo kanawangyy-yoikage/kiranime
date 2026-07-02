@@ -98,11 +98,11 @@ export default function ComicDetailPage() {
                   href={`/manga/read/${ch.slug}`}
                   className="flex items-center justify-between p-3 bg-surface-dark hover:bg-surface-hover rounded-lg transition-colors group"
                 >
-                  <span className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors truncate">
+                  <span className="text-sm font-medium text-white group-hover:text-ocean transition-colors truncate">
                     {ch.title}
                   </span>
                   {ch.date && (
-                    <span className="text-xs text-pearl/50 shrink-0 ml-2">{ch.date}</span>
+                    <span className="text-xs text-white/50 shrink-0 ml-2">{ch.date}</span>
                   )}
                 </Link>
               ))}
