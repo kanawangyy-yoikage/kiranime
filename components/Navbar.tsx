@@ -49,7 +49,7 @@ export default function Navbar({ theme, toggleTheme, toggleSidebar }: NavbarProp
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari anime..."
-              className="w-full bg-surface-dark border border-ocean/30 rounded-full px-4 py-2 pl-10 text-pearl placeholder-pearl/50 focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean transition-all"
+              className="w-full bg-surface dark:bg-surface-dark border border-ocean/30 rounded-full px-4 py-2 pl-10 text-pearl placeholder-pearl/50 focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean transition-all"
             />
             <svg 
               className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-pearl/50"
@@ -119,7 +119,7 @@ export default function Navbar({ theme, toggleTheme, toggleSidebar }: NavbarProp
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari anime..."
-                className="w-full bg-surface-dark border border-ocean/30 rounded-full px-4 py-2 pl-10 text-pearl placeholder-pearl/50 focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean"
+                className="w-full bg-surface dark:bg-surface-dark border border-ocean/30 rounded-full px-4 py-2 pl-10 text-pearl placeholder-pearl/50 focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean"
                 autoFocus
               />
               <svg 

@@ -10,11 +10,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    // Beberapa CDN (Webtoons, MyAnimeList) punya hotlink protection yang cuma
+    // ngizinin Referer dari domain resminya sendiri, bukan dari origin URL gambarnya.
+    // Ini penyebab thumbnail dari MAL (Jadwal Rilis) & panel Webtoons sering gagal muncul.
+    const hostname = new URL(url).hostname
+    let referer = new URL(url).origin
+    if (/webtoons\.com|pstatic\.net/i.test(hostname)) {
+      referer = 'https://www.webtoons.com/'
+    } else if (/myanimelist\.net/i.test(hostname)) {
+      referer = 'https://myanimelist.net/'
+    }
+
     const response = await axios.get(url, {
       responseType: 'arraybuffer', // Penting untuk gambar
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Referer': new URL(url).origin, // Pakai origin dari URL gambar
+        'Referer': referer,
       },
     })
 

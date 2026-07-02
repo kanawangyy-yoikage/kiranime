@@ -65,22 +65,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (action === 'detail') {
       const html = await fetchHtml(String(url || ''))
       const $ = cheerio.load(html)
-      const title = $('h1.subj, .info .subj').first().text().trim()
-      const thumbnail = $('.detail_header .thmb img').first().attr('src') || ''
+      const title = $('h1.subj, h3.subj, .info .subj').first().text().trim() ||
+        $('meta[property="og:title"]').attr('content') || ''
+      const thumbnail = $('.detail_header .thmb img, .detail_bg img').first().attr('src') ||
+        $('meta[property="og:image"]').attr('content') || ''
+      const synopsis = $('p.summary, .detail_body .summary').first().text().trim() ||
+        $('meta[property="og:description"]').attr('content') || ''
       const episodes: Array<Record<string, unknown>> = []
 
-      $('#_listUl li a').each((_, el) => {
-        const $a = $(el)
+      $('#_listUl > li, ul#_listUl > li').each((_, el) => {
+        const $li = $(el)
+        const $a = $li.find('a').first()
         const href = $a.attr('href') || ''
         if (!href) return
+        const epNo = Number($li.attr('data-episode-no')) || Number(href.match(/episode_no=(\d+)/)?.[1]) || null
         episodes.push({
-          title: $a.find('.subj span, .subj').first().text().trim() || $a.text().trim(),
-          thumbnail: $a.find('img').first().attr('src') || '',
+          episodeNo: epNo,
+          title: $a.find('.subj span, .subj').first().text().trim() || $a.attr('title')?.trim() || $a.text().trim(),
+          thumbnail: $a.find('.thmb img, img').first().attr('src') || '',
           url: href.startsWith('http') ? href : `${BASE}${href}`,
         })
       })
 
-      return res.status(200).json({ title, thumbnail, url, episodes })
+      return res.status(200).json({ title, thumbnail, synopsis, url, episodes })
     }
 
     if (action === 'pages') {

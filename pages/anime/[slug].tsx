@@ -237,7 +237,7 @@ export default function AnimeDetailPage() {
           animate={{ opacity: 1 }}
           className="card overflow-hidden"
         >
-          <div className="relative h-64 md:h-80 bg-[var(--color-surface-alt)]">
+          <div className="relative min-h-[300px] sm:min-h-[260px] md:min-h-80 bg-[var(--color-surface-alt)]">
             <Image
               src={`/api/mal-image?url=${encodeURIComponent(anime.image)}`}
               alt={anime.title}
@@ -246,7 +246,7 @@ export default function AnimeDetailPage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-surface)] via-[var(--color-surface)]/80 to-transparent" />
             
-            <div className="absolute bottom-0 left-0 right-0 p-6">
+            <div className="relative p-6">
               <div className="flex flex-col md:flex-row gap-6 items-end">
                 {/* Poster */}
                 <div className="relative w-32 h-48 md:w-40 md:h-60 flex-shrink-0 rounded-lg overflow-hidden border border-[var(--color-border)] shadow-2xl">

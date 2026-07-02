@@ -6,36 +6,71 @@ import { useRouter } from 'next/router'
 export default function NovelReader() {
   const router = useRouter()
   const { slug } = router.query
-  const [content, setContent] = useState<string>('')
+  const [images, setImages] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const imageProxy = (url: string) => `/api/proxy?url=${encodeURIComponent(url)}`
 
   useEffect(() => {
-    if (!slug) return
-    // KiraNime API
-    fetch(`/api/novel?action=read&slug=${slug}`)
+    if (!slug || typeof slug !== 'string') return
+    const episodeUrl = decodeURIComponent(slug)
+    setLoading(true)
+    setError(false)
+    fetch(`/api/novel?action=pages&url=${encodeURIComponent(episodeUrl)}`)
       .then(res => res.json())
       .then(data => {
-        setContent(data.content || 'Konten tidak tersedia.')
+        if (!data.images || data.images.length === 0) {
+          setError(true)
+        } else {
+          setImages(data.images)
+        }
         setLoading(false)
       })
       .catch(err => {
         console.error('Reader error:', err)
+        setError(true)
         setLoading(false)
       })
   }, [slug])
 
   return (
     <>
-      <Head><title>Membaca Novel - KiraNime</title></Head>
-      <div className="card p-6 max-w-3xl mx-auto">
-        {loading ? (
-          <div className="text-center py-12">Loading...</div>
-        ) : (
-          <div className="prose dark:prose-invert max-w-none">
-            <p className="whitespace-pre-wrap leading-relaxed">{content}</p>
+      <Head><title>Membaca Novel - KiraNime 🌸</title></Head>
+
+      {loading ? (
+        <div className="text-center py-20">
+          <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-pearl">Membuka episode...</p>
+        </div>
+      ) : error || images.length === 0 ? (
+        <div className="text-center py-20 card p-6">
+          <p className="text-xl text-pearl mb-4">Yah... Episode gagal dimuat atau kosong 😭</p>
+          <button onClick={() => router.back()} className="btn-primary">Kembali</button>
+        </div>
+      ) : (
+        <div className="space-y-6 max-w-3xl mx-auto">
+          <div className="card p-4 flex justify-between items-center">
+            <button onClick={() => router.back()} className="btn-secondary text-sm">← Kembali</button>
           </div>
-        )}
-      </div>
+
+          <div className="flex flex-col items-center bg-noir rounded-lg overflow-hidden py-4 shadow-xl border border-ocean/10">
+            {images.map((imgUrl, index) => (
+              <div key={index} className="w-full relative">
+                <img
+                  src={imageProxy(imgUrl)}
+                  alt={`Panel ${index + 1}`}
+                  className="w-full h-auto select-none"
+                  loading={index < 3 ? 'eager' : 'lazy'}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="card p-4 flex justify-center">
+            <button onClick={() => router.back()} className="btn-secondary">Kembali ke Episode</button>
+          </div>
+        </div>
+      )}
     </>
   )
 }

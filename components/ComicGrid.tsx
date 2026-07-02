@@ -14,7 +14,7 @@ export default function ComicGrid({ comics }: ComicGridProps) {
           href={`/manga/${comic.slug}`}
           className="card group hover:scale-105 transition-transform duration-200"
         >
-          <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-surface-dark">
+          <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-surface dark:bg-surface-dark">
             {comic.image ? (
               <img
                 src={comic.image}

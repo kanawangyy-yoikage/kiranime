@@ -1,12 +1,11 @@
 /* ─── KIRA-NIME DESIGN SYSTEM ─────────────────────────────── */
 
-/* Cards */
-.card {
-  border-radius: 0.75rem;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-surface);
-  transition: all 0.2s;
-}
+/* NB: .card sengaja gak didefinisikan lagi di sini — sudah ada di globals.css
+   lewat @layer components (include overflow-hidden). File ini di-@import di
+   globals.css SETELAH posisi @tailwind components dikompilasi, jadi kalau .card
+   didefinisikan ulang di sini (tanpa overflow-hidden) dia bakal menang di cascade
+   dan bikin gambar/konten "bocor" keluar dari card (ini yang kejadian di halaman
+   detail anime — backdrop gambar meluber ke luar card). */
 
 .anime-card {
   display: block;

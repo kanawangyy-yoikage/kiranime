@@ -190,7 +190,16 @@ export async function fetchAnimeList(letter: string, page = 1): Promise<Anime[]>
 export async function fetchSchedule(): Promise<Record<string, Anime[]>> {
   try {
     const { data } = await animeClient.get(ENDPOINTS.SCHEDULE)
-    return data.schedule || data.data || {}
+    const raw = data.schedule || data.data || data || {}
+    // Sebelumnya raw item per hari langsung di-cast ke tipe Anime tanpa normalisasi,
+    // padahal field mentahnya beda nama (poster/href dll) — makanya anime.image selalu
+    // kosong dan proxy gambar selalu gagal (400 "URL missing"). Disamain pakai extractAnimes
+    // biar konsisten sama endpoint lain (latest/popular/dst).
+    const result: Record<string, Anime[]> = {}
+    for (const day of Object.keys(raw)) {
+      result[day] = extractAnimes(raw[day])
+    }
+    return result
   } catch {
     return {}
   }
@@ -366,7 +375,15 @@ const comicClient: AxiosInstance = axios.create({
 })
 
 function extractComics(raw: any): Comic[] {
-  const arr = raw.comics || raw.data?.comics || raw.data || (Array.isArray(raw) ? raw : [])
+  const arr =
+    raw?.komikList ||
+    raw?.komiklist ||
+    raw?.results ||
+    raw?.comics ||
+    raw?.data?.komikList ||
+    raw?.data?.comics ||
+    raw?.data ||
+    (Array.isArray(raw) ? raw : [])
   if (!Array.isArray(arr)) return []
   return arr.map((item: any) => ({
     title: item.title || item.name || '',
@@ -436,9 +453,14 @@ export async function fetchChapterPages(chapterSlug: string): Promise<ChapterPag
   try {
     const { data } = await comicClient.get(ENDPOINTS.COMIC_CHAPTER(chapterSlug))
     const d = data.data || data
+    const rawPages = d.images || d.pages || d.imagesUrl || (Array.isArray(d) ? d : [])
+    // Beberapa response ngasih array of object ({url, src, image}) bukan array of string
+    const pages: string[] = (Array.isArray(rawPages) ? rawPages : [])
+      .map((p: any) => (typeof p === 'string' ? p : p?.url || p?.src || p?.image || ''))
+      .filter(Boolean)
     return {
       title: d.title || d.chapter || '',
-      pages: d.pages || d.images || d.imagesUrl || [],
+      pages,
     }
   } catch { return null }
 }
