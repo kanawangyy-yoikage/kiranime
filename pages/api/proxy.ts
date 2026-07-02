@@ -10,10 +10,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Webtoons CDN butuh Referer dari webtoons.com sendiri, bukan origin CDN-nya,
-    // kalau nggak gambar bakal ke-block hotlink protection (ini penyebab gambar novel sering gagal muncul)
-    const isWebtoonsCdn = /webtoons\.com|pstatic\.net/i.test(new URL(url).hostname)
-    const referer = isWebtoonsCdn ? 'https://www.webtoons.com/' : new URL(url).origin
+    // Beberapa CDN (Webtoons, MyAnimeList) punya hotlink protection yang cuma
+    // ngizinin Referer dari domain resminya sendiri, bukan dari origin URL gambarnya.
+    // Ini penyebab thumbnail dari MAL (Jadwal Rilis) & panel Webtoons sering gagal muncul.
+    const hostname = new URL(url).hostname
+    let referer = new URL(url).origin
+    if (/webtoons\.com|pstatic\.net/i.test(hostname)) {
+      referer = 'https://www.webtoons.com/'
+    } else if (/myanimelist\.net/i.test(hostname)) {
+      referer = 'https://myanimelist.net/'
+    }
 
     const response = await axios.get(url, {
       responseType: 'arraybuffer', // Penting untuk gambar
