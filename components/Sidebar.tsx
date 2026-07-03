@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, FormEvent, ReactNode } from 'react'
 import {
   Home,
   Flame,
@@ -10,19 +10,36 @@ import {
   Tags,
   BookOpen,
   ScrollText,
+  Clapperboard,
   Calendar,
   Search,
   Moon,
   Sun,
   Menu,
   X,
-  Heart
+  Heart,
+  ChevronDown
 } from 'lucide-react'
+
+interface NavItem {
+  icon: ReactNode
+  label: string
+  href: string
+}
+
+interface NavGroup {
+  key: string
+  label: string
+  icon: ReactNode
+  items: NavItem[]
+}
 
 export default function Sidebar() {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isDark, setIsDark] = useState(true)
+  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set())
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark')
@@ -42,18 +59,63 @@ export default function Sidebar() {
     }
   }
 
-  const navItems = [
-    { icon: <Home size={20} />, label: 'Beranda', href: '/' },
-    { icon: <Flame size={20} />, label: 'Populer', href: '/popular' },
-    { icon: <Film size={20} />, label: 'Movies', href: '/movies' },
-    { icon: <PlayCircle size={20} />, label: 'Ongoing', href: '/ongoing' },
-    { icon: <CheckCircle size={20} />, label: 'Selesai', href: '/completed' },
-    { icon: <Tags size={20} />, label: 'Genres', href: '/genres' },
-    { icon: <BookOpen size={20} />, label: 'Manga', href: '/manga' },
-    { icon: <ScrollText size={20} />, label: 'Webtoon', href: '/webtoon' },
-    { icon: <Calendar size={20} />, label: 'Jadwal', href: '/schedule' },
-    { icon: <Search size={20} />, label: 'Pencarian', href: '/search' },
+  const navGroups: NavGroup[] = [
+    {
+      key: 'anime',
+      label: 'Anime',
+      icon: <Clapperboard size={20} />,
+      items: [
+        { icon: <Flame size={16} />, label: 'Populer', href: '/popular' },
+        { icon: <Film size={16} />, label: 'Movies', href: '/movies' },
+        { icon: <PlayCircle size={16} />, label: 'Ongoing', href: '/ongoing' },
+        { icon: <CheckCircle size={16} />, label: 'Selesai', href: '/completed' },
+        { icon: <Calendar size={16} />, label: 'Jadwal', href: '/schedule' },
+        { icon: <Tags size={16} />, label: 'Genres', href: '/genres' },
+      ],
+    },
+    {
+      key: 'komik',
+      label: 'Komik',
+      icon: <BookOpen size={20} />,
+      items: [
+        { icon: <BookOpen size={16} />, label: 'Semua Komik', href: '/manga' },
+      ],
+    },
+    {
+      key: 'webtoon',
+      label: 'Webtoon',
+      icon: <ScrollText size={20} />,
+      items: [
+        { icon: <ScrollText size={16} />, label: 'Semua Webtoon', href: '/webtoon' },
+      ],
+    },
   ]
+
+  // Auto-expand the group that matches the current route
+  useEffect(() => {
+    const activeGroup = navGroups.find((g) => g.items.some((i) => i.href === router.pathname))
+    if (activeGroup) {
+      setOpenGroups((prev) => new Set(prev).add(activeGroup.key))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.pathname])
+
+  const toggleGroup = (key: string) => {
+    setOpenGroups((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+      setSearchQuery('')
+    }
+  }
 
   // Close sidebar on route change for mobile
   useEffect(() => {
@@ -99,24 +161,84 @@ export default function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1 custom-scrollbar">
-          {navItems.map((item) => {
-            const isActive = router.pathname === item.href
+          {/* Beranda */}
+          <Link
+            href="/"
+            className={`
+              flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group font-medium
+              ${router.pathname === '/'
+                ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm'
+                : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/5 hover:text-primary'}
+            `}
+          >
+            <div className={`transition-transform duration-200 ${router.pathname === '/' ? 'scale-110' : 'group-hover:scale-110'}`}>
+              <Home size={20} />
+            </div>
+            Beranda
+          </Link>
+
+          {/* Search */}
+          <form onSubmit={handleSearch} className="relative py-2">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari anime, komik, webtoon..."
+              className="input-field py-2.5 pl-10 pr-3 text-sm"
+            />
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-pearl/50 pointer-events-none" />
+          </form>
+
+          {/* Category groups with submenus */}
+          {navGroups.map((group) => {
+            const isGroupOpen = openGroups.has(group.key)
+            const isGroupActive = group.items.some((i) => i.href === router.pathname)
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`
-                  flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group font-medium
-                  ${isActive 
-                    ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm' 
-                    : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/5 hover:text-primary'}
-                `}
-              >
-                <div className={`transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>
-                  {item.icon}
-                </div>
-                {item.label}
-              </Link>
+              <div key={group.key} className="pt-1">
+                <button
+                  onClick={() => toggleGroup(group.key)}
+                  className={`
+                    w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all duration-200 group font-medium
+                    ${isGroupActive
+                      ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm'
+                      : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/5 hover:text-primary'}
+                  `}
+                >
+                  <span className="flex items-center gap-3">
+                    <div className={`transition-transform duration-200 ${isGroupActive ? 'scale-110' : 'group-hover:scale-110'}`}>
+                      {group.icon}
+                    </div>
+                    {group.label}
+                  </span>
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 ${isGroupOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+
+                {isGroupOpen && (
+                  <div className="mt-1 ml-4 pl-3 border-l border-pearl/10 space-y-0.5">
+                    {group.items.map((item) => {
+                      const isActive = router.pathname === item.href
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={`
+                            flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-200
+                            ${isActive
+                              ? 'bg-primary/10 text-primary font-semibold'
+                              : 'text-text-light/60 dark:text-text-dark/60 hover:bg-pearl/5 hover:text-primary'}
+                          `}
+                        >
+                          {item.icon}
+                          {item.label}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
             )
           })}
         </nav>
