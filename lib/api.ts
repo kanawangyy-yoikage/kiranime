@@ -429,14 +429,20 @@ export async function fetchComicDetail(slug: string): Promise<ComicDetail | null
   try {
     const { data } = await comicClient.get(ENDPOINTS.COMIC_DETAIL(slug))
     const d = data.detail || data.data || data
-    const chapters = (d.chapters || d.chapterList || []).map((ch: any) => ({
-      title: ch.title || ch.name || ch.chapter || '',
-      slug: ch.slug || cleanSlug(ch.href || ch.url || ''),
-      date: ch.date || ch.updatedAt || '',
-    }))
+    const chapters = (d.chapters || d.chapterList || []).map((ch: any, idx: number) => {
+      const rawTitle =
+        ch.title || ch.name || ch.chapter || ch.chapter_title || ch.chapterTitle ||
+        ch.judul || ch.label || ch.text ||
+        (ch.number ?? ch.chapterNumber ?? ch.chapter_number ?? ch.nomor ?? ch.no)
+      return {
+        title: rawTitle ? String(rawTitle) : `Chapter ${(d.chapters || d.chapterList).length - idx}`,
+        slug: ch.slug || cleanSlug(ch.href || ch.url || ''),
+        date: ch.date || ch.updatedAt || ch.releaseDate || ch.uploaded || '',
+      }
+    })
     return {
       title: d.title || '',
-      image: d.poster || d.image || d.thumbnail || '',
+      image: d.poster || d.image || d.thumbnail || d.cover || '',
       description: d.synopsis || d.description || '',
       status: d.status || '',
       author: d.author || '',

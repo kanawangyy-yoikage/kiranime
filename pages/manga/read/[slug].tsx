@@ -68,7 +68,7 @@ export default function ChapterReaderPage() {
           {chapter.pages.map((imgUrl, index) => (
             <div key={index} className="w-full max-w-3xl relative">
               <img
-                src={imgUrl}
+                src={`/api/proxy?url=${encodeURIComponent(imgUrl)}`}
                 alt={`Halaman ${index + 1}`}
                 className="w-full h-auto select-none"
                 loading={index < 3 ? 'eager' : 'lazy'}

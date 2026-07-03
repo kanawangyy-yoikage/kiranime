@@ -18,7 +18,7 @@ export default function ComicGrid({ comics }: ComicGridProps) {
           <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-surface dark:bg-surface-dark">
             {comic.image ? (
               <img
-                src={comic.image}
+                src={`/api/proxy?url=${encodeURIComponent(comic.image)}`}
                 alt={comic.title}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 loading="lazy"
