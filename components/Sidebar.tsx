@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState, FormEvent, ReactNode } from 'react'
+import { useEffect, useState, ReactNode } from 'react'
 import {
   Home,
   Flame,
@@ -12,7 +12,6 @@ import {
   ScrollText,
   Clapperboard,
   Calendar,
-  Search,
   Moon,
   Sun,
   Menu,
@@ -39,7 +38,6 @@ export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isDark, setIsDark] = useState(true)
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set())
-  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark')
@@ -109,14 +107,6 @@ export default function Sidebar() {
     })
   }
 
-  const handleSearch = (e: FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
-      setSearchQuery('')
-    }
-  }
-
   // Close sidebar on route change for mobile
   useEffect(() => {
     setIsOpen(false)
@@ -176,18 +166,6 @@ export default function Sidebar() {
             </div>
             Beranda
           </Link>
-
-          {/* Search */}
-          <form onSubmit={handleSearch} className="relative py-2">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari anime, komik, webtoon..."
-              className="input-field py-2.5 pl-10 pr-3 text-sm"
-            />
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-pearl/50 pointer-events-none" />
-          </form>
 
           {/* Category groups with submenus */}
           {navGroups.map((group) => {
