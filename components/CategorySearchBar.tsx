@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { Search } from 'lucide-react'
 
 interface CategorySearchBarProps {
-  type: 'anime' | 'manga' | 'webtoon'
+  type: 'anime' | 'manga' | 'webtoon' | 'novel'
   placeholder?: string
   className?: string
 }

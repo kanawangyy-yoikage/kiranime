@@ -59,4 +59,11 @@ export const ENDPOINTS = {
   COMIC_GENRES: '/comic/komikindo/genres',
   COMIC_GENRE: (slug: string) => `/comic/bacakomik/genre/${encodeURIComponent(slug)}`,
   COMIC_UNLIMITED: (page = 1) => `/comic/unlimited?page=${page}`,
+
+  // Novel (Sankavollerei — lihat dokumentasi sankavollerei.web.id/comic bagian "Novel")
+  NOVEL_HOME: '/novel/home',
+  NOVEL_HOT_SEARCH: '/novel/hot-search',
+  NOVEL_SEARCH: (q: string) => `/novel/search?q=${encodeURIComponent(q)}`,
+  NOVEL_GENRE: (id: string, page = 1) => `/novel/genre/${encodeURIComponent(id)}${page > 1 ? `?page=${page}` : ''}`,
+  NOVEL_CHAPTERS: (novelId: string) => `/novel/chapters/${encodeURIComponent(novelId)}`,
 } as const

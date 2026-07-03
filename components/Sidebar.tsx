@@ -9,6 +9,7 @@ import {
   CheckCircle,
   Tags,
   BookOpen,
+  BookMarked,
   ScrollText,
   Clapperboard,
   Calendar,
@@ -85,6 +86,14 @@ export default function Sidebar() {
       icon: <ScrollText size={20} />,
       items: [
         { icon: <ScrollText size={16} />, label: 'Semua Webtoon', href: '/webtoon' },
+      ],
+    },
+    {
+      key: 'novel',
+      label: 'Novel',
+      icon: <BookMarked size={20} />,
+      items: [
+        { icon: <BookMarked size={16} />, label: 'Semua Novel', href: '/novel' },
       ],
     },
   ]

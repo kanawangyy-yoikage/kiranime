@@ -1,56 +1,66 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
-import Link from 'next/link'
-import Image from 'next/image'
+import { BookMarked, Flame, Sparkles } from 'lucide-react'
+import NovelGrid from '@/components/NovelGrid'
+import CategorySearchBar from '@/components/CategorySearchBar'
+import { fetchNovelHome, fetchNovelHotSearch, type Novel } from '@/lib/api'
 
-export default function NovelPage() {
-  const [trending, setTrending] = useState<any[]>([])
+export default function NovelListPage() {
+  const [novels, setNovels] = useState<Novel[]>([])
   const [loading, setLoading] = useState(true)
-  const imageProxy = (url: string) => `/api/proxy?url=${encodeURIComponent(url)}`
+  const [tab, setTab] = useState<'home' | 'hot'>('home')
 
   useEffect(() => {
-    fetch('/api/novel?action=trending&day=trending')
-      .then(res => res.json())
-      .then(data => {
-        setTrending(data.items || [])
-        setLoading(false)
-      })
-      .catch(err => {
-        console.error('Novel fetch error:', err)
-        setLoading(false)
-      })
-  }, [])
+    const load = async () => {
+      setLoading(true)
+      const data = tab === 'home' ? await fetchNovelHome() : await fetchNovelHotSearch()
+      setNovels(data)
+      setLoading(false)
+    }
+    load()
+  }, [tab])
+
+  const switchTab = (next: 'home' | 'hot') => {
+    if (next === tab) return
+    setTab(next)
+  }
 
   return (
     <>
       <Head><title>Novel - KiraNime</title></Head>
-      <div className="space-y-5">
-        <div className="card px-5 py-4">
-          <h1 className="section-title">📖 Novel</h1>
-          <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca novel dan webtoon favorit kamu.</p>
+      <div className="space-y-6">
+        <div className="card px-5 py-4 flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h1 className="section-title flex items-center gap-2"><BookMarked size={22} className="text-ocean" /> Novel</h1>
+              <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca novel favorit kamu.</p>
+            </div>
+            <CategorySearchBar type="novel" placeholder="Cari novel..." />
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => switchTab('home')}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'home' ? 'bg-ocean text-white' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
+            >
+              <Sparkles size={15} /> Beranda
+            </button>
+            <button
+              onClick={() => switchTab('hot')}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'hot' ? 'bg-ocean text-white' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
+            >
+              <Flame size={15} /> Trending
+            </button>
+          </div>
         </div>
 
         {loading ? (
-          <div className="text-center py-12 text-[var(--color-text-muted)] text-sm">Loading novel...</div>
-        ) : trending.length === 0 ? (
-          <div className="card p-5 text-center text-[var(--color-text-muted)] text-sm">Belum ada novel tersedia. Coba lagi nanti.</div>
-        ) : (
-          <div className="anime-grid">
-            {trending.map((item, i) => (
-              <Link key={i} href={`/novel/${encodeURIComponent(item.url)}`} className="anime-card group">
-                <div className="relative aspect-[3/4] bg-[var(--color-surface-alt)]">
-                  {item.thumbnail ? (
-                    <Image src={imageProxy(item.thumbnail)} alt={item.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xs text-[var(--color-text-muted)]">No Image</div>
-                  )}
-                </div>
-                <div className="p-2.5">
-                  <h3 className="line-clamp-2 text-xs font-semibold leading-snug sm:text-sm text-[var(--color-text)]">{item.title}</h3>
-                </div>
-              </Link>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
+        ) : novels.length === 0 ? (
+          <div className="card p-6 text-center text-pearl/60">Belum ada novel tersedia. Coba lagi nanti.</div>
+        ) : (
+          <NovelGrid novels={novels} />
         )}
       </div>
     </>

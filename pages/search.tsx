@@ -3,13 +3,14 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, PlayCircle, BookOpen, ScrollText, Star, Frown, ImageOff } from 'lucide-react'
+import { Search, PlayCircle, BookOpen, ScrollText, BookMarked, Star, Frown, ImageOff } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import ComicGrid from '@/components/ComicGrid'
+import NovelGrid from '@/components/NovelGrid'
 import Section from '@/components/Section'
-import { searchAnime, searchComic, searchMAL, type Anime, type Comic, type MALAnime } from '@/lib/api'
+import { searchAnime, searchComic, searchNovel, searchMAL, type Anime, type Comic, type Novel, type MALAnime } from '@/lib/api'
 
-type SearchType = 'anime' | 'manga' | 'webtoon'
+type SearchType = 'anime' | 'manga' | 'webtoon' | 'novel'
 
 interface WebtoonResult {
   title: string
@@ -21,13 +22,14 @@ const TABS: { key: SearchType; label: string; icon: typeof PlayCircle; placehold
   { key: 'anime', label: 'Anime', icon: PlayCircle, placeholder: 'Cari anime berdasarkan judul...' },
   { key: 'manga', label: 'Manga', icon: BookOpen, placeholder: 'Cari manga berdasarkan judul...' },
   { key: 'webtoon', label: 'Webtoon', icon: ScrollText, placeholder: 'Cari webtoon berdasarkan judul...' },
+  { key: 'novel', label: 'Novel', icon: BookMarked, placeholder: 'Cari novel berdasarkan judul...' },
 ]
 
 export default function SearchPage() {
   const router = useRouter()
   const { q, type } = router.query
 
-  const activeType: SearchType = type === 'manga' || type === 'webtoon' ? type : 'anime'
+  const activeType: SearchType = type === 'manga' || type === 'webtoon' || type === 'novel' ? type : 'anime'
 
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(false)
@@ -36,6 +38,7 @@ export default function SearchPage() {
   const [malResults, setMalResults] = useState<MALAnime[]>([])
   const [mangaResults, setMangaResults] = useState<Comic[]>([])
   const [webtoonResults, setWebtoonResults] = useState<WebtoonResult[]>([])
+  const [novelResults, setNovelResults] = useState<Novel[]>([])
 
   const imageProxy = (url: string) => `/api/proxy?url=${encodeURIComponent(url)}`
 
@@ -50,6 +53,9 @@ export default function SearchPage() {
       } else if (searchType === 'manga') {
         const results = await searchComic(query)
         setMangaResults(results)
+      } else if (searchType === 'novel') {
+        const results = await searchNovel(query)
+        setNovelResults(results)
       } else {
         const res = await fetch(`/api/webtoon?action=search&query=${encodeURIComponent(query)}`)
         const data = await res.json()
@@ -89,6 +95,7 @@ export default function SearchPage() {
   const hasResults =
     activeType === 'anime' ? animeResults.length > 0 :
     activeType === 'manga' ? mangaResults.length > 0 :
+    activeType === 'novel' ? novelResults.length > 0 :
     webtoonResults.length > 0
 
   return (
@@ -159,6 +166,12 @@ export default function SearchPage() {
                 {activeType === 'manga' && (
                   <Section title={`Hasil Pencarian: "${q}" (${mangaResults.length})`}>
                     <ComicGrid comics={mangaResults} />
+                  </Section>
+                )}
+
+                {activeType === 'novel' && (
+                  <Section title={`Hasil Pencarian: "${q}" (${novelResults.length})`}>
+                    <NovelGrid novels={novelResults} />
                   </Section>
                 )}
 

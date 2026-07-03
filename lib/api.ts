@@ -471,6 +471,173 @@ export async function fetchChapterPages(chapterSlug: string): Promise<ChapterPag
   } catch { return null }
 }
 
+// ─── NOVEL TYPES ─────────────────────────────────────────────
+
+export interface Novel {
+  id: string
+  title: string
+  slug: string
+  image: string
+  chapter?: string
+  status?: string
+  genres?: string[]
+  author?: string
+  score?: string
+}
+
+export interface NovelChapterItem {
+  title: string
+  slug: string
+  date?: string
+}
+
+export interface NovelDetail {
+  id: string
+  title: string
+  image: string
+  description: string
+  status?: string
+  author?: string
+  genres: string[]
+  chapters: NovelChapterItem[]
+}
+
+export interface NovelChapterContent {
+  title: string
+  content: string
+  novelTitle?: string
+}
+
+// ─── NOVEL API FUNCTIONS ──────────────────────────────────────
+// Sumber: sankavollerei.web.id/novel (lihat dokumentasi endpoint di sankavollerei.web.id/comic)
+
+const novelClient: AxiosInstance = axios.create({
+  baseURL: 'https://www.sankavollerei.web.id',
+  timeout: 15000,
+  headers: { 'Accept': 'application/json' },
+})
+
+function extractNovels(raw: any): Novel[] {
+  const arr =
+    raw?.novelList || raw?.novellist || raw?.results || raw?.novels ||
+    raw?.data?.novelList || raw?.data?.novels || raw?.data ||
+    (Array.isArray(raw) ? raw : [])
+  if (!Array.isArray(arr)) return []
+  return arr
+    .map((item: any) => {
+      const id = String(item.id ?? item.novelId ?? item.novel_id ?? cleanSlug(item.slug || item.href || item.url || ''))
+      if (!id) return null
+      return {
+        id,
+        title: item.title || item.name || '',
+        slug: item.slug || id,
+        image: item.poster || item.image || item.thumbnail || item.cover || '',
+        chapter: item.chapter || item.latestChapter || item.lastChapter || '',
+        status: item.status || '',
+        genres: (item.genres || []).map((g: any) => (typeof g === 'object' ? g.name || '' : g)).filter(Boolean),
+        author: item.author || '',
+        score: item.score || item.rating || '',
+      }
+    })
+    .filter(Boolean) as Novel[]
+}
+
+function dedupeNovels(list: Novel[]): Novel[] {
+  return list.filter((v, i, a) => a.findIndex((x) => x.id === v.id) === i)
+}
+
+export async function fetchNovelHome(): Promise<Novel[]> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_HOME)
+    // Halaman home biasanya berisi beberapa section/genre yang masing-masing punya list novel sendiri,
+    // jadi kita gabungin semua section jadi satu array flat kalau bentuknya begitu.
+    const sections = data?.sections || data?.data?.sections
+    if (Array.isArray(sections)) {
+      const all: Novel[] = []
+      for (const sec of sections) all.push(...extractNovels(sec?.novels || sec?.list || sec))
+      return dedupeNovels(all)
+    }
+    return extractNovels(data)
+  } catch { return [] }
+}
+
+export async function fetchNovelHotSearch(): Promise<Novel[]> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_HOT_SEARCH)
+    return extractNovels(data)
+  } catch { return [] }
+}
+
+export async function searchNovel(keyword: string): Promise<Novel[]> {
+  if (!keyword.trim()) return []
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_SEARCH(keyword))
+    return extractNovels(data)
+  } catch { return [] }
+}
+
+export async function fetchNovelByGenre(id: string, page = 1): Promise<Novel[]> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_GENRE(id, page))
+    return extractNovels(data)
+  } catch { return [] }
+}
+
+export async function fetchNovelChapters(novelId: string): Promise<NovelDetail | null> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_CHAPTERS(novelId))
+    const d = data.detail || data.novel || data.data || data
+    const rawChapters: any[] = d.chapters || d.chapterList || (Array.isArray(d.data) ? d.data : []) || []
+    const chapters: NovelChapterItem[] = (Array.isArray(rawChapters) ? rawChapters : []).map((ch: any, idx: number) => {
+      const rawTitle =
+        ch.title || ch.name || ch.chapter || ch.chapterTitle || ch.judul ||
+        (ch.number ?? ch.chapterNumber ?? ch.no)
+      return {
+        title: rawTitle ? String(rawTitle) : `Chapter ${rawChapters.length - idx}`,
+        slug: String(ch.id ?? ch.chapterId ?? ch.slug ?? cleanSlug(ch.href || ch.url || '')),
+        date: ch.date || ch.updatedAt || ch.releaseDate || '',
+      }
+    })
+    return {
+      id: novelId,
+      title: d.title || d.name || '',
+      image: d.poster || d.image || d.thumbnail || d.cover || '',
+      description: d.synopsis || d.description || '',
+      status: d.status || '',
+      author: d.author || '',
+      genres: (d.genres || d.genreList || []).map((g: any) => (typeof g === 'object' ? g.name || '' : g)).filter(Boolean),
+      chapters,
+    }
+  } catch { return null }
+}
+
+// Endpoint resmi buat "baca isi chapter" belum kelihatan di screenshot dokumentasi kamu,
+// jadi ini nyoba beberapa pola URL yang lazim dipakai Sankavollerei. Kalau semuanya gagal,
+// tolong kirim endpoint aslinya (screenshot bagian docs yang belum kefoto) biar aku pas-in.
+export async function fetchNovelChapterContent(novelId: string, chapterSlug: string): Promise<NovelChapterContent | null> {
+  const attempts = [
+    `/novel/chapters/${encodeURIComponent(novelId)}/${encodeURIComponent(chapterSlug)}`,
+    `/novel/chapter/${encodeURIComponent(chapterSlug)}`,
+    `/novel/read/${encodeURIComponent(chapterSlug)}`,
+  ]
+  for (const path of attempts) {
+    try {
+      const { data } = await novelClient.get(path)
+      const d = data.data || data.chapter || data
+      const rawContent = d.content || d.text || d.body || d.isi || ''
+      const content = Array.isArray(rawContent) ? rawContent.join('\n\n') : String(rawContent || '')
+      if (content.trim()) {
+        return {
+          title: d.title || d.chapterTitle || chapterSlug,
+          content,
+          novelTitle: d.novelTitle || d.novel || '',
+        }
+      }
+    } catch { /* coba pola URL berikutnya */ }
+  }
+  return null
+}
+
 // ─── HELPERS ─────────────────────────────────────────────────
 
 function extractAnimes(raw: any): Anime[] {
