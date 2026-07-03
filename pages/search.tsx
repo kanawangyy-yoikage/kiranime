@@ -126,7 +126,7 @@ export default function SearchPage() {
                 onClick={() => switchTab(key)}
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all shrink-0 ${
                   activeType === key
-                    ? 'bg-ocean text-pearl'
+                    ? 'bg-ocean text-white'
                     : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
                 }`}
               >

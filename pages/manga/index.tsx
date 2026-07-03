@@ -39,13 +39,13 @@ export default function MangaListPage() {
           <div className="flex gap-2">
             <button
               onClick={() => switchTab('popular')}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'popular' ? 'bg-ocean text-pearl' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'popular' ? 'bg-ocean text-white' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
             >
               <Flame size={15} /> Populer
             </button>
             <button
               onClick={() => switchTab('latest')}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'latest' ? 'bg-ocean text-pearl' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'latest' ? 'bg-ocean text-white' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
             >
               <Sparkles size={15} /> Terbaru
             </button>

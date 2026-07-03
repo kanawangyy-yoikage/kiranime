@@ -15,6 +15,12 @@
   --color-text: #122C4F;
   --color-text-muted: rgba(18, 44, 79, 0.65);
   --color-pearl: #FBF9E4;
+
+  /* Adaptive tokens (RGB triplets so Tailwind opacity modifiers like /60 work) */
+  --pearl-rgb: 18 44 79;           /* body text on cards: dark navy on light bg */
+  --surface-dark-rgb: 255 255 255; /* panels that assumed a permanent dark bg */
+  --surface-card-rgb: 240 237 224;
+  --surface-hover-rgb: 233 228 208;
 }
 
 html.dark {
@@ -28,6 +34,12 @@ html.dark {
   --color-text: #FBF9E4;
   --color-text-muted: rgba(251, 249, 228, 0.60);
   --color-pearl: #FBF9E4;
+
+  /* Adaptive tokens — identical to the original static values, so dark mode is unchanged */
+  --pearl-rgb: 251 249 228;
+  --surface-dark-rgb: 18 44 79;
+  --surface-card-rgb: 26 58 92;
+  --surface-hover-rgb: 35 75 115;
 }
 
 body {

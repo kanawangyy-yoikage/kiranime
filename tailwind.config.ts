@@ -11,7 +11,7 @@ const config: Config = {
     extend: {
       colors: {
         midnight: '#122C4F',
-        pearl: '#FBF9E4',
+        pearl: 'rgb(var(--pearl-rgb) / <alpha-value>)',
         noir: '#000000',
         ocean: '#5B88B2',
         oceanAccent: {
@@ -21,9 +21,9 @@ const config: Config = {
         },
         surface: {
           DEFAULT: '#FFFFFF',
-          dark: '#122C4F',
-          card: '#1a3a5c',
-          hover: '#234b73',
+          dark: 'rgb(var(--surface-dark-rgb) / <alpha-value>)',
+          card: 'rgb(var(--surface-card-rgb) / <alpha-value>)',
+          hover: 'rgb(var(--surface-hover-rgb) / <alpha-value>)',
         },
         'bg-light': '#FBF9E4',
         'bg-dark': '#000000',

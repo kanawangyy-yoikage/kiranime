@@ -189,7 +189,7 @@ export default function AnimeDetailPage() {
                     onClick={() => setSelectedServer(idx)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       selectedServer === idx
-                        ? 'bg-ocean text-pearl'
+                        ? 'bg-ocean text-white'
                         : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
                     }`}
                   >
@@ -386,7 +386,7 @@ export default function AnimeDetailPage() {
                   onClick={() => handlePlayEpisode(episode.slug)}
                   className={`p-3 rounded-lg font-medium transition-all ${
                     playingEpisode === episode.slug
-                      ? 'bg-ocean text-pearl'
+                      ? 'bg-ocean text-white'
                       : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
                   }`}
                 >
