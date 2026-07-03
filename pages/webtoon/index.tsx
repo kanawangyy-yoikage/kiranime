@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ScrollText, ImageOff } from 'lucide-react'
+import CategorySearchBar from '@/components/CategorySearchBar'
 
 export default function WebtoonPage() {
   const [trending, setTrending] = useState<any[]>([])
@@ -26,11 +27,14 @@ export default function WebtoonPage() {
     <>
       <Head><title>Webtoon - KiraNime</title></Head>
       <div className="space-y-5">
-        <div className="card px-5 py-4">
-          <h1 className="section-title flex items-center gap-2">
-            <ScrollText size={22} className="text-ocean" /> Webtoon
-          </h1>
-          <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca webtoon favorit kamu.</p>
+        <div className="card px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="section-title flex items-center gap-2">
+              <ScrollText size={22} className="text-ocean" /> Webtoon
+            </h1>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca webtoon favorit kamu.</p>
+          </div>
+          <CategorySearchBar type="webtoon" placeholder="Cari webtoon..." />
         </div>
 
         {loading ? (

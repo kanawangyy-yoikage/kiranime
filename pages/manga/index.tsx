@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { BookOpen, Flame, Sparkles } from 'lucide-react'
 import ComicGrid from '@/components/ComicGrid'
+import CategorySearchBar from '@/components/CategorySearchBar'
 import { fetchComicPopular, fetchComicLatest, type Comic } from '@/lib/api'
 
 export default function MangaListPage() {
@@ -31,10 +32,13 @@ export default function MangaListPage() {
     <>
       <Head><title>Manga - KiraNime</title></Head>
       <div className="space-y-6">
-        <div className="card px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 className="section-title flex items-center gap-2"><BookOpen size={22} className="text-ocean" /> Manga</h1>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca manga favorit kamu.</p>
+        <div className="card px-5 py-4 flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h1 className="section-title flex items-center gap-2"><BookOpen size={22} className="text-ocean" /> Manga</h1>
+              <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca manga favorit kamu.</p>
+            </div>
+            <CategorySearchBar type="manga" placeholder="Cari manga..." />
           </div>
           <div className="flex gap-2">
             <button
