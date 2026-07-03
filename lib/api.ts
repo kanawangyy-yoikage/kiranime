@@ -478,11 +478,13 @@ export interface Novel {
   title: string
   slug: string
   image: string
-  chapter?: string
-  status?: string
-  genres?: string[]
-  author?: string
+  summary?: string
   score?: string
+  totalViews?: string
+  totalChapters?: number
+  genres: string[]
+  tags?: string[]
+  status?: string
 }
 
 export interface NovelChapterItem {
@@ -509,37 +511,48 @@ export interface NovelChapterContent {
 }
 
 // ─── NOVEL API FUNCTIONS ──────────────────────────────────────
-// Sumber: sankavollerei.web.id/novel (lihat dokumentasi endpoint di sankavollerei.web.id/comic)
+// Sumber: sankavollerei.web.id/novel — bentuk response asli (dicek manual lewat console):
+// { creator, success, result: { items: [...] } }, dan tiap item novel field-nya novelId/title/cover.url/dst.
 
 const novelClient: AxiosInstance = axios.create({
   baseURL: 'https://www.sankavollerei.web.id',
   timeout: 15000,
   headers: { 'Accept': 'application/json' },
+  // PENTING: novelId & chapterId dari API ini angkanya > Number.MAX_SAFE_INTEGER (19 digit),
+  // kalau di-parse pakai JSON.parse biasa presisinya kepotong/kebulet — hasilnya ID yang
+  // kekirim ke endpoint detail/chapters jadi beda sama aslinya (server balikin 404).
+  // Makanya di sini kita sisipin tanda kutip ke angka itu di teks mentahnya SEBELUM di-parse,
+  // biar jadi string dan presisinya utuh.
+  transformResponse: [(data: any) => {
+    if (typeof data !== 'string') return data
+    const safe = data.replace(/"(novelId|chapterId)":(\d+)/g, '"$1":"$2"')
+    try { return JSON.parse(safe) } catch { return data }
+  }],
 })
 
-function extractNovels(raw: any): Novel[] {
-  const arr =
-    raw?.novelList || raw?.novellist || raw?.results || raw?.novels ||
-    raw?.data?.novelList || raw?.data?.novels || raw?.data ||
-    (Array.isArray(raw) ? raw : [])
-  if (!Array.isArray(arr)) return []
-  return arr
-    .map((item: any) => {
-      const id = String(item.id ?? item.novelId ?? item.novel_id ?? cleanSlug(item.slug || item.href || item.url || ''))
-      if (!id) return null
-      return {
-        id,
-        title: item.title || item.name || '',
-        slug: item.slug || id,
-        image: item.poster || item.image || item.thumbnail || item.cover || '',
-        chapter: item.chapter || item.latestChapter || item.lastChapter || '',
-        status: item.status || '',
-        genres: (item.genres || []).map((g: any) => (typeof g === 'object' ? g.name || '' : g)).filter(Boolean),
-        author: item.author || '',
-        score: item.score || item.rating || '',
-      }
-    })
-    .filter(Boolean) as Novel[]
+function mapNovelItem(item: any): Novel | null {
+  const id = item?.novelId != null ? String(item.novelId) : ''
+  if (!id) return null
+  return {
+    id,
+    title: item.title || '',
+    slug: id,
+    image: item.cover?.url || item.image || item.thumbnail || '',
+    summary: item.summary || item.description || '',
+    score: item.score || '',
+    totalViews: item.totalViews || '',
+    totalChapters: typeof item.totalChapters === 'number' ? item.totalChapters : undefined,
+    genres: Array.isArray(item.genres) ? item.genres : [],
+    tags: Array.isArray(item.tags) ? item.tags : [],
+    status: item.novelStatus === 2 ? 'Completed' : item.novelStatus === 1 ? 'Ongoing' : (item.novelStatusDesc || ''),
+  }
+}
+
+// result.items bisa berupa array novel langsung (hot-search, search) ATAU array "ContentList"
+// section yang masing-masing punya .contents (home) — extractNovelItems cuma ngambil array mentahnya,
+// flatten section-nya ditangani terpisah di fetchNovelHome.
+function extractNovelItems(raw: any): any[] {
+  return raw?.result?.items || raw?.items || raw?.data?.items || (Array.isArray(raw) ? raw : [])
 }
 
 function dedupeNovels(list: Novel[]): Novel[] {
@@ -549,22 +562,24 @@ function dedupeNovels(list: Novel[]): Novel[] {
 export async function fetchNovelHome(): Promise<Novel[]> {
   try {
     const { data } = await novelClient.get(ENDPOINTS.NOVEL_HOME)
-    // Halaman home biasanya berisi beberapa section/genre yang masing-masing punya list novel sendiri,
-    // jadi kita gabungin semua section jadi satu array flat kalau bentuknya begitu.
-    const sections = data?.sections || data?.data?.sections
-    if (Array.isArray(sections)) {
-      const all: Novel[] = []
-      for (const sec of sections) all.push(...extractNovels(sec?.novels || sec?.list || sec))
-      return dedupeNovels(all)
+    const sections = extractNovelItems(data) // array of { title, type: 'ContentList', contents: [...] }
+    const all: Novel[] = []
+    for (const sec of sections) {
+      const items = Array.isArray(sec?.contents) ? sec.contents : (Array.isArray(sec) ? sec : [sec])
+      for (const it of items) {
+        const n = mapNovelItem(it)
+        if (n) all.push(n)
+      }
     }
-    return extractNovels(data)
+    return dedupeNovels(all)
   } catch { return [] }
 }
 
 export async function fetchNovelHotSearch(): Promise<Novel[]> {
   try {
     const { data } = await novelClient.get(ENDPOINTS.NOVEL_HOT_SEARCH)
-    return extractNovels(data)
+    const items = extractNovelItems(data)
+    return dedupeNovels(items.map(mapNovelItem).filter(Boolean) as Novel[])
   } catch { return [] }
 }
 
@@ -572,48 +587,52 @@ export async function searchNovel(keyword: string): Promise<Novel[]> {
   if (!keyword.trim()) return []
   try {
     const { data } = await novelClient.get(ENDPOINTS.NOVEL_SEARCH(keyword))
-    return extractNovels(data)
+    const items = extractNovelItems(data)
+    return dedupeNovels(items.map(mapNovelItem).filter(Boolean) as Novel[])
   } catch { return [] }
 }
 
 export async function fetchNovelByGenre(id: string, page = 1): Promise<Novel[]> {
   try {
     const { data } = await novelClient.get(ENDPOINTS.NOVEL_GENRE(id, page))
-    return extractNovels(data)
+    const items = extractNovelItems(data)
+    return dedupeNovels(items.map(mapNovelItem).filter(Boolean) as Novel[])
   } catch { return [] }
 }
 
 export async function fetchNovelChapters(novelId: string): Promise<NovelDetail | null> {
   try {
     const { data } = await novelClient.get(ENDPOINTS.NOVEL_CHAPTERS(novelId))
-    const d = data.detail || data.novel || data.data || data
-    const rawChapters: any[] = d.chapters || d.chapterList || (Array.isArray(d.data) ? d.data : []) || []
+    if (data?.success === false) return null
+    const d = data.result || data.detail || data.data || data
+    const rawChapters: any[] = d.chapters || d.chapterList || d.items || (Array.isArray(d) ? d : []) || []
     const chapters: NovelChapterItem[] = (Array.isArray(rawChapters) ? rawChapters : []).map((ch: any, idx: number) => {
       const rawTitle =
         ch.title || ch.name || ch.chapter || ch.chapterTitle || ch.judul ||
-        (ch.number ?? ch.chapterNumber ?? ch.no)
+        (ch.chapterIndex ?? ch.number ?? ch.chapterNumber ?? ch.no)
+      const chId = ch.chapterId != null ? String(ch.chapterId) : String(ch.id ?? ch.slug ?? cleanSlug(ch.href || ch.url || ''))
       return {
         title: rawTitle ? String(rawTitle) : `Chapter ${rawChapters.length - idx}`,
-        slug: String(ch.id ?? ch.chapterId ?? ch.slug ?? cleanSlug(ch.href || ch.url || '')),
+        slug: chId,
         date: ch.date || ch.updatedAt || ch.releaseDate || '',
       }
     })
     return {
       id: novelId,
       title: d.title || d.name || '',
-      image: d.poster || d.image || d.thumbnail || d.cover || '',
-      description: d.synopsis || d.description || '',
-      status: d.status || '',
+      image: d.cover?.url || d.poster || d.image || '',
+      description: d.summary || d.synopsis || d.description || '',
+      status: d.novelStatusDesc || d.status || '',
       author: d.author || '',
-      genres: (d.genres || d.genreList || []).map((g: any) => (typeof g === 'object' ? g.name || '' : g)).filter(Boolean),
+      genres: Array.isArray(d.genres) ? d.genres : [],
       chapters,
     }
   } catch { return null }
 }
 
-// Endpoint resmi buat "baca isi chapter" belum kelihatan di screenshot dokumentasi kamu,
-// jadi ini nyoba beberapa pola URL yang lazim dipakai Sankavollerei. Kalau semuanya gagal,
-// tolong kirim endpoint aslinya (screenshot bagian docs yang belum kefoto) biar aku pas-in.
+// Endpoint resmi buat "baca isi chapter" belum ketauan bentuknya (belum ketes karena endpoint
+// chapters di atas masih perlu dicoba ulang pakai novelId yang presisinya udah bener). Ini nyoba
+// beberapa pola URL yang lazim; begitu endpoint chapters kekonfirmasi, kirim hasilnya biar aku pas-in.
 export async function fetchNovelChapterContent(novelId: string, chapterSlug: string): Promise<NovelChapterContent | null> {
   const attempts = [
     `/novel/chapters/${encodeURIComponent(novelId)}/${encodeURIComponent(chapterSlug)}`,
@@ -623,7 +642,7 @@ export async function fetchNovelChapterContent(novelId: string, chapterSlug: str
   for (const path of attempts) {
     try {
       const { data } = await novelClient.get(path)
-      const d = data.data || data.chapter || data
+      const d = data.result || data.data || data.chapter || data
       const rawContent = d.content || d.text || d.body || d.isi || ''
       const content = Array.isArray(rawContent) ? rawContent.join('\n\n') : String(rawContent || '')
       if (content.trim()) {

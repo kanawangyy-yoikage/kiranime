@@ -35,11 +35,11 @@ export default function NovelGrid({ novels }: NovelGridProps) {
               </div>
             )}
 
-            {novel.chapter && (
+            {novel.totalChapters ? (
               <div className="absolute bottom-2 left-2 bg-ocean/90 text-pearl text-xs font-medium px-2 py-1 rounded">
-                Ch. {novel.chapter.replace(/chapter\s+/gi, '')}
+                {novel.totalChapters} Ch
               </div>
-            )}
+            ) : null}
           </div>
 
           <div className="p-3">
