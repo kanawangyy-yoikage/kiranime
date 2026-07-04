@@ -22,12 +22,20 @@ export default function NovelGrid({ novels }: NovelGridProps) {
                 alt={novel.title}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 loading="lazy"
+                onError={(e) => {
+                  const target = e.currentTarget
+                  target.style.display = 'none'
+                  const fallback = target.nextElementSibling as HTMLElement | null
+                  if (fallback) fallback.style.display = 'flex'
+                }}
               />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-pearl/40">
-                No Image
-              </div>
-            )}
+            ) : null}
+            <div
+              className="w-full h-full items-center justify-center text-pearl/40 text-xs text-center px-2"
+              style={{ display: novel.image ? 'none' : 'flex' }}
+            >
+              No Image
+            </div>
 
             {novel.rating && (
               <div className="absolute top-2 right-2 bg-yellow-500/90 text-noir text-xs font-bold px-2 py-1 rounded flex items-center gap-1">

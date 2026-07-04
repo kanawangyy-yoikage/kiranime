@@ -10,16 +10,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Beberapa CDN (Webtoons, MyAnimeList, SakuraNovel) punya hotlink protection yang cuma
-    // ngizinin Referer dari domain resminya sendiri, bukan dari origin URL gambarnya.
     const hostname = new URL(url).hostname
+
+    // sakuranovel.id kelihatannya pake proteksi anti-bot (Cloudflare/WAF) yang nge-block
+    // request langsung dari server kita (403) walopun header/referer udah dibikin mirip browser.
+    // wsrv.nl itu image proxy pihak ketiga yang IP-nya biasanya gak ke-block situs kayak gini,
+    // jadi request kita "titip" lewat sana khusus buat domain ini.
+    if (/sakuranovel\.id/i.test(hostname)) {
+      const wsrvUrl = `https://wsrv.nl/?url=${encodeURIComponent(url)}`
+      const response = await axios.get(wsrvUrl, { responseType: 'arraybuffer', timeout: 15000 })
+      const contentType = response.headers['content-type'] as string
+      res.setHeader('Content-Type', contentType || 'image/jpeg')
+      res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate')
+      return res.send(response.data)
+    }
+
+    // Beberapa CDN lain (Webtoons, MyAnimeList) punya hotlink protection yang cuma
+    // ngizinin Referer dari domain resminya sendiri, bukan dari origin URL gambarnya.
     let referer = new URL(url).origin + '/'
     if (/webtoons\.com|pstatic\.net/i.test(hostname)) {
       referer = 'https://www.webtoons.com/'
     } else if (/myanimelist\.net/i.test(hostname)) {
       referer = 'https://myanimelist.net/'
-    } else if (/sakuranovel\.id/i.test(hostname)) {
-      referer = 'https://sakuranovel.id/'
     }
 
     const response = await axios.get(url, {

@@ -51,10 +51,24 @@ export default function NovelDetailPage() {
         <div className="card p-6 flex flex-col md:flex-row gap-6">
           <div className="w-48 h-72 flex-shrink-0 mx-auto md:mx-0 overflow-hidden rounded-lg bg-surface-dark">
             {novel.image ? (
-              <img src={`/api/proxy?url=${encodeURIComponent(novel.image)}`} alt={novel.title} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-pearl/40 text-sm">No Image</div>
-            )}
+              <img
+                src={`/api/proxy?url=${encodeURIComponent(novel.image)}`}
+                alt={novel.title}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.currentTarget
+                  target.style.display = 'none'
+                  const fallback = target.nextElementSibling as HTMLElement | null
+                  if (fallback) fallback.style.display = 'flex'
+                }}
+              />
+            ) : null}
+            <div
+              className="w-full h-full items-center justify-center text-pearl/40 text-sm"
+              style={{ display: novel.image ? 'none' : 'flex' }}
+            >
+              No Image
+            </div>
           </div>
 
           <div className="flex-1 space-y-4">
