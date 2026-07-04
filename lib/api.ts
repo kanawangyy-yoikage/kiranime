@@ -666,7 +666,11 @@ export async function fetchNovelChapterContent(novelId: string, chapterId: strin
       content,
       novelTitle: detail.title,
     }
-  } catch { return null }
+  } catch (err: any) {
+    // Log detail biar gampang debug dari console browser kalau proxy /api/novel-text gagal
+    console.error('fetchNovelChapterContent error:', err?.response?.data || err?.message || err)
+    return null
+  }
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────
