@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { BookMarked, Frown } from 'lucide-react'
-import { fetchNovelChapters, NovelDetail } from '@/lib/api'
+import { fetchNovelChapters, NovelDetail, Novel } from '@/lib/api'
 
 export default function NovelDetailPage() {
   const router = useRouter()
@@ -14,10 +14,39 @@ export default function NovelDetailPage() {
 
   useEffect(() => {
     if (!slug || typeof slug !== 'string') return
+
+    // Endpoint chapters gak balikin judul/cover/sinopsis, jadi prefill dulu dari cache
+    // listing (kalau ada, dari NovelGrid) biar gak nunggu kosong pas baru masuk halaman.
+    try {
+      const cached = sessionStorage.getItem(`novelMeta:${slug}`)
+      if (cached) {
+        const c: Novel = JSON.parse(cached)
+        setNovel({
+          id: slug,
+          title: c.title,
+          image: c.image,
+          description: c.summary || '',
+          status: c.status || '',
+          author: '',
+          genres: c.genres || [],
+          chapters: [],
+        })
+      }
+    } catch { /* sessionStorage gak available, gapapa */ }
+
     const load = async () => {
       try {
         const data = await fetchNovelChapters(slug)
-        setNovel(data)
+        setNovel((prev) => {
+          if (!data) return prev // gagal fetch chapters, tetep pertahanin info dari cache kalau ada
+          return {
+            ...data,
+            title: data.title || prev?.title || '',
+            image: data.image || prev?.image || '',
+            description: data.description || prev?.description || '',
+            genres: data.genres.length ? data.genres : (prev?.genres || []),
+          }
+        })
       } catch (err) {
         console.error(err)
       } finally {

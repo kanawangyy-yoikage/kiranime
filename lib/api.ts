@@ -488,9 +488,13 @@ export interface Novel {
 }
 
 export interface NovelChapterItem {
+  chapterId: string
   title: string
-  slug: string
+  slug: string          // = chapterId, dipake buat routing
+  sequel?: number
+  totalWords?: number
   date?: string
+  url: string            // link .txt mentah ke isi chapter (langsung dari API)
 }
 
 export interface NovelDetail {
@@ -604,57 +608,65 @@ export async function fetchNovelChapters(novelId: string): Promise<NovelDetail |
   try {
     const { data } = await novelClient.get(ENDPOINTS.NOVEL_CHAPTERS(novelId))
     if (data?.success === false) return null
-    const d = data.result || data.detail || data.data || data
-    const rawChapters: any[] = d.chapters || d.chapterList || d.items || (Array.isArray(d) ? d : []) || []
-    const chapters: NovelChapterItem[] = (Array.isArray(rawChapters) ? rawChapters : []).map((ch: any, idx: number) => {
-      const rawTitle =
-        ch.title || ch.name || ch.chapter || ch.chapterTitle || ch.judul ||
-        (ch.chapterIndex ?? ch.number ?? ch.chapterNumber ?? ch.no)
-      const chId = ch.chapterId != null ? String(ch.chapterId) : String(ch.id ?? ch.slug ?? cleanSlug(ch.href || ch.url || ''))
-      return {
-        title: rawTitle ? String(rawTitle) : `Chapter ${rawChapters.length - idx}`,
-        slug: chId,
-        date: ch.date || ch.updatedAt || ch.releaseDate || '',
-      }
-    })
+    const d = data.result || data.data || data
+    const rawChapters: any[] = Array.isArray(d.chapters) ? d.chapters : []
+
+    const chapters: NovelChapterItem[] = rawChapters
+      .map((ch: any): NovelChapterItem | null => {
+        const chapterId = ch.chapterId != null ? String(ch.chapterId) : ''
+        if (!chapterId) return null
+        const sequel = typeof ch.sequel === 'number' ? ch.sequel : undefined
+        return {
+          chapterId,
+          title: ch.name || ch.title || (sequel != null ? `Chapter ${sequel}` : 'Chapter'),
+          slug: chapterId,
+          sequel,
+          totalWords: typeof ch.totalWords === 'number' ? ch.totalWords : undefined,
+          date: ch.lastUpdateTime ? new Date(ch.lastUpdateTime * 1000).toLocaleDateString('id-ID') : '',
+          url: ch.url || '',
+        }
+      })
+      .filter(Boolean) as NovelChapterItem[]
+
+    // Endpoint ini kadang balikin urutan chapter gak konsisten, jadi diurutin manual pake 'sequel'
+    chapters.sort((a, b) => (a.sequel ?? 0) - (b.sequel ?? 0))
+
+    // Endpoint ini sejauh yang ketes cuma balikin daftar chapter, gak ada judul/cover/sinopsis novelnya.
+    // Kalau ternyata di respons aslinya ada field detail tambahan, ini bakal kepakai otomatis;
+    // kalau nggak ada, halaman detail bakal isi dari cache listing (lihat pages/novel/[slug].tsx).
+    const detailSrc = d.detail || d.novel || d
     return {
       id: novelId,
-      title: d.title || d.name || '',
-      image: d.cover?.url || d.poster || d.image || '',
-      description: d.summary || d.synopsis || d.description || '',
-      status: d.novelStatusDesc || d.status || '',
-      author: d.author || '',
-      genres: Array.isArray(d.genres) ? d.genres : [],
+      title: detailSrc.title || detailSrc.name || '',
+      image: detailSrc.cover?.url || detailSrc.image || '',
+      description: detailSrc.summary || detailSrc.description || '',
+      status: detailSrc.novelStatusDesc || detailSrc.status || '',
+      author: detailSrc.author || '',
+      genres: Array.isArray(detailSrc.genres) ? detailSrc.genres : [],
       chapters,
     }
   } catch { return null }
 }
 
-// Endpoint resmi buat "baca isi chapter" belum ketauan bentuknya (belum ketes karena endpoint
-// chapters di atas masih perlu dicoba ulang pakai novelId yang presisinya udah bener). Ini nyoba
-// beberapa pola URL yang lazim; begitu endpoint chapters kekonfirmasi, kirim hasilnya biar aku pas-in.
-export async function fetchNovelChapterContent(novelId: string, chapterSlug: string): Promise<NovelChapterContent | null> {
-  const attempts = [
-    `/novel/chapters/${encodeURIComponent(novelId)}/${encodeURIComponent(chapterSlug)}`,
-    `/novel/chapter/${encodeURIComponent(chapterSlug)}`,
-    `/novel/read/${encodeURIComponent(chapterSlug)}`,
-  ]
-  for (const path of attempts) {
-    try {
-      const { data } = await novelClient.get(path)
-      const d = data.result || data.data || data.chapter || data
-      const rawContent = d.content || d.text || d.body || d.isi || ''
-      const content = Array.isArray(rawContent) ? rawContent.join('\n\n') : String(rawContent || '')
-      if (content.trim()) {
-        return {
-          title: d.title || d.chapterTitle || chapterSlug,
-          content,
-          novelTitle: d.novelTitle || d.novel || '',
-        }
-      }
-    } catch { /* coba pola URL berikutnya */ }
-  }
-  return null
+// Isi chapter di-hosting sebagai file .txt mentah (field `url` di tiap chapter), jadi tinggal
+// di-fetch lewat proxy server kita sendiri (pages/api/novel-text.ts) biar gak kena masalah CORS.
+export async function fetchNovelChapterContent(novelId: string, chapterId: string): Promise<NovelChapterContent | null> {
+  try {
+    const detail = await fetchNovelChapters(novelId)
+    if (!detail) return null
+    const chapter = detail.chapters.find((c) => c.chapterId === chapterId)
+    if (!chapter || !chapter.url) return null
+
+    const { data } = await axios.get(`/api/novel-text`, { params: { url: chapter.url } })
+    const content = typeof data === 'string' ? data : (data?.text || '')
+    if (!content.trim()) return null
+
+    return {
+      title: chapter.title,
+      content,
+      novelTitle: detail.title,
+    }
+  } catch { return null }
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────

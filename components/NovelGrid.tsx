@@ -7,12 +7,24 @@ interface NovelGridProps {
 }
 
 export default function NovelGrid({ novels }: NovelGridProps) {
+  const cacheNovel = (novel: Novel) => {
+    // Endpoint chapters (dipakai di halaman detail) gak balikin judul/cover/sinopsis novel,
+    // jadi kita simpen sebentar data dari listing di sini biar detail page bisa langsung nampilin
+    // info dasarnya sambil nunggu daftar chapter asli di-fetch.
+    try {
+      sessionStorage.setItem(`novelMeta:${novel.id}`, JSON.stringify(novel))
+    } catch {
+      // sessionStorage bisa aja gak available (mode private/incognito ketat), diemin aja
+    }
+  }
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
       {novels.map((novel) => (
         <Link
           key={novel.id}
           href={`/novel/${novel.id}`}
+          onClick={() => cacheNovel(novel)}
           className="card group hover:scale-105 transition-transform duration-200"
         >
           <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-surface dark:bg-surface-dark">
