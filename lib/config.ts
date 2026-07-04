@@ -61,9 +61,14 @@ export const ENDPOINTS = {
   COMIC_UNLIMITED: (page = 1) => `/comic/unlimited?page=${page}`,
 
   // Novel (Sankavollerei — lihat dokumentasi sankavollerei.web.id/comic bagian "Novel")
-  NOVEL_HOME: '/novel/home',
-  NOVEL_HOT_SEARCH: '/novel/hot-search',
-  NOVEL_SEARCH: (q: string) => `/novel/search?q=${encodeURIComponent(q)}`,
-  NOVEL_GENRE: (id: string, page = 1) => `/novel/genre/${encodeURIComponent(id)}${page > 1 ? `?page=${page}` : ''}`,
-  NOVEL_CHAPTERS: (novelId: string) => `/novel/chapters/${encodeURIComponent(novelId)}`,
+  // Novel (Sankavollerei — sumber SakuraNovel, lihat dokumentasi sankavollerei.web.id/novel/sakuranovel)
+  NOVEL_HOME: (page = 1) => `/novel/sakuranovel/home${page > 1 ? `?page=${page}` : ''}`,
+  NOVEL_SEARCH: (q: string, page = 1) => `/novel/sakuranovel/search?q=${encodeURIComponent(q)}${page > 1 ? `&page=${page}` : ''}`,
+  NOVEL_DETAIL: (slug: string) => `/novel/sakuranovel/detail/${encodeURIComponent(slug)}`,
+  NOVEL_READ: (slug: string) => `/novel/sakuranovel/read/${encodeURIComponent(slug)}`,
+  NOVEL_GENRES: '/novel/sakuranovel/genres',
+  NOVEL_GENRE: (slug: string, page = 1) => `/novel/sakuranovel/genre/${encodeURIComponent(slug)}${page > 1 ? `?page=${page}` : ''}`,
+  NOVEL_TAGS: '/novel/sakuranovel/tags',
+  NOVEL_TAG: (slug: string, page = 1) => `/novel/sakuranovel/tag/${encodeURIComponent(slug)}${page > 1 ? `?page=${page}` : ''}`,
+  NOVEL_DAFTAR: '/novel/sakuranovel/daftar-novel',
 } as const

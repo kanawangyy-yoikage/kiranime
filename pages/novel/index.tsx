@@ -1,29 +1,31 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
-import { BookMarked, Flame, Sparkles } from 'lucide-react'
+import Link from 'next/link'
+import { BookMarked, ChevronLeft, ChevronRight } from 'lucide-react'
 import NovelGrid from '@/components/NovelGrid'
 import CategorySearchBar from '@/components/CategorySearchBar'
-import { fetchNovelHome, fetchNovelHotSearch, type Novel } from '@/lib/api'
+import { fetchNovelHome, fetchNovelGenres, type Novel, type NovelGenreTag } from '@/lib/api'
 
 export default function NovelListPage() {
   const [novels, setNovels] = useState<Novel[]>([])
+  const [genres, setGenres] = useState<NovelGenreTag[]>([])
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState<'home' | 'hot'>('home')
+  const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    fetchNovelGenres().then(setGenres)
+  }, [])
 
   useEffect(() => {
     const load = async () => {
       setLoading(true)
-      const data = tab === 'home' ? await fetchNovelHome() : await fetchNovelHotSearch()
+      const data = await fetchNovelHome(page)
       setNovels(data)
       setLoading(false)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
     load()
-  }, [tab])
-
-  const switchTab = (next: 'home' | 'hot') => {
-    if (next === tab) return
-    setTab(next)
-  }
+  }, [page])
 
   return (
     <>
@@ -37,20 +39,20 @@ export default function NovelListPage() {
             </div>
             <CategorySearchBar type="novel" placeholder="Cari novel..." />
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => switchTab('home')}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'home' ? 'bg-ocean text-white' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
-            >
-              <Sparkles size={15} /> Beranda
-            </button>
-            <button
-              onClick={() => switchTab('hot')}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${tab === 'hot' ? 'bg-ocean text-white' : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'}`}
-            >
-              <Flame size={15} /> Trending
-            </button>
-          </div>
+
+          {genres.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {genres.slice(0, 14).map((g) => (
+                <Link
+                  key={g.slug}
+                  href={`/novel/genre/${g.slug}`}
+                  className="px-3 py-1.5 bg-surface-dark hover:bg-ocean/20 text-pearl/80 hover:text-pearl text-xs font-medium rounded-full transition-colors"
+                >
+                  {g.name}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {loading ? (
@@ -60,7 +62,25 @@ export default function NovelListPage() {
         ) : novels.length === 0 ? (
           <div className="card p-6 text-center text-pearl/60">Belum ada novel tersedia. Coba lagi nanti.</div>
         ) : (
-          <NovelGrid novels={novels} />
+          <>
+            <NovelGrid novels={novels} />
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                className="btn-secondary inline-flex items-center gap-1 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft size={16} /> Sebelumnya
+              </button>
+              <span className="text-sm text-pearl/70">Halaman {page}</span>
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                className="btn-secondary inline-flex items-center gap-1 text-sm"
+              >
+                Selanjutnya <ChevronRight size={16} />
+              </button>
+            </div>
+          </>
         )}
       </div>
     </>
