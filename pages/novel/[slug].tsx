@@ -52,9 +52,10 @@ export default function NovelDetailPage() {
           <div className="w-48 h-72 flex-shrink-0 mx-auto md:mx-0 overflow-hidden rounded-lg bg-surface-dark">
             {novel.image ? (
               <img
-                src={`/api/proxy?url=${encodeURIComponent(novel.image)}`}
+                src={novel.image}
                 alt={novel.title}
                 className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
                 onError={(e) => {
                   const target = e.currentTarget
                   target.style.display = 'none'

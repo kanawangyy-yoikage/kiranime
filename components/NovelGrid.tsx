@@ -18,10 +18,14 @@ export default function NovelGrid({ novels }: NovelGridProps) {
           <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-surface dark:bg-surface-dark">
             {novel.image ? (
               <img
-                src={`/api/proxy?url=${encodeURIComponent(novel.image)}`}
+                // Gambar sakuranovel.id gagal terus lewat proxy server kita (403/404 — kena
+                // proteksi anti-bot yang nge-block request server-to-server). Browser pengguna
+                // sendiri yang narik langsung biasanya lolos, makanya di sini gak lewat /api/proxy.
+                src={novel.image}
                 alt={novel.title}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 loading="lazy"
+                referrerPolicy="no-referrer"
                 onError={(e) => {
                   const target = e.currentTarget
                   target.style.display = 'none'
