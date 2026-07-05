@@ -4,7 +4,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { ArrowLeft, ChevronLeft, ChevronRight, Tag } from 'lucide-react'
 import NovelGrid from '@/components/NovelGrid'
-import { fetchNovelByGenre, type Novel } from '@/lib/api'
+import { fetchNovelByGenre, enrichNovelCovers, type Novel } from '@/lib/api'
 
 export default function NovelGenrePage() {
   const router = useRouter()
@@ -20,11 +20,20 @@ export default function NovelGenrePage() {
 
   useEffect(() => {
     if (!slug || typeof slug !== 'string') return
-    setLoading(true)
-    fetchNovelByGenre(slug, page)
-      .then(setNovels)
-      .finally(() => setLoading(false))
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    let cancelled = false
+    const load = async () => {
+      setLoading(true)
+      const data = await fetchNovelByGenre(slug, page)
+      if (cancelled) return
+      setNovels(data)
+      setLoading(false)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+
+      const enriched = await enrichNovelCovers(data)
+      if (!cancelled) setNovels(enriched)
+    }
+    load()
+    return () => { cancelled = true }
   }, [slug, page])
 
   const genreName = typeof slug === 'string'

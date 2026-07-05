@@ -3,8 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { BookMarked, Frown } from 'lucide-react'
-import { fetchNovelChapters, NovelDetail, Novel } from '@/lib/api'
-import { getNovelCoverGradient, getNovelInitial } from '@/lib/novelPlaceholder'
+import { fetchNovelDetail, fetchNovelCoverByTitle, NovelDetail } from '@/lib/api'
 
 export default function NovelDetailPage() {
   const router = useRouter()
@@ -15,46 +14,20 @@ export default function NovelDetailPage() {
 
   useEffect(() => {
     if (!slug || typeof slug !== 'string') return
-
-    // Endpoint chapters gak balikin judul/cover/sinopsis, jadi prefill dulu dari cache
-    // listing (kalau ada, dari NovelGrid) biar gak nunggu kosong pas baru masuk halaman.
-    try {
-      const cached = sessionStorage.getItem(`novelMeta:${slug}`)
-      if (cached) {
-        const c: Novel = JSON.parse(cached)
-        setNovel({
-          id: slug,
-          title: c.title,
-          image: c.image,
-          description: c.summary || '',
-          status: c.status || '',
-          author: '',
-          genres: c.genres || [],
-          chapters: [],
-        })
-      }
-    } catch { /* sessionStorage gak available, gapapa */ }
-
-    const load = async () => {
-      try {
-        const data = await fetchNovelChapters(slug)
-        setNovel((prev) => {
-          if (!data) return prev
-          return {
-            ...data,
-            title: data.title || prev?.title || '',
-            image: data.image || prev?.image || '',
-            description: data.description || prev?.description || '',
-            genres: data.genres.length ? data.genres : (prev?.genres || []),
-          }
-        })
-      } catch (err) {
-        console.error(err)
-      } finally {
+    let cancelled = false
+    setLoading(true)
+    fetchNovelDetail(slug)
+      .then(async (data) => {
+        if (cancelled || !data) return
+        setNovel(data)
         setLoading(false)
-      }
-    }
-    load()
+        // cari covernya belakangan (biar detail utama gak nunggu), update begitu ketemu
+        const cover = await fetchNovelCoverByTitle(data.title)
+        if (!cancelled && cover) setNovel((prev) => (prev ? { ...prev, image: cover } : prev))
+      })
+      .catch((err) => console.error(err))
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
   }, [slug])
 
   if (loading) {
@@ -101,37 +74,45 @@ export default function NovelDetailPage() {
               />
             ) : null}
             <div
-              className="w-full h-full items-center justify-center"
-              style={{
-                display: novel.image ? 'none' : 'flex',
-                backgroundImage: getNovelCoverGradient(novel.title),
-              }}
+              className="w-full h-full items-center justify-center text-pearl/40 text-sm"
+              style={{ display: novel.image ? 'none' : 'flex' }}
             >
-              <span className="text-6xl font-bold text-white/25">{getNovelInitial(novel.title)}</span>
+              No Image
             </div>
           </div>
 
           <div className="flex-1 space-y-4">
             <h1 className="text-2xl md:text-3xl font-bold text-pearl text-center md:text-left">{novel.title}</h1>
+            {novel.altTitle && novel.altTitle !== novel.title && (
+              <p className="text-sm text-pearl/50 text-center md:text-left -mt-3">{novel.altTitle}</p>
+            )}
 
             <div className="grid grid-cols-2 gap-2 text-sm text-pearl/80">
               {novel.author && <p><span className="text-pearl/50">Author:</span> {novel.author}</p>}
               {novel.status && <p><span className="text-pearl/50">Status:</span> {novel.status}</p>}
+              {novel.type && <p><span className="text-pearl/50">Tipe:</span> {novel.type}</p>}
+              {novel.rating && <p><span className="text-pearl/50">Rating:</span> {novel.rating}</p>}
+              {novel.country && <p><span className="text-pearl/50">Negara:</span> {novel.country}</p>}
+              {novel.published && <p><span className="text-pearl/50">Terbit:</span> {novel.published}</p>}
             </div>
 
             {novel.genres.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {novel.genres.map((genre) => (
-                  <span key={genre} className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 text-pearl text-xs font-medium rounded-full transition-colors">
-                    {genre}
-                  </span>
+                  <Link
+                    key={genre.slug || genre.name}
+                    href={`/novel/genre/${genre.slug}`}
+                    className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 text-pearl text-xs font-medium rounded-full transition-colors"
+                  >
+                    {genre.name}
+                  </Link>
                 ))}
               </div>
             )}
 
-            {novel.description && (
+            {novel.synopsis && (
               <div className="pt-4 border-t border-ocean/20">
-                <p className="text-sm leading-relaxed text-pearl/80 whitespace-pre-line">{novel.description}</p>
+                <p className="text-sm leading-relaxed text-pearl/80 whitespace-pre-line">{novel.synopsis}</p>
               </div>
             )}
           </div>
@@ -148,7 +129,7 @@ export default function NovelDetailPage() {
               {novel.chapters.map((ch) => (
                 <Link
                   key={ch.slug}
-                  href={`/novel/read/${novel.id}/${ch.slug}`}
+                  href={`/novel/read/${ch.slug}`}
                   className="flex items-center justify-between p-3 bg-surface-dark hover:bg-surface-hover rounded-lg transition-colors group"
                 >
                   <span className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors truncate">

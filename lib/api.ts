@@ -474,201 +474,258 @@ export async function fetchChapterPages(chapterSlug: string): Promise<ChapterPag
 // ─── NOVEL TYPES ─────────────────────────────────────────────
 
 export interface Novel {
-  id: string
   title: string
   slug: string
   image: string
-  summary?: string
-  score?: string
-  totalViews?: string
-  totalChapters?: number
-  genres: string[]
-  tags?: string[]
+  type?: string
+  latestChapter?: string
+  rating?: string
   status?: string
+}
+
+export interface NovelGenreTag {
+  name: string
+  slug: string
+  count?: string
 }
 
 export interface NovelChapterItem {
-  chapterId: string
   title: string
-  slug: string          // = chapterId, dipake buat routing
-  sequel?: number
-  totalWords?: number
+  slug: string
   date?: string
-  url: string            // link .txt mentah ke isi chapter (langsung dari API)
 }
 
 export interface NovelDetail {
-  id: string
   title: string
+  altTitle?: string
+  slug: string
   image: string
-  description: string
+  rating?: string
   status?: string
+  type?: string
+  synopsis: string
   author?: string
-  genres: string[]
+  country?: string
+  published?: string
+  tags: string[]
+  genres: NovelGenreTag[]
   chapters: NovelChapterItem[]
 }
 
 export interface NovelChapterContent {
   title: string
   content: string
-  novelTitle?: string
+  isHtml: boolean
+  parentSlug?: string | null
+  prevSlug?: string | null
+  nextSlug?: string | null
+}
+
+export interface NovelAZItem {
+  title: string
+  slug: string
+  type?: string
+  letterGroup?: string
 }
 
 // ─── NOVEL API FUNCTIONS ──────────────────────────────────────
-// Sumber: sankavollerei.web.id/novel — bentuk response asli (dicek manual lewat console):
-// { creator, success, result: { items: [...] } }, dan tiap item novel field-nya novelId/title/cover.url/dst.
-// Isi chapter di-hosting sebagai file .txt mentah di nacdn.novelhubapp.com (field `url` per chapter).
+// Konten/katalog novel dari SakuraNovel (lewat Sankavollerei). Cover poster SakuraNovel
+// (sakuranovel.id) keblokir hotlink-protection-nya, jadi gambar dicari terpisah lewat
+// API Sankavollerei versi lama (novelId based) yang cover-nya di-hosting di
+// nacdn.novelhubapp.com — lihat fetchNovelCoverByTitle/enrichNovelCovers di bawah.
 
 const novelClient: AxiosInstance = axios.create({
   baseURL: 'https://www.sankavollerei.web.id',
   timeout: 15000,
   headers: { 'Accept': 'application/json' },
-  // PENTING: novelId & chapterId dari API ini angkanya > Number.MAX_SAFE_INTEGER (19 digit),
-  // kalau di-parse pakai JSON.parse biasa presisinya kepotong/kebulet — hasilnya ID yang
-  // kekirim ke endpoint detail/chapters jadi beda sama aslinya (server balikin 404).
-  // Makanya di sini kita sisipin tanda kutip ke angka itu di teks mentahnya SEBELUM di-parse,
-  // biar jadi string dan presisinya utuh.
+  // novelId di API versi lama angkanya > Number.MAX_SAFE_INTEGER (19 digit), kalau di-parse
+  // pakai JSON.parse biasa presisinya kepotong. Regex ini cuma nyentuh key "novelId", jadi
+  // aman dipakai bareng buat response SakuraNovel juga (gak ada key itu di sana).
   transformResponse: [(data: any) => {
     if (typeof data !== 'string') return data
-    const safe = data.replace(/"(novelId|chapterId)":(\d+)/g, '"$1":"$2"')
+    const safe = data.replace(/"novelId":(\d+)/g, '"novelId":"$1"')
     try { return JSON.parse(safe) } catch { return data }
   }],
 })
 
-function mapNovelItem(item: any): Novel | null {
-  const id = item?.novelId != null ? String(item.novelId) : ''
-  if (!id) return null
+function mapNovel(item: any): Novel {
   return {
-    id,
     title: item.title || '',
-    slug: id,
-    image: item.cover?.url || item.image || item.thumbnail || '',
-    summary: item.summary || item.description || '',
-    score: item.score || '',
-    totalViews: item.totalViews || '',
-    totalChapters: typeof item.totalChapters === 'number' ? item.totalChapters : undefined,
-    genres: Array.isArray(item.genres) ? item.genres : [],
-    tags: Array.isArray(item.tags) ? item.tags : [],
-    status: item.novelStatus === 2 ? 'Completed' : item.novelStatus === 1 ? 'Ongoing' : (item.novelStatusDesc || ''),
+    slug: item.slug || '',
+    image: '', // sengaja dikosongin — diisi belakangan lewat enrichNovelCovers()
+    type: item.type || '',
+    latestChapter: item.latest_chapter || '',
+    rating: item.rating || '',
+    status: item.status || '',
   }
 }
 
-// result.items bisa berupa array novel langsung (hot-search, search) ATAU array "ContentList"
-// section yang masing-masing punya .contents (home) — extractNovelItems cuma ngambil array mentahnya,
-// flatten section-nya ditangani terpisah di fetchNovelHome.
-function extractNovelItems(raw: any): any[] {
-  return raw?.result?.items || raw?.items || raw?.data?.items || (Array.isArray(raw) ? raw : [])
-}
-
-function dedupeNovels(list: Novel[]): Novel[] {
-  return list.filter((v, i, a) => a.findIndex((x) => x.id === v.id) === i)
-}
-
-export async function fetchNovelHome(): Promise<Novel[]> {
+export async function fetchNovelHome(page = 1): Promise<Novel[]> {
   try {
-    const { data } = await novelClient.get(ENDPOINTS.NOVEL_HOME)
-    const sections = extractNovelItems(data) // array of { title, type: 'ContentList', contents: [...] }
-    const all: Novel[] = []
-    for (const sec of sections) {
-      const items = Array.isArray(sec?.contents) ? sec.contents : (Array.isArray(sec) ? sec : [sec])
-      for (const it of items) {
-        const n = mapNovelItem(it)
-        if (n) all.push(n)
-      }
-    }
-    return dedupeNovels(all)
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_HOME(page))
+    const results = data?.data?.results
+    return Array.isArray(results) ? results.map(mapNovel) : []
   } catch { return [] }
 }
 
-export async function fetchNovelHotSearch(): Promise<Novel[]> {
-  try {
-    const { data } = await novelClient.get(ENDPOINTS.NOVEL_HOT_SEARCH)
-    const items = extractNovelItems(data)
-    return dedupeNovels(items.map(mapNovelItem).filter(Boolean) as Novel[])
-  } catch { return [] }
-}
-
-export async function searchNovel(keyword: string): Promise<Novel[]> {
+export async function searchNovel(keyword: string, page = 1): Promise<Novel[]> {
   if (!keyword.trim()) return []
   try {
-    const { data } = await novelClient.get(ENDPOINTS.NOVEL_SEARCH(keyword))
-    const items = extractNovelItems(data)
-    return dedupeNovels(items.map(mapNovelItem).filter(Boolean) as Novel[])
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_SEARCH(keyword, page))
+    const results = data?.data?.results
+    return Array.isArray(results) ? results.map(mapNovel) : []
   } catch { return [] }
 }
 
-export async function fetchNovelByGenre(id: string, page = 1): Promise<Novel[]> {
+export async function fetchNovelGenres(): Promise<NovelGenreTag[]> {
   try {
-    const { data } = await novelClient.get(ENDPOINTS.NOVEL_GENRE(id, page))
-    const items = extractNovelItems(data)
-    return dedupeNovels(items.map(mapNovelItem).filter(Boolean) as Novel[])
-  } catch { return [] }
-}
-
-export async function fetchNovelChapters(novelId: string): Promise<NovelDetail | null> {
-  try {
-    const { data } = await novelClient.get(ENDPOINTS.NOVEL_CHAPTERS(novelId))
-    if (data?.success === false) return null
-    const d = data.result || data.data || data
-    const rawChapters: any[] = Array.isArray(d.chapters) ? d.chapters : []
-
-    const chapters: NovelChapterItem[] = rawChapters
-      .map((ch: any): NovelChapterItem | null => {
-        const chapterId = ch.chapterId != null ? String(ch.chapterId) : ''
-        if (!chapterId) return null
-        const sequel = typeof ch.sequel === 'number' ? ch.sequel : undefined
-        return {
-          chapterId,
-          title: ch.name || ch.title || (sequel != null ? `Chapter ${sequel}` : 'Chapter'),
-          slug: chapterId,
-          sequel,
-          totalWords: typeof ch.totalWords === 'number' ? ch.totalWords : undefined,
-          date: ch.lastUpdateTime ? new Date(ch.lastUpdateTime * 1000).toLocaleDateString('id-ID') : '',
-          url: ch.url || '',
-        }
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_GENRES)
+    const list = Array.isArray(data?.data) ? data.data : []
+    const seen = new Set<string>()
+    return list
+      .filter((g: any) => {
+        if (!g?.slug || seen.has(g.slug)) return false
+        seen.add(g.slug)
+        return true
       })
-      .filter(Boolean) as NovelChapterItem[]
+      .map((g: any): NovelGenreTag => ({ name: g.name || '', slug: g.slug || '', count: g.count || '' }))
+  } catch { return [] }
+}
 
-    // Endpoint ini kadang balikin urutan chapter gak konsisten, jadi diurutin manual pake 'sequel'
-    chapters.sort((a, b) => (a.sequel ?? 0) - (b.sequel ?? 0))
+export async function fetchNovelTags(): Promise<NovelGenreTag[]> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_TAGS)
+    const list = Array.isArray(data?.data) ? data.data : []
+    return list.map((t: any): NovelGenreTag => ({ name: t.name || '', slug: t.slug || '', count: t.count || '' }))
+  } catch { return [] }
+}
 
-    // Endpoint ini sejauh yang ketes cuma balikin daftar chapter, gak ada judul/cover/sinopsis novelnya.
-    const detailSrc = d.detail || d.novel || d
+export async function fetchNovelByGenre(slug: string, page = 1): Promise<Novel[]> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_GENRE(slug, page))
+    const results = data?.data?.results
+    return Array.isArray(results) ? results.map(mapNovel) : []
+  } catch { return [] }
+}
+
+export async function fetchNovelByTag(slug: string, page = 1): Promise<Novel[]> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_TAG(slug, page))
+    const results = data?.data?.results
+    return Array.isArray(results) ? results.map(mapNovel) : []
+  } catch { return [] }
+}
+
+export async function fetchNovelAZ(): Promise<NovelAZItem[]> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_DAFTAR)
+    const list = Array.isArray(data?.data) ? data.data : []
+    return list.map((n: any): NovelAZItem => ({
+      title: n.title || '',
+      slug: n.slug || '',
+      type: n.type || '',
+      letterGroup: n.letter_group || '',
+    }))
+  } catch { return [] }
+}
+
+export async function fetchNovelDetail(slug: string): Promise<NovelDetail | null> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_DETAIL(slug))
+    if (data?.status !== 'success' || !data?.data) return null
+    const d = data.data
+    const tagsStr: string = d.info?.tags || ''
     return {
-      id: novelId,
-      title: detailSrc.title || detailSrc.name || '',
-      image: detailSrc.cover?.url || detailSrc.image || '',
-      description: detailSrc.summary || detailSrc.description || '',
-      status: detailSrc.novelStatusDesc || detailSrc.status || '',
-      author: detailSrc.author || '',
-      genres: Array.isArray(detailSrc.genres) ? detailSrc.genres : [],
-      chapters,
+      title: d.title || '',
+      altTitle: d.alt_title || '',
+      slug: d.slug || slug,
+      image: '', // sengaja dikosongin — diisi belakangan lewat fetchNovelCoverByTitle()
+      rating: d.rating || '',
+      status: d.status || '',
+      type: d.type || '',
+      synopsis: d.synopsis || '',
+      author: d.info?.author || '',
+      country: d.info?.country || '',
+      published: d.info?.published || '',
+      tags: tagsStr ? tagsStr.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+      genres: Array.isArray(d.genres)
+        ? d.genres.map((g: any): NovelGenreTag => ({ name: g.name || '', slug: g.slug || '' })).filter((g: NovelGenreTag) => g.name)
+        : [],
+      chapters: Array.isArray(d.chapters)
+        ? d.chapters.map((c: any): NovelChapterItem => ({
+            title: c.title || '',
+            slug: c.slug || '',
+            date: c.date || '',
+          }))
+        : [],
     }
   } catch { return null }
 }
 
-// Isi chapter di-hosting sebagai file .txt mentah (field `url` di tiap chapter), jadi tinggal
-// di-fetch lewat proxy server kita sendiri (pages/api/novel-text.ts) biar gak kena masalah CORS.
-export async function fetchNovelChapterContent(novelId: string, chapterId: string): Promise<NovelChapterContent | null> {
+export async function fetchNovelChapterContent(chapterSlug: string): Promise<NovelChapterContent | null> {
   try {
-    const detail = await fetchNovelChapters(novelId)
-    if (!detail) return null
-    const chapter = detail.chapters.find((c) => c.chapterId === chapterId)
-    if (!chapter || !chapter.url) return null
-
-    const { data } = await axios.get(`/api/novel-text`, { params: { url: chapter.url } })
-    const content = typeof data === 'string' ? data : (data?.text || '')
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_READ(chapterSlug))
+    if (data?.status !== 'success' || !data?.data) return null
+    const d = data.data
+    const rawContent = d.content
+    if (!rawContent) return null
+    const content = Array.isArray(rawContent) ? rawContent.join('\n\n') : String(rawContent)
     if (!content.trim()) return null
-
+    const isHtml = /<[a-z][\s\S]*>/i.test(content)
     return {
-      title: chapter.title,
+      title: d.title || '',
       content,
-      novelTitle: detail.title,
+      isHtml,
+      parentSlug: d.navigation?.parent_slug ?? null,
+      prevSlug: d.navigation?.prev_slug ?? null,
+      nextSlug: d.navigation?.next_slug ?? null,
     }
-  } catch (err: any) {
-    console.error('fetchNovelChapterContent error:', err?.response?.data || err?.message || err)
+  } catch { return null }
+}
+
+// ─── COVER LOOKUP (nacdn.novelhubapp.com lewat API lama) ──────
+// Poster asli SakuraNovel keblokir, jadi buat tiap novel kita coba cari ulang covernya
+// di API Sankavollerei versi lama berdasarkan judul. Kalau ketemu & judulnya cocok,
+// dipakai; kalau nggak ketemu, gambar dibiarin kosong (tampil "No Image" di UI).
+
+const novelCoverCache = new Map<string, string | null>()
+
+export async function fetchNovelCoverByTitle(title: string): Promise<string | null> {
+  const key = title.trim().toLowerCase()
+  if (!key) return null
+  if (novelCoverCache.has(key)) return novelCoverCache.get(key) ?? null
+
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_COVER_SEARCH(title))
+    const items = data?.result?.items
+    let cover: string | null = null
+
+    if (Array.isArray(items) && items.length > 0) {
+      // Prioritasin yang judulnya sama persis (case-insensitive), kalau nggak ada baru
+      // ambil hasil teratas (biasanya paling relevan menurut urutan search-nya sendiri)
+      const exact = items.find((it: any) => (it.title || '').trim().toLowerCase() === key)
+      const chosen = exact || items[0]
+      cover = chosen?.cover?.url || null
+    }
+
+    novelCoverCache.set(key, cover)
+    return cover
+  } catch {
+    novelCoverCache.set(key, null)
     return null
   }
+}
+
+// Dipanggil setelah dapet list novel dari SakuraNovel, buat ngisi field .image-nya
+// secara paralel. Kalau salah satu lookup gagal/gak ketemu, novel itu tetep tampil,
+// cuma gambarnya kosong (fallback "No Image" di komponen).
+export async function enrichNovelCovers(novels: Novel[]): Promise<Novel[]> {
+  return Promise.all(
+    novels.map(async (n) => {
+      const cover = await fetchNovelCoverByTitle(n.title)
+      return { ...n, image: cover || '' }
+    })
+  )
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────

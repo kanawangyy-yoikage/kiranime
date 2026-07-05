@@ -8,7 +8,7 @@ import AnimeGrid from '@/components/AnimeGrid'
 import ComicGrid from '@/components/ComicGrid'
 import NovelGrid from '@/components/NovelGrid'
 import Section from '@/components/Section'
-import { searchAnime, searchComic, searchNovel, searchMAL, type Anime, type Comic, type Novel, type MALAnime } from '@/lib/api'
+import { searchAnime, searchComic, searchNovel, enrichNovelCovers, searchMAL, type Anime, type Comic, type Novel, type MALAnime } from '@/lib/api'
 
 type SearchType = 'anime' | 'manga' | 'webtoon' | 'novel'
 
@@ -56,6 +56,7 @@ export default function SearchPage() {
       } else if (searchType === 'novel') {
         const results = await searchNovel(query)
         setNovelResults(results)
+        enrichNovelCovers(results).then(setNovelResults)
       } else {
         const res = await fetch(`/api/webtoon?action=search&query=${encodeURIComponent(query)}`)
         const data = await res.json()
