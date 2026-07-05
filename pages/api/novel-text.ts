@@ -23,7 +23,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
         'Accept': 'text/plain, */*',
-        'Referer': 'https://www.novelhubapp.com/',
       },
     })
 
@@ -31,8 +30,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate')
     res.status(200).send(response.data)
   } catch (error: any) {
-    // Sementara ini kita expose detail error-nya biar ketauan penyebab aslinya
-    // (403 hotlink block, timeout, dll), bukan cuma "500" doang.
     console.error('Novel text proxy error:', error?.response?.status, error?.message)
     res.status(500).json({
       error: 'Failed to fetch chapter text',
