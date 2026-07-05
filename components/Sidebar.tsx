@@ -248,7 +248,7 @@ export default function Sidebar() {
           
           <div className="text-center">
             <p className="text-xs text-text-light/40 dark:text-text-dark/40 font-medium inline-flex items-center justify-center gap-1">
-              Made with <Heart size={12} className="fill-red-400 text-red-400" /> by Kira
+              Made with <Heart size={12} className="fill-red-400 text-red-400" /> by Kira, matchadesu_
             </p>
             <p className="text-[10px] text-text-light/30 dark:text-text-dark/30 mt-1">v1.1.0 &copy; 2026 KiraStream</p>
           </div>
