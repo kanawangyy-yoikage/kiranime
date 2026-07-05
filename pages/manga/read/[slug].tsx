@@ -49,7 +49,7 @@ export default function ChapterReaderPage() {
   return (
     <>
       <Head>
-        <title>{chapter.title || 'Baca Manga'} - KiraNime</title>
+        <title>{chapter.title || 'Baca Manga'} - KiraStream</title>
       </Head>
 
       <div className="space-y-6 max-w-4xl mx-auto">

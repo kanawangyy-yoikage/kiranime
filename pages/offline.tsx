@@ -6,7 +6,7 @@ export default function Offline() {
   return (
     <>
       <Head>
-        <title>Offline - KiraNime</title>
+        <title>Offline - KiraStream</title>
         <meta name="robots" content="noindex" />
       </Head>
       <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 text-center">

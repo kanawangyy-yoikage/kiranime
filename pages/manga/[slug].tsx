@@ -49,7 +49,7 @@ export default function ComicDetailPage() {
   return (
     <>
       <Head>
-        <title>{comic.title} - KiraNime</title>
+        <title>{comic.title} - KiraStream</title>
       </Head>
 
       <div className="space-y-6">

@@ -68,7 +68,7 @@ export default function WebtoonDetailPage() {
 
   return (
     <>
-      <Head><title>{webtoon.title} - KiraNime</title></Head>
+      <Head><title>{webtoon.title} - KiraStream</title></Head>
       <div className="space-y-6">
         <div className="card p-6 flex gap-6 flex-col md:flex-row">
           <div className="w-48 h-72 flex-shrink-0 overflow-hidden rounded-lg bg-surface-dark mx-auto md:mx-0">

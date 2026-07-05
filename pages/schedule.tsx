@@ -30,7 +30,7 @@ export default function SchedulePage() {
   return (
     <>
       <Head>
-        <title>Jadwal Rilis - KiraNime</title>
+        <title>Jadwal Rilis - KiraStream</title>
       </Head>
 
       <div className="space-y-6">

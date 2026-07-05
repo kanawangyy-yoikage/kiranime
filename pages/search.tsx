@@ -102,7 +102,7 @@ export default function SearchPage() {
   return (
     <>
       <Head>
-        <title>Cari {currentTab.label} - KiraNime</title>
+        <title>Cari {currentTab.label} - KiraStream</title>
       </Head>
 
       <div className="space-y-6">

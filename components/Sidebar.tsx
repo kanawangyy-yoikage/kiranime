@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useState, ReactNode } from 'react'
 import {
@@ -125,10 +126,10 @@ export default function Sidebar() {
     <>
       {/* Mobile Header Toggle */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-md z-40 flex items-center justify-between px-4 border-b border-pearl/10 shadow-sm">
-        <span className="font-bold text-xl text-primary flex items-center gap-2">
-          <PlayCircle className="text-accent" />
-          KiraNime
-        </span>
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/icons/icon-96x96.png" alt="" width={32} height={32} className="rounded-lg" />
+          <Image src="/logo-title.png" alt="KiraStream" width={110} height={36} className="h-7 w-auto object-contain" priority />
+        </Link>
         <button onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors">
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -152,9 +153,9 @@ export default function Sidebar() {
         
         {/* Brand */}
         <div className="h-16 flex items-center px-6 border-b border-pearl/10 shrink-0">
-          <Link href="/" className="font-bold text-2xl text-primary flex items-center gap-2 transition-transform hover:scale-105">
-            <PlayCircle className="text-accent fill-accent/20" />
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">KiraNime</span>
+          <Link href="/" className="flex items-center gap-2.5 transition-transform hover:scale-105">
+            <Image src="/icons/icon-96x96.png" alt="" width={36} height={36} className="rounded-xl" />
+            <Image src="/logo-title.png" alt="KiraStream" width={130} height={43} className="h-8 w-auto object-contain" priority />
           </Link>
         </div>
 
@@ -249,7 +250,7 @@ export default function Sidebar() {
             <p className="text-xs text-text-light/40 dark:text-text-dark/40 font-medium inline-flex items-center justify-center gap-1">
               Made with <Heart size={12} className="fill-red-400 text-red-400" /> by Kira
             </p>
-            <p className="text-[10px] text-text-light/30 dark:text-text-dark/30 mt-1">v1.1.0 &copy; 2026 KiraNime</p>
+            <p className="text-[10px] text-text-light/30 dark:text-text-dark/30 mt-1">v1.1.0 &copy; 2026 KiraStream</p>
           </div>
         </div>
       </aside>

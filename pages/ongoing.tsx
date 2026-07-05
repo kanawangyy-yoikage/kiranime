@@ -22,7 +22,7 @@ export default function OngoingPage() {
 
   return (
     <>
-      <Head><title>Anime Ongoing - KiraNime</title></Head>
+      <Head><title>Anime Ongoing - KiraStream</title></Head>
       <div className="space-y-6">
         <div className="card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>

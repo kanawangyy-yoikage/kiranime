@@ -52,7 +52,7 @@ export default function NovelReaderPage() {
   return (
     <>
       <Head>
-        <title>{chapter.title || 'Baca Novel'} - KiraNime</title>
+        <title>{chapter.title || 'Baca Novel'} - KiraStream</title>
       </Head>
 
       <div className="space-y-6 max-w-3xl mx-auto">

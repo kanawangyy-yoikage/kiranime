@@ -112,7 +112,7 @@ export default function ProfilePage() {
   return (
     <>
       <Head>
-        <title>Profil Saya - KiraNime</title>
+        <title>Profil Saya - KiraStream</title>
       </Head>
 
       <div className="space-y-6">

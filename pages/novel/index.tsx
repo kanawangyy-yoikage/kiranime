@@ -36,7 +36,7 @@ export default function NovelListPage() {
 
   return (
     <>
-      <Head><title>Novel - KiraNime</title></Head>
+      <Head><title>Novel - KiraStream</title></Head>
       <div className="space-y-6">
         <div className="card px-5 py-4 flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

@@ -48,7 +48,7 @@ export default function GenresPage() {
   return (
     <>
       <Head>
-        <title>Genre Anime - KiraNime</title>
+        <title>Genre Anime - KiraStream</title>
       </Head>
 
       <div className="space-y-6">

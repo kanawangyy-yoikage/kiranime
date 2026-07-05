@@ -25,7 +25,7 @@ export default function WebtoonPage() {
 
   return (
     <>
-      <Head><title>Webtoon - KiraNime</title></Head>
+      <Head><title>Webtoon - KiraStream</title></Head>
       <div className="space-y-5">
         <div className="card px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>

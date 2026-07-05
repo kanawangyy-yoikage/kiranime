@@ -52,7 +52,7 @@ export default function NovelDetailPage() {
   return (
     <>
       <Head>
-        <title>{novel.title} - KiraNime</title>
+        <title>{novel.title} - KiraStream</title>
       </Head>
 
       <div className="space-y-6">

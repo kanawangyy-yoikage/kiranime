@@ -36,7 +36,7 @@ export default function WebtoonReader() {
 
   return (
     <>
-      <Head><title>Membaca Webtoon - KiraNime</title></Head>
+      <Head><title>Membaca Webtoon - KiraStream</title></Head>
 
       {loading ? (
         <div className="text-center py-20">

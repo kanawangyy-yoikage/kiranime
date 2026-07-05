@@ -152,7 +152,7 @@ export default function AnimeDetailPage() {
   return (
     <>
       <Head>
-        <title>{anime.title} - KiraNime</title>
+        <title>{anime.title} - KiraStream</title>
         <meta name="description" content={anime.description} />
       </Head>
 

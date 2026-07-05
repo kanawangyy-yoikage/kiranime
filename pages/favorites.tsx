@@ -48,7 +48,7 @@ export default function FavoritesPage() {
   return (
     <>
       <Head>
-        <title>Favorit Saya - KiraNime</title>
+        <title>Favorit Saya - KiraStream</title>
       </Head>
 
       <div className="space-y-6">

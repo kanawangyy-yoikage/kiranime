@@ -1,4 +1,4 @@
-// KiraNime Service Worker
+// KiraStream Service Worker
 // Strategi:
 // - Navigasi (HTML): network-first, fallback ke halaman /offline saat gagal
 // - Aset statis Next.js (_next/static, gambar ikon, dsb): stale-while-revalidate

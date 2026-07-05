@@ -68,7 +68,7 @@ export default function InstallPwaPrompt() {
         <Download className="h-5 w-5" style={{ color: 'var(--color-pearl)' }} />
       </div>
       <div className="flex-1">
-        <p className="text-sm font-semibold">Pasang KiraNime</p>
+        <p className="text-sm font-semibold">Pasang KiraStream</p>
         <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
           Akses lebih cepat & tetap bisa dibuka dari layar utama.
         </p>

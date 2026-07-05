@@ -42,7 +42,7 @@ export default function NovelGenrePage() {
 
   return (
     <>
-      <Head><title>Genre {genreName} - Novel - KiraNime</title></Head>
+      <Head><title>Genre {genreName} - Novel - KiraStream</title></Head>
       <div className="space-y-6">
         <div className="card px-5 py-4 flex items-center justify-between gap-3">
           <div>

@@ -63,7 +63,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>KiraNime - Streaming Anime Subtitle Indonesia</title>
+        <title>KiraStream - Streaming Anime Subtitle Indonesia</title>
         <meta name="description" content="Streaming anime subtitle Indonesia dengan UI modern, manga, webtoon, dan jadwal rilis." />
       </Head>
 
@@ -74,7 +74,7 @@ export default function Home() {
               Midnight · Pearl · Ocean
             </p>
             <h1 className="text-4xl font-black tracking-tight md:text-6xl" style={textStyle()}>
-              KiraNime
+              KiraStream
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 md:text-lg" style={textStyle(true)}>
               Streaming anime subtitle Indonesia dengan pengalaman cepat, bersih, dan nyaman di desktop maupun mobile.
