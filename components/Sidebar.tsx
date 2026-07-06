@@ -40,7 +40,7 @@ interface NavGroup {
 
 export default function Sidebar() {
   const router = useRouter()
-  const { user, loading: authLoading, logout } = useAuth()
+  const { user, profile, loading: authLoading, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [isDark, setIsDark] = useState(true)
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set())
@@ -261,17 +261,17 @@ export default function Sidebar() {
                 className="flex items-center gap-3 px-4 py-3 hover:bg-pearl/10 transition-colors"
               >
                 <div className="w-9 h-9 rounded-full bg-primary shrink-0 flex items-center justify-center overflow-hidden">
-                  {user.photoURL ? (
-                    <img src={user.photoURL} alt={user.displayName || 'Avatar'} className="w-full h-full object-cover" />
+                  {profile?.photoURL ? (
+                    <img src={profile.photoURL} alt={profile?.displayName || 'Avatar'} className="w-full h-full object-cover" />
                   ) : (
                     <span className="text-sm font-bold text-white">
-                      {(user.displayName || user.email || '?')[0].toUpperCase()}
+                      {(profile?.displayName || user.displayName || user.email || '?')[0].toUpperCase()}
                     </span>
                   )}
                 </div>
                 <div className="min-w-0 flex-1 text-left">
                   <p className="text-sm font-semibold text-text-light dark:text-text-dark truncate">
-                    {user.displayName || 'KiraFan'}
+                    {profile?.displayName || user.displayName || 'KiraFan'}
                   </p>
                   <p className="text-xs text-text-light/50 dark:text-text-dark/50 truncate">Lihat profil</p>
                 </div>

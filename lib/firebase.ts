@@ -33,7 +33,6 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase/firestore'
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 
 // ─── CONFIG ──────────────────────────────────────────────────
 
@@ -53,7 +52,6 @@ const app = initializeApp(firebaseConfig)
 const authInstance = typeof window !== 'undefined' ? getAuth(app) : undefined
 export const auth = authInstance!
 export const db = getFirestore(app)
-export const storage = getStorage(app)
 export const googleProvider = new GoogleAuthProvider()
 
 // ─── AUTH FUNCTIONS ──────────────────────────────────────────
@@ -117,7 +115,12 @@ export async function resetPassword(email: string) {
 
 export async function updateUserProfile(user: User, updates: { displayName?: string; photoURL?: string }) {
   try {
-    await updateProfile(user, updates)
+    // Catatan: field photoURL di Firebase Auth punya batas panjang string (~2KB),
+    // jadi base64 avatar TIDAK dikirim ke sana — cukup disimpan di Firestore saja.
+    // Firestore document limit 1MB jauh lebih longgar untuk base64 image kecil.
+    if (updates.displayName) {
+      await updateProfile(user, { displayName: updates.displayName })
+    }
     if (updates.displayName) {
       await updateUserFirestore(user.uid, { displayName: updates.displayName })
     }
@@ -452,35 +455,106 @@ export async function getContinueWatching() {
   }
 }
 
-// ─── STORAGE ─────────────────────────────────────────────────
+// ─── AVATAR/BANNER: BASE64 (tanpa Firebase Storage) ──────────
+// Gambar di-resize + dikompres di browser (canvas) sebelum diubah ke Base64,
+// lalu disimpan langsung sebagai field di dokumen Firestore user. Ini menghindari
+// biaya/kebutuhan Firebase Storage sepenuhnya — cocok untuk free tier.
+// Firestore document limit ~1MB, jadi avatar dibatasi resolusi kecil (aman jauh di bawah itu).
 
-export async function uploadAvatar(file: File, uid: string) {
+function resizeAndCompressImage(
+  file: File,
+  maxDimension: number,
+  quality: number
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      reject(new Error('File harus berupa gambar'))
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Gagal membaca file'))
+    reader.onload = () => {
+      const img = new Image()
+      img.onerror = () => reject(new Error('Gagal memuat gambar'))
+      img.onload = () => {
+        let { width, height } = img
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width)
+            width = maxDimension
+          } else {
+            width = Math.round((width * maxDimension) / height)
+            height = maxDimension
+          }
+        }
+
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        if (!ctx) {
+          reject(new Error('Canvas tidak didukung'))
+          return
+        }
+        ctx.drawImage(img, 0, 0, width, height)
+        resolve(canvas.toDataURL('image/jpeg', quality))
+      }
+      img.src = reader.result as string
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
+const MAX_AVATAR_BASE64_BYTES = 400 * 1024 // ~400KB, aman jauh di bawah limit dokumen 1MB
+
+export async function uploadAvatarBase64(file: File, uid: string) {
   try {
-    const storageRef = ref(storage, `avatars/${uid}/${Date.now()}_${file.name}`)
-    await uploadBytes(storageRef, file)
-    const downloadURL = await getDownloadURL(storageRef)
-    return { success: true, url: downloadURL }
+    // Coba beberapa level kompresi sampai ukurannya cukup kecil untuk Firestore
+    const attempts: [number, number][] = [
+      [256, 0.8],
+      [256, 0.6],
+      [192, 0.5],
+      [128, 0.4],
+    ]
+
+    let base64 = ''
+    for (const [dimension, quality] of attempts) {
+      base64 = await resizeAndCompressImage(file, dimension, quality)
+      if (base64.length <= MAX_AVATAR_BASE64_BYTES) break
+    }
+
+    if (base64.length > MAX_AVATAR_BASE64_BYTES) {
+      return { success: false, error: 'Gambar terlalu besar, coba foto lain ya~' }
+    }
+
+    await updateUserFirestore(uid, { photoURL: base64 })
+    return { success: true, url: base64 }
   } catch (error) {
     return { success: false, error }
   }
 }
 
-export async function uploadBanner(file: File, uid: string) {
+export async function uploadBannerBase64(file: File, uid: string) {
   try {
-    const storageRef = ref(storage, `banners/${uid}/${Date.now()}_${file.name}`)
-    await uploadBytes(storageRef, file)
-    const downloadURL = await getDownloadURL(storageRef)
-    return { success: true, url: downloadURL }
-  } catch (error) {
-    return { success: false, error }
-  }
-}
+    const attempts: [number, number][] = [
+      [800, 0.7],
+      [600, 0.6],
+      [480, 0.5],
+    ]
 
-export async function deleteFile(url: string) {
-  try {
-    const storageRef = ref(storage, url)
-    await deleteObject(storageRef)
-    return { success: true }
+    let base64 = ''
+    for (const [dimension, quality] of attempts) {
+      base64 = await resizeAndCompressImage(file, dimension, quality)
+      if (base64.length <= MAX_AVATAR_BASE64_BYTES * 2) break
+    }
+
+    if (base64.length > MAX_AVATAR_BASE64_BYTES * 2) {
+      return { success: false, error: 'Gambar terlalu besar, coba foto lain ya~' }
+    }
+
+    await updateUserFirestore(uid, { bannerURL: base64 })
+    return { success: true, url: base64 }
   } catch (error) {
     return { success: false, error }
   }

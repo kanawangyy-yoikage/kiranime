@@ -4,12 +4,12 @@ import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { Pencil, Clapperboard, Clock, Star, BookmarkPlus, PlayCircle, CheckCircle, Ban } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { getUserFirestore, uploadAvatar, uploadBanner, updateUserFirestore } from '@/lib/firebase'
+import { getUserFirestore, uploadAvatarBase64, updateUserFirestore } from '@/lib/firebase'
 import { getHistory, getFavorites, getWatchlistByStatus, getContinueWatching } from '@/lib/firebase'
 
 export default function ProfilePage() {
   const router = useRouter()
-  const { user, updateProfile, loading: authLoading } = useAuth()
+  const { user, updateProfile, refreshProfile, loading: authLoading } = useAuth()
   
   const [profile, setProfile] = useState<any>(null)
   const [history, setHistory] = useState<any[]>([])
@@ -67,6 +67,7 @@ export default function ProfilePage() {
       await updateProfile({ displayName: editName })
       await updateUserFirestore(user!.uid, { displayName: editName, bio: editBio })
       setProfile({ ...profile, displayName: editName, bio: editBio })
+      await refreshProfile()
       setEditMode(false)
     } catch (error) {
       console.error('Failed to save profile:', error)
@@ -75,15 +76,28 @@ export default function ProfilePage() {
     }
   }
 
+  const [avatarUploading, setAvatarUploading] = useState(false)
+  const [avatarError, setAvatarError] = useState('')
+
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    e.target.value = '' // reset input biar bisa pilih file yang sama lagi kalau gagal
     if (!file || !user) return
-    
-    const result = await uploadAvatar(file, user.uid)
-    if (result.success) {
-      await updateProfile({ photoURL: result.url })
-      await updateUserFirestore(user.uid, { photoURL: result.url })
-      setProfile({ ...profile, photoURL: result.url })
+
+    setAvatarUploading(true)
+    setAvatarError('')
+    try {
+      const result = await uploadAvatarBase64(file, user.uid)
+      if (result.success) {
+        setProfile((prev: any) => ({ ...prev, photoURL: result.url }))
+        await refreshProfile()
+      } else {
+        setAvatarError(typeof result.error === 'string' ? result.error : 'Gagal upload avatar, coba lagi ya~')
+      }
+    } catch (error) {
+      setAvatarError('Gagal upload avatar, coba lagi ya~')
+    } finally {
+      setAvatarUploading(false)
     }
   }
 
@@ -147,6 +161,11 @@ export default function ProfilePage() {
                       {(profile?.displayName || '?')[0].toUpperCase()}
                     </span>
                   )}
+                  {avatarUploading && (
+                    <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center">
+                      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    </div>
+                  )}
                 </div>
                 <label className="absolute bottom-0 right-0 p-2 bg-ocean rounded-full cursor-pointer hover:bg-accent-secondary transition-colors">
                   <svg className="w-4 h-4 text-pearl" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -157,9 +176,15 @@ export default function ProfilePage() {
                     type="file"
                     accept="image/*"
                     className="hidden"
+                    disabled={avatarUploading}
                     onChange={handleAvatarUpload}
                   />
                 </label>
+                {avatarError && (
+                  <p className="absolute top-full mt-1 left-1/2 -translate-x-1/2 w-max max-w-[200px] text-center text-xs text-red-400">
+                    {avatarError}
+                  </p>
+                )}
               </div>
 
               {/* Name & Bio */}
