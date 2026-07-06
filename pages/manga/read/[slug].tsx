@@ -40,7 +40,7 @@ export default function ChapterReaderPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
-        <p className="text-xl text-pearl mb-4">Yah... Halaman chapter kosong atau gagal dimuat</p>
+        <p className="text-xl text-pearl mb-4">Halaman chapter-nya kosong atau gagal kebuka</p>
         <button onClick={() => router.back()} className="btn-primary">Kembali</button>
       </div>
     )

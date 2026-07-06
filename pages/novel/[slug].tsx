@@ -43,7 +43,7 @@ export default function NovelDetailPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
-        <p className="text-xl text-pearl mb-4">Yah... Novel tidak ditemukan</p>
+        <p className="text-xl text-pearl mb-4">Waduh, novelnya nggak ketemu</p>
         <Link href="/novel" className="btn-primary">Kembali ke Novel</Link>
       </div>
     )
@@ -123,7 +123,7 @@ export default function NovelDetailPage() {
           <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2"><BookMarked size={20} className="text-ocean" /> Daftar Chapter ({novel.chapters.length})</h2>
 
           {novel.chapters.length === 0 ? (
-            <p className="text-pearl/60">Tidak ada chapter tersedia.</p>
+            <p className="text-pearl/60">Chapternya belum ada nih, coba cek lagi nanti.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
               {novel.chapters.map((ch) => (

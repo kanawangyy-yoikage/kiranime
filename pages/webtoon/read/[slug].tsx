@@ -46,7 +46,7 @@ export default function WebtoonReader() {
       ) : error || images.length === 0 ? (
         <div className="text-center py-20 card p-6">
           <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
-          <p className="text-xl text-pearl mb-4">Yah... Episode gagal dimuat atau kosong</p>
+          <p className="text-xl text-pearl mb-4">Episode ini gagal kebuka atau memang belum ada isinya</p>
           <button onClick={() => router.back()} className="btn-primary">Kembali</button>
         </div>
       ) : (

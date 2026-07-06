@@ -102,7 +102,7 @@ export default function Home() {
           {loading ? (
             <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
           ) : data.webtoons.length === 0 ? (
-            <div className="card p-5 text-sm" style={textStyle(true)}>Webtoon belum tersedia dari source saat ini.</div>
+            <div className="card p-5 text-sm" style={textStyle(true)}>Webtoon-nya belum bisa ditampilkan sekarang, coba lagi beberapa saat lagi ya.</div>
           ) : (
             <div className="anime-grid">
               {data.webtoons.slice(0, 8).map((item) => (

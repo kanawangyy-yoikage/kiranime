@@ -43,7 +43,7 @@ export default function NovelReaderPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
-        <p className="text-xl text-pearl mb-4">Yah... Chapter gagal dimuat atau kosong</p>
+        <p className="text-xl text-pearl mb-4">Chapter ini gagal kebuka atau memang belum ada isinya</p>
         <button onClick={() => router.back()} className="btn-primary">Kembali</button>
       </div>
     )

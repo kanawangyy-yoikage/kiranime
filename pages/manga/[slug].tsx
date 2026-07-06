@@ -40,7 +40,7 @@ export default function ComicDetailPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
-        <p className="text-xl text-pearl mb-4">Yah... Komik tidak ditemukan</p>
+        <p className="text-xl text-pearl mb-4">Waduh, komiknya nggak ketemu</p>
         <Link href="/manga" className="btn-primary">Kembali ke Manga</Link>
       </div>
     )
@@ -95,7 +95,7 @@ export default function ComicDetailPage() {
           <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2"><BookOpen size={20} className="text-ocean" /> Daftar Chapter ({comic.chapters.length})</h2>
           
           {comic.chapters.length === 0 ? (
-            <p className="text-pearl/60">Tidak ada chapter tersedia.</p>
+            <p className="text-pearl/60">Chapternya belum ada nih, coba cek lagi nanti.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
               {comic.chapters.map((ch) => (

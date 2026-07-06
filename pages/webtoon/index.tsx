@@ -40,7 +40,7 @@ export default function WebtoonPage() {
         {loading ? (
           <div className="text-center py-12 text-[var(--color-text-muted)] text-sm">Loading webtoon...</div>
         ) : trending.length === 0 ? (
-          <div className="card p-5 text-center text-[var(--color-text-muted)] text-sm">Belum ada webtoon tersedia. Coba lagi nanti.</div>
+          <div className="card p-5 text-center text-[var(--color-text-muted)] text-sm">Webtoon belum bisa dimuat, coba refresh halaman ini sebentar lagi.</div>
         ) : (
           <div className="anime-grid">
             {trending.map((item, i) => (

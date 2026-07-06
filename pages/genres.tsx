@@ -102,7 +102,7 @@ export default function GenresPage() {
               </div>
             ) : (
               <div className="text-center py-12 card p-6">
-                <p className="text-pearl/60">Tidak ada anime ditemukan untuk genre ini</p>
+                <p className="text-pearl/60">Belum ada anime di genre ini, coba pilih genre lain</p>
               </div>
             )}
           </>

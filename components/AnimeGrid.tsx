@@ -34,7 +34,7 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
 
 export default function AnimeGrid({ animes }: { animes: Anime[] }) {
   if (!animes || animes.length === 0) {
-    return <div className="card p-5 text-center text-sm" style={{ color: 'var(--color-text-muted)' }}>Tidak ada anime ditemukan.</div>
+    return <div className="card p-5 text-center text-sm" style={{ color: 'var(--color-text-muted)' }}>Belum ada anime yang cocok nih.</div>
   }
 
   return (

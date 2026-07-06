@@ -60,7 +60,7 @@ export default function WebtoonDetailPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
-        <p className="text-xl text-pearl mb-4">Yah... Webtoon tidak ditemukan</p>
+        <p className="text-xl text-pearl mb-4">Waduh, webtoonnya nggak ketemu</p>
         <Link href="/webtoon" className="btn-primary">Kembali ke Webtoon</Link>
       </div>
     )
@@ -87,7 +87,7 @@ export default function WebtoonDetailPage() {
           </h2>
 
           {!webtoon.episodes || webtoon.episodes.length === 0 ? (
-            <p className="text-pearl/60">Tidak ada episode tersedia.</p>
+            <p className="text-pearl/60">Episodenya belum ada nih, coba cek lagi nanti.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
               {webtoon.episodes.map((ep, i) => (

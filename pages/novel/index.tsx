@@ -67,7 +67,7 @@ export default function NovelListPage() {
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
         ) : novels.length === 0 ? (
-          <div className="card p-6 text-center text-pearl/60">Belum ada novel tersedia. Coba lagi nanti.</div>
+          <div className="card p-6 text-center text-pearl/60">Novel belum bisa dimuat, coba refresh halaman ini sebentar lagi.</div>
         ) : (
           <>
             <NovelGrid novels={novels} />

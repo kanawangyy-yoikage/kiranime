@@ -43,10 +43,10 @@ export default function LoginPage() {
       if (result.success) {
         router.push('/')
       } else {
-        setError('Login dengan Google gagal. Coba lagi.')
+        setError('Login Google-nya gagal, coba sekali lagi ya.')
       }
     } catch (err) {
-      setError('Terjadi kesalahan. Coba lagi.')
+      setError('Ada gangguan pas coba login. Coba beberapa saat lagi.')
     } finally {
       setLoading(false)
     }
@@ -75,11 +75,11 @@ export default function LoginPage() {
         if (result.success) {
           router.push('/')
         } else {
-          setError('Registrasi gagal. Email mungkin sudah terdaftar.')
+          setError('Registrasi gagal, mungkin email ini sudah dipakai.')
         }
       }
     } catch (err) {
-      setError('Terjadi kesalahan. Coba lagi.')
+      setError('Ada yang error di sistem. Coba lagi sebentar ya.')
     } finally {
       setLoading(false)
     }
@@ -97,10 +97,10 @@ export default function LoginPage() {
         setConfirmationResult(result.confirmationResult)
         setOtpSent(true)
       } else {
-        setError('Gagal mengirim OTP. Cek kembali nomor HP-nya ya~')
+        setError('Kode OTP gagal dikirim, coba cek lagi nomor HP-nya.')
       }
     } catch (err) {
-      setError('Terjadi kesalahan. Coba lagi.')
+      setError('Lagi ada masalah di server. Coba lagi sebentar.')
     } finally {
       setLoading(false)
     }
@@ -117,10 +117,10 @@ export default function LoginPage() {
       if (result.success) {
         router.push('/')
       } else {
-        setError('Kode OTP salah atau sudah kadaluarsa.')
+        setError('Kode OTP-nya salah atau sudah keburu kadaluarsa.')
       }
     } catch (err) {
-      setError('Terjadi kesalahan. Coba lagi.')
+      setError('Verifikasinya gagal karena ada gangguan. Coba lagi ya.')
     } finally {
       setLoading(false)
     }

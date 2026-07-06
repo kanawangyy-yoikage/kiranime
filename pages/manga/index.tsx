@@ -61,7 +61,7 @@ export default function MangaListPage() {
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
         ) : comics.length === 0 ? (
-          <div className="card p-6 text-center text-pearl/60">Belum ada manga tersedia. Coba lagi nanti.</div>
+          <div className="card p-6 text-center text-pearl/60">Manga belum bisa dimuat, coba refresh halaman ini sebentar lagi.</div>
         ) : (
           <>
             <ComicGrid comics={comics} />

@@ -138,7 +138,7 @@ export default function AnimeDetailPage() {
   if (!anime) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-pearl mb-4">Anime tidak ditemukan</h2>
+        <h2 className="text-2xl font-bold text-pearl mb-4">Waduh, anime-nya nggak ketemu</h2>
         <button
           onClick={() => router.back()}
           className="btn-primary"
@@ -352,7 +352,7 @@ export default function AnimeDetailPage() {
           <div className="md:col-span-2 card p-6">
             <h2 className="section-title">Sinopsis</h2>
             <p className="text-pearl/80 leading-relaxed whitespace-pre-line">
-              {anime.description || 'Tidak ada sinopsis tersedia.'}
+              {anime.description || 'Sinopsisnya belum ada, nih.'}
             </p>
           </div>
 
