@@ -19,8 +19,11 @@ import {
   Menu,
   X,
   Heart,
-  ChevronDown
+  ChevronDown,
+  LogOut,
+  LogIn
 } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface NavItem {
   icon: ReactNode
@@ -37,9 +40,21 @@ interface NavGroup {
 
 export default function Sidebar() {
   const router = useRouter()
+  const { user, loading: authLoading, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [isDark, setIsDark] = useState(true)
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set())
+  const [loggingOut, setLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    try {
+      await logout()
+      router.push('/')
+    } finally {
+      setLoggingOut(false)
+    }
+  }
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark')
@@ -233,6 +248,53 @@ export default function Sidebar() {
 
         {/* Footer Actions */}
         <div className="p-4 border-t border-pearl/10 shrink-0 space-y-3">
+          {/* Account */}
+          {authLoading ? (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-pearl/5 animate-pulse">
+              <div className="w-9 h-9 rounded-full bg-pearl/10 shrink-0" />
+              <div className="h-3 w-24 rounded bg-pearl/10" />
+            </div>
+          ) : user ? (
+            <div className="rounded-xl bg-pearl/5 border border-transparent overflow-hidden">
+              <Link
+                href="/profile"
+                className="flex items-center gap-3 px-4 py-3 hover:bg-pearl/10 transition-colors"
+              >
+                <div className="w-9 h-9 rounded-full bg-primary shrink-0 flex items-center justify-center overflow-hidden">
+                  {user.photoURL ? (
+                    <img src={user.photoURL} alt={user.displayName || 'Avatar'} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-sm font-bold text-white">
+                      {(user.displayName || user.email || '?')[0].toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="text-sm font-semibold text-text-light dark:text-text-dark truncate">
+                    {user.displayName || 'KiraFan'}
+                  </p>
+                  <p className="text-xs text-text-light/50 dark:text-text-dark/50 truncate">Lihat profil</p>
+                </div>
+              </Link>
+              <button
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors border-t border-pearl/10 disabled:opacity-50"
+              >
+                <LogOut size={16} />
+                {loggingOut ? 'Logging out...' : 'Logout'}
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary transition-colors font-medium border border-primary/20"
+            >
+              <LogIn size={20} />
+              Login / Register
+            </Link>
+          )}
+
           <button
             onClick={toggleTheme}
             className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-pearl/5 hover:bg-pearl/10 text-text-light dark:text-text-dark transition-colors font-medium border border-transparent hover:border-pearl/10"
