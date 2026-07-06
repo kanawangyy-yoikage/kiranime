@@ -15,6 +15,9 @@ import {
   updateProfile,
   updateEmail,
   updatePassword,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  ConfirmationResult,
 } from 'firebase/auth'
 import {
   getFirestore,
@@ -108,6 +111,54 @@ export async function resetPassword(email: string) {
   try {
     await sendPasswordResetEmail(auth, email)
     return { success: true }
+  } catch (error) {
+    return { success: false, error }
+  }
+}
+
+// ─── PHONE NUMBER LOGIN (OTP) ────────────────────────────────
+// Butuh Firebase Auth > Sign-in method > "Phone" diaktifkan dulu di Console.
+// Catatan: verifikasi nomor HP via SMS ini pakai kuota Firebase yang diatur
+// oleh Google — cek limit gratis harian di Firebase Console sebelum rilis publik.
+
+let recaptchaVerifier: RecaptchaVerifier | null = null
+
+// Dipanggil sekali dari halaman login untuk menyiapkan invisible reCAPTCHA.
+// containerId harus mengarah ke <div> kosong yang ada di DOM.
+export function initRecaptcha(containerId: string) {
+  if (typeof window === 'undefined') return null
+  if (!recaptchaVerifier) {
+    recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
+      size: 'invisible',
+    })
+  }
+  return recaptchaVerifier
+}
+
+export function resetRecaptcha() {
+  recaptchaVerifier?.clear()
+  recaptchaVerifier = null
+}
+
+// phoneNumber harus format E.164, contoh: +6281234567890
+export async function sendPhoneOtp(phoneNumber: string, containerId: string) {
+  try {
+    const verifier = initRecaptcha(containerId)
+    if (!verifier) throw new Error('Recaptcha tidak tersedia')
+    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, verifier)
+    return { success: true, confirmationResult }
+  } catch (error) {
+    // Reset verifier biar widget reCAPTCHA nggak nyangkut di state error
+    resetRecaptcha()
+    return { success: false, error }
+  }
+}
+
+export async function confirmPhoneOtp(confirmationResult: ConfirmationResult, code: string) {
+  try {
+    const result = await confirmationResult.confirm(code)
+    await syncUserToFirestore(result.user)
+    return { success: true, user: result.user }
   } catch (error) {
     return { success: false, error }
   }
