@@ -21,7 +21,9 @@ import {
   Heart,
   ChevronDown,
   LogOut,
-  LogIn
+  LogIn,
+  Sparkles,
+  TrendingUp
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -94,6 +96,12 @@ export default function Sidebar() {
       icon: <BookOpen size={20} />,
       items: [
         { icon: <BookOpen size={16} />, label: 'Semua Komik', href: '/manga' },
+        { icon: <Flame size={16} />, label: 'Populer', href: '/manga?tab=popular' },
+        { icon: <Sparkles size={16} />, label: 'Terbaru', href: '/manga?tab=latest' },
+        { icon: <TrendingUp size={16} />, label: 'Trending', href: '/manga?tab=trending' },
+        { icon: <BookOpen size={16} />, label: 'Manga', href: '/manga?type=manga' },
+        { icon: <BookOpen size={16} />, label: 'Manhwa', href: '/manga?type=manhwa' },
+        { icon: <BookOpen size={16} />, label: 'Manhua', href: '/manga?type=manhua' },
       ],
     },
     {
@@ -222,7 +230,7 @@ export default function Sidebar() {
                 {isGroupOpen && (
                   <div className="mt-1 ml-4 pl-3 border-l border-pearl/10 space-y-0.5">
                     {group.items.map((item) => {
-                      const isActive = router.pathname === item.href
+                      const isActive = item.href.includes('?') ? router.asPath === item.href : router.pathname === item.href
                       return (
                         <Link
                           key={item.href}
