@@ -38,7 +38,7 @@ export default function MangaGenrePage() {
         <div className="card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">
-              <Tags size={22} className="text-ocean" /> Genre: {slug.replace(/-/g, ' ')}
+              <Tags size={22} className="text-ocean" aria-hidden="true" /> Genre: {slug.replace(/-/g, ' ')}
             </h1>
             <p className="mt-1 text-sm text-[var(--color-text-muted)]">Kumpulan komik dengan genre ini.</p>
           </div>
@@ -56,7 +56,7 @@ export default function MangaGenrePage() {
             <ComicGrid comics={comics} />
             <div className="text-center">
               <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-primary">
-                {loading ? 'Loading...' : 'Muat Lebih Banyak'}
+                {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
               </button>
             </div>
           </>

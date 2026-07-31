@@ -276,7 +276,7 @@ export default function LoginPage() {
                       disabled={loading}
                       className="w-full btn-primary disabled:opacity-50"
                     >
-                      {loading ? 'Loading...' : mode === 'login' ? 'Login' : 'Register'}
+                      {loading ? 'Loading\u2026' : mode === 'login' ? 'Login' : 'Register'}
                     </button>
                   </form>
 
@@ -321,7 +321,7 @@ export default function LoginPage() {
                         disabled={loading || !phoneNumber.trim()}
                         className="w-full btn-primary disabled:opacity-50"
                       >
-                        {loading ? 'Mengirim OTP...' : 'Kirim Kode OTP'}
+                        {loading ? 'Mengirim OTP\u2026' : 'Kirim Kode OTP'}
                       </button>
                     </form>
                   ) : (
@@ -350,7 +350,7 @@ export default function LoginPage() {
                         disabled={loading || otpCode.length < 6}
                         className="w-full btn-primary disabled:opacity-50"
                       >
-                        {loading ? 'Verifikasi...' : 'Verifikasi & Login'}
+                        {loading ? 'Verifikasi\u2026' : 'Verifikasi & Login'}
                       </button>
 
                       <button

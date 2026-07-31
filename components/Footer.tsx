@@ -79,7 +79,7 @@ export default function Footer() {
                   href="mailto:kira@kirastream.example"
                   className="flex items-center gap-2.5 hover:text-primary dark:hover:text-accent transition-colors"
                 >
-                  <Mail size={16} /> kira@kirastream.example
+                  <Mail size={16} aria-hidden="true" /> kira@kirastream.example
                 </a>
               </li>
               <li>
@@ -88,7 +88,7 @@ export default function Footer() {
                   onClick={(e) => e.preventDefault()}
                   className="flex items-center gap-2.5 hover:text-primary dark:hover:text-accent transition-colors"
                 >
-                  <MessageCircle size={16} /> Komunitas Discord
+                  <MessageCircle size={16} aria-hidden="true" /> Komunitas Discord
                 </a>
               </li>
             </ul>
@@ -107,9 +107,9 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-light/40 dark:text-text-dark/40">
-          <p>v1.1.0 &copy; 2026 KiraStream. All rights reserved.</p>
+          <p>&copy; 2026 KiraStream. All rights reserved.</p>
           <p className="inline-flex items-center gap-1">
-            Made with <Heart size={12} className="fill-red-400 text-red-400" /> by Kira, matchadesu_
+            Made with <Heart size={12} className="fill-red-400 text-red-400" aria-hidden="true" /> by Kira, matchadesu_
           </p>
         </div>
       </div>

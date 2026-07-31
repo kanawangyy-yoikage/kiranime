@@ -41,7 +41,7 @@ export default function WebtoonReader() {
       {loading ? (
         <div className="text-center py-20">
           <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-pearl">Membuka episode...</p>
+          <p className="text-pearl">Membuka episode\u2026</p>
         </div>
       ) : error || images.length === 0 ? (
         <div className="text-center py-20 card p-6">

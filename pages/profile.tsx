@@ -106,7 +106,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[var(--color-text-muted)]">Loading...</p>
+          <p className="text-[var(--color-text-muted)]">Loading\u2026</p>
         </div>
       </div>
     )
@@ -202,7 +202,7 @@ export default function ProfilePage() {
                       value={editBio}
                       onChange={(e) => setEditBio(e.target.value)}
                       className="input-field text-sm"
-                      placeholder="Bio singkat..."
+                      placeholder="Bio singkat\u2026"
                       rows={2}
                     />
                     <div className="flex gap-2">
@@ -211,7 +211,7 @@ export default function ProfilePage() {
                         disabled={saving}
                         className="btn-primary text-sm"
                       >
-                        {saving ? 'Saving...' : 'Save'}
+                        {saving ? 'Saving\u2026' : 'Save'}
                       </button>
                       <button
                         onClick={() => setEditMode(false)}
@@ -234,7 +234,7 @@ export default function ProfilePage() {
                       onClick={() => setEditMode(true)}
                       className="mt-2 text-sm text-ocean hover:text-oceanAccent-secondary transition-colors inline-flex items-center gap-1.5"
                     >
-                      <Pencil size={14} /> Edit Profil
+                      <Pencil size={14} aria-hidden="true" /> Edit Profil
                     </button>
                   </>
                 )}

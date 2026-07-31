@@ -25,7 +25,7 @@ export default function CategorySearchBar({ type, placeholder, className }: Cate
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={placeholder || 'Cari judul...'}
+        placeholder={placeholder || 'Cari judul\u2026'}
         className="input-field py-2.5 pr-11 text-sm"
       />
       <button
@@ -33,7 +33,7 @@ export default function CategorySearchBar({ type, placeholder, className }: Cate
         className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-ocean hover:bg-oceanAccent-secondary rounded-full transition-colors"
         aria-label="Cari"
       >
-        <Search size={14} className="text-white" />
+        <Search size={14} className="text-white" aria-hidden="true" />
       </button>
     </form>
   )

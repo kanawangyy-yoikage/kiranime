@@ -129,7 +129,7 @@ export default function AnimeDetailPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-pearl">Loading anime...</p>
+          <p className="text-pearl">Loading anime\u2026</p>
         </div>
       </div>
     )
@@ -384,7 +384,7 @@ export default function AnimeDetailPage() {
                 <button
                   key={episode.slug}
                   onClick={() => handlePlayEpisode(episode.slug)}
-                  className={`p-3 rounded-lg font-medium transition-all ${
+                  className={`p-3 rounded-lg font-medium transition ${
                     playingEpisode === episode.slug
                       ? 'bg-ocean text-white'
                       : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'

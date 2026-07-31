@@ -28,10 +28,10 @@ export default function OngoingPage() {
         <div className="flex-1 min-w-0 space-y-6">
         <div className="card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="section-title flex items-center gap-2"><PlayCircle size={22} className="text-ocean" /> Sedang Tayang</h1>
+            <h1 className="section-title flex items-center gap-2"><PlayCircle size={22} className="text-ocean" aria-hidden="true" /> Sedang Tayang</h1>
             <p className="text-pearl/60">Anime yang sedang tayang sekarang.</p>
           </div>
-          <CategorySearchBar type="anime" placeholder="Cari anime..." />
+          <CategorySearchBar type="anime" placeholder="Cari anime\u2026" />
         </div>
         {loading && page === 1 ? (
           <div className="text-center py-12"><div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto" /></div>
@@ -41,7 +41,7 @@ export default function OngoingPage() {
             {animes.length > 0 && (
               <div className="text-center">
                 <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-primary">
-                  {loading ? 'Loading...' : 'Muat Lebih Banyak'}
+                  {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
                 </button>
               </div>
             )}

@@ -27,14 +27,14 @@ export default function NovelReaderPage() {
         setError(true)
       })
       .finally(() => setLoading(false))
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
   }, [slug])
 
   if (loading) {
     return (
       <div className="text-center py-20">
         <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-pearl">Membuka chapter...</p>
+        <p className="text-pearl">Membuka chapter\u2026</p>
       </div>
     )
   }

@@ -24,7 +24,7 @@ export default function NovelListPage() {
       if (cancelled) return
       setNovels(data)
       setLoading(false)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
 
       const enriched = await enrichNovelCovers(data)
       if (!cancelled) setNovels(enriched)
@@ -43,24 +43,24 @@ export default function NovelListPage() {
       <div className="space-y-6">
         <div className="card px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="section-title flex items-center gap-2"><BookMarked size={22} className="text-ocean" /> Novel</h1>
+            <h1 className="section-title flex items-center gap-2"><BookMarked size={22} className="text-ocean" aria-hidden="true" /> Novel</h1>
             <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca novel favorit kamu.</p>
           </div>
-          <CategorySearchBar type="novel" placeholder="Cari novel..." />
+          <CategorySearchBar type="novel" placeholder="Cari novel\u2026" />
         </div>
 
         {/* Quick Menu */}
         {quickMenu.length > 0 && (
           <div className="card p-4">
             <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-              <LayoutGrid size={16} className="text-ocean" /> Quick Menu
+              <LayoutGrid size={16} className="text-ocean" aria-hidden="true" /> Quick Menu
             </h3>
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
               <Link
                 href="/novel"
                 className="flex flex-col items-center gap-1.5 rounded-xl border border-primary bg-primary/10 px-2 py-3 text-center text-xs font-semibold text-primary dark:border-accent dark:bg-accent/15 dark:text-accent"
               >
-                <BookOpen size={18} className="text-ocean" />
+                <BookOpen size={18} className="text-ocean" aria-hidden="true" />
                 Semua Novel
               </Link>
               {quickMenu.map(({ label, href }) => (
@@ -109,14 +109,14 @@ export default function NovelListPage() {
                 disabled={page <= 1}
                 className="btn-secondary inline-flex items-center gap-1 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <ChevronLeft size={16} /> Sebelumnya
+                <ChevronLeft size={16} aria-hidden="true" /> Sebelumnya
               </button>
               <span className="text-sm text-pearl/70">Halaman {page}</span>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 className="btn-secondary inline-flex items-center gap-1 text-sm"
               >
-                Selanjutnya <ChevronRight size={16} />
+                Selanjutnya <ChevronRight size={16} aria-hidden="true" />
               </button>
             </div>
           </>

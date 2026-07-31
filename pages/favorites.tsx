@@ -39,7 +39,7 @@ export default function FavoritesPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[var(--color-text-muted)]">Loading...</p>
+          <p className="text-[var(--color-text-muted)]">Loading\u2026</p>
         </div>
       </div>
     )
@@ -53,7 +53,7 @@ export default function FavoritesPage() {
 
       <div className="space-y-6">
         <div className="card p-6">
-          <h1 className="section-title flex items-center gap-2"><Heart size={22} className="fill-red-400 text-red-400" /> Anime Favorit</h1>
+          <h1 className="section-title flex items-center gap-2"><Heart size={22} className="fill-red-400 text-red-400" aria-hidden="true" /> Anime Favorit</h1>
           <p className="text-[var(--color-text-muted)]">
             {favorites.length} anime dalam daftar favorit
           </p>
@@ -63,7 +63,7 @@ export default function FavoritesPage() {
           <AnimeGrid animes={favorites} />
         ) : (
           <div className="text-center py-12 card p-6">
-            <HeartCrack className="mx-auto mb-4 text-[var(--color-text-muted)]" size={40} />
+            <HeartCrack className="mx-auto mb-4 text-[var(--color-text-muted)]" size={40} aria-hidden="true" />
             <h2 className="text-xl font-bold text-[var(--color-text)] mb-2">Belum ada favorit</h2>
             <p className="text-[var(--color-text-muted)] mb-4">Tambahkan anime ke favorit untuk melihatnya di sini</p>
             <button

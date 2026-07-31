@@ -65,17 +65,17 @@ export default function WebtoonPage() {
         <div className="card px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">
-              <ScrollText size={22} className="text-ocean" /> Webtoon
+              <ScrollText size={22} className="text-ocean" aria-hidden="true" /> Webtoon
             </h1>
             <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca webtoon favorit kamu.</p>
           </div>
-          <CategorySearchBar type="webtoon" placeholder="Cari webtoon..." />
+          <CategorySearchBar type="webtoon" placeholder="Cari webtoon\u2026" />
         </div>
 
         {/* Quick Menu */}
         <div className="card p-4">
           <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2 text-[var(--color-text)]">
-            <CalendarDays size={16} className="text-ocean" /> Jadwal Harian
+            <CalendarDays size={16} className="text-ocean" aria-hidden="true" /> Jadwal Harian
           </h3>
           <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-9">
             {QUICK_MENU.map(({ label, key, href, icon: Icon }) => {
@@ -90,7 +90,7 @@ export default function WebtoonPage() {
                       : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
                   }`}
                 >
-                  <Icon size={18} className="text-ocean" />
+                  <Icon size={18} className="text-ocean" aria-hidden="true" />
                   {label}
                 </Link>
               )
@@ -115,7 +115,7 @@ export default function WebtoonPage() {
                     <Image src={imageProxy(item.thumbnail)} alt={item.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-[var(--color-text-muted)]">
-                      <ImageOff size={24} />
+                      <ImageOff size={24} aria-hidden="true" />
                     </div>
                   )}
                 </div>

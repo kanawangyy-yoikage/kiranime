@@ -83,24 +83,24 @@ export default function Home() {
         <section className="hero-panel relative overflow-hidden rounded-3xl border px-6 py-12 md:px-10 md:py-16">
           <div className="relative z-10 flex flex-col items-center text-center">
             <p className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-ocean/30 bg-ocean/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.2em] text-ocean">
-              <Sparkles size={13} /> Midnight · Pearl · Ocean
+              <Sparkles size={13} aria-hidden="true" /> Midnight Pearl Ocean
             </p>
 
             <h1 className="text-4xl font-black tracking-tight md:text-6xl gradient-text">KiraStream</h1>
 
             <p className="mt-4 max-w-2xl text-sm leading-7 md:text-base" style={textStyle(true)}>
-              Streaming anime subtitle Indonesia, baca manga, manhwa, manhua, webtoon, dan novel — cepat, bersih, dan nyaman di desktop maupun mobile.
+              Streaming anime subtitle Indonesia, baca manga, manhwa, manhua, webtoon, dan novel. Cepat, bersih, dan nyaman di desktop maupun mobile.
             </p>
 
             {/* Search */}
             <form onSubmit={handleSearch} className="mt-8 w-full max-w-xl">
               <div className="relative">
-                <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light/40 dark:text-text-dark/40" />
+                <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light/40 dark:text-text-dark/40" aria-hidden="true" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari anime, komik, webtoon, novel..."
+                  placeholder="Cari anime, komik, webtoon, novel\u2026"
                   className="input-field w-full py-3.5 pl-12 pr-28 text-sm"
                 />
                 <button type="submit" className="btn-primary absolute right-1.5 top-1/2 -translate-y-1/2 px-4 py-2 text-xs">
@@ -117,7 +117,7 @@ export default function Home() {
                   href={href}
                   className="group card flex flex-col items-center gap-2 p-4 text-center hover:-translate-y-1"
                 >
-                  <Icon size={24} className="text-ocean transition-transform group-hover:scale-110" />
+                  <Icon size={24} className="text-ocean transition-transform group-hover:scale-110" aria-hidden="true" />
                   <div>
                     <p className="font-bold text-sm" style={textStyle()}>{label}</p>
                     <p className="text-xs mt-0.5" style={textStyle(true)}>{desc}</p>

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState, FormEvent, ReactNode } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import {
   Search,
   Moon,
@@ -83,6 +83,7 @@ export default function TopNavbar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [openGroup, setOpenGroup] = useState<string | null>(null)
   const [loggingOut, setLoggingOut] = useState(false)
+  const reduceMotion = useReducedMotion()
   const navRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -166,7 +167,7 @@ export default function TopNavbar() {
                 router.pathname === '/' ? 'text-primary dark:text-accent' : 'text-text-light/70 dark:text-text-dark/70 hover:text-primary dark:hover:text-accent'
               }`}
             >
-              <Home size={16} /> Beranda
+              <Home size={16} aria-hidden="true" /> Beranda
             </Link>
 
             {DROPDOWN_GROUPS.map((group) => {
@@ -181,7 +182,7 @@ export default function TopNavbar() {
                     }`}
                   >
                     {group.label}
-                    <ChevronDown size={14} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={14} aria-hidden="true" className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
                   </button>
 
                   <AnimatePresence>
@@ -190,7 +191,7 @@ export default function TopNavbar() {
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 8 }}
-                        transition={{ duration: 0.15 }}
+                        transition={reduceMotion ? { duration: 0 } : { duration: 0.15 }}
                         className="absolute top-full left-0 mt-2 w-56 rounded-2xl border border-pearl/10 bg-surface dark:bg-surface-dark shadow-xl overflow-hidden"
                       >
                         <div className="py-2 px-2 space-y-0.5">
@@ -236,7 +237,7 @@ export default function TopNavbar() {
               className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors"
               aria-label="Cari"
             >
-              <Search size={20} />
+              <Search size={20} aria-hidden="true" />
             </button>
 
             <button
@@ -244,7 +245,7 @@ export default function TopNavbar() {
               className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors"
               aria-label="Ganti tema"
             >
-              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+              {isDark ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
             </button>
 
             {authLoading ? (
@@ -267,7 +268,7 @@ export default function TopNavbar() {
                 href="/login"
                 className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold bg-primary dark:bg-accent text-pearl dark:text-noir hover:opacity-90 transition-opacity"
               >
-                <LogIn size={16} /> Login
+                <LogIn size={16} aria-hidden="true" /> Login
               </Link>
             )}
           </div>
@@ -281,21 +282,20 @@ export default function TopNavbar() {
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.15 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.15 }}
             className="mx-auto max-w-[1600px] px-4 md:px-6 lg:px-8 pt-2"
           >
             <form
               onSubmit={handleSearch}
               className="rounded-2xl border border-pearl/10 bg-surface dark:bg-surface-dark shadow-xl p-3 flex items-center gap-2"
             >
-              <Search size={20} className="shrink-0 text-text-light/40 dark:text-text-dark/40" />
+              <Search size={20} className="shrink-0 text-text-light/40 dark:text-text-dark/40" aria-hidden="true" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari anime, komik, webtoon, novel..."
+                placeholder="Cari anime, komik, webtoon, novel\u2026"
                 className="flex-1 bg-transparent outline-none text-sm text-text-light dark:text-text-dark placeholder:text-text-light/40 dark:placeholder:text-text-dark/40"
-                autoFocus
               />
               <button type="submit" className="btn-primary text-xs shrink-0">
                 Cari
@@ -313,6 +313,7 @@ export default function TopNavbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={reduceMotion ? { duration: 0 } : undefined}
               className="fixed inset-0 bg-noir/50 backdrop-blur-sm lg:hidden"
               onClick={() => setDrawerOpen(false)}
             />
@@ -320,7 +321,7 @@ export default function TopNavbar() {
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 260 }}
+              transition={reduceMotion ? { duration: 0 } : { type: 'spring', damping: 28, stiffness: 260 }}
               className="fixed top-16 bottom-0 left-0 w-72 bg-surface dark:bg-surface-dark z-50 lg:hidden overflow-y-auto custom-scrollbar border-r border-pearl/10 shadow-xl"
             >
               <nav className="p-4 space-y-1">
@@ -332,7 +333,7 @@ export default function TopNavbar() {
                       : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
                   }`}
                 >
-                  <Home size={18} /> Beranda
+                  <Home size={18} aria-hidden="true" /> Beranda
                 </Link>
 
                 {DROPDOWN_GROUPS.map((group) => {
@@ -352,7 +353,7 @@ export default function TopNavbar() {
                           {group.icon}
                           {group.label}
                         </span>
-                        <ChevronDown size={16} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={16} aria-hidden="true" className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
                       </button>
                       <AnimatePresence initial={false}>
                         {isOpen && (
@@ -360,7 +361,7 @@ export default function TopNavbar() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
+                            transition={reduceMotion ? { duration: 0 } : { duration: 0.2 }}
                             className="overflow-hidden"
                           >
                             <div className="mt-1 ml-4 pl-3 border-l border-pearl/10 space-y-0.5">
@@ -429,8 +430,8 @@ export default function TopNavbar() {
                         disabled={loggingOut}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
                       >
-                        <LogOut size={18} />
-                        {loggingOut ? 'Logging out...' : 'Logout'}
+                        <LogOut size={18} aria-hidden="true" />
+                        {loggingOut ? 'Logging out\u2026' : 'Logout'}
                       </button>
                     </>
                   ) : (
@@ -438,7 +439,7 @@ export default function TopNavbar() {
                       href="/login"
                       className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary dark:text-accent font-medium border border-primary/20"
                     >
-                      <LogIn size={18} />
+                      <LogIn size={18} aria-hidden="true" />
                       Login / Register
                     </Link>
                   )}

@@ -34,7 +34,7 @@ export default function NovelDetailPage() {
     return (
       <div className="text-center py-20">
         <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-pearl">Mengambil detail novel...</p>
+        <p className="text-pearl">Mengambil detail novel\u2026</p>
       </div>
     )
   }

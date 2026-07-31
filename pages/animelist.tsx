@@ -42,7 +42,7 @@ export default function AnimeListPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
               <h1 className="section-title flex items-center gap-2">
-                <ListOrdered size={22} className="text-ocean" /> Anime A-Z
+                <ListOrdered size={22} className="text-ocean" aria-hidden="true" /> Anime A-Z
               </h1>
               <p className="mt-1 text-sm text-[var(--color-text-muted)]">
                 Kumpulan anime berdasarkan huruf <span className="font-bold text-primary dark:text-accent">{letter.toUpperCase()}</span>
@@ -68,7 +68,7 @@ export default function AnimeListPage() {
             {animes.length > 0 && (
               <div className="text-center">
                 <button onClick={() => setPage((p) => p + 1)} disabled={loading} className="btn-primary">
-                  {loading ? 'Loading...' : 'Muat Lebih Banyak'}
+                  {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
                 </button>
               </div>
             )}

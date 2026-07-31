@@ -98,17 +98,17 @@ export default function MangaListPage() {
         <div className="card px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">
-              <ActiveIcon size={22} className="text-ocean" /> {activeLabel}
+              <ActiveIcon size={22} className="text-ocean" aria-hidden="true" /> {activeLabel}
             </h1>
             <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca manga, manhwa, & manhua favorit kamu.</p>
           </div>
-          <CategorySearchBar type="manga" placeholder="Cari manga..." />
+          <CategorySearchBar type="manga" placeholder="Cari manga\u2026" />
         </div>
 
         {/* Quick Menu */}
         <div className="card p-4">
           <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-            <LayoutGrid size={16} className="text-ocean" /> Quick Menu
+            <LayoutGrid size={16} className="text-ocean" aria-hidden="true" /> Quick Menu
           </h3>
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-7">
             {QUICK_MENU.map(({ label, href, icon: Icon }) => {
@@ -125,7 +125,7 @@ export default function MangaListPage() {
                       : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
                   }`}
                 >
-                  <Icon size={18} className="text-ocean" />
+                  <Icon size={18} className="text-ocean" aria-hidden="true" />
                   {label}
                 </Link>
               )
@@ -137,7 +137,7 @@ export default function MangaListPage() {
         {genres.length > 0 && (
           <div className="card p-4">
             <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-              <Sparkles size={16} className="text-ocean" /> Genre
+              <Sparkles size={16} className="text-ocean" aria-hidden="true" /> Genre
             </h3>
             <div className="flex flex-wrap gap-2">
               {genres.slice(0, 18).map((g) => (
@@ -164,7 +164,7 @@ export default function MangaListPage() {
             <ComicGrid comics={comics} />
             <div className="text-center">
               <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-primary">
-                {loading ? 'Loading...' : 'Muat Lebih Banyak'}
+                {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
               </button>
             </div>
           </>

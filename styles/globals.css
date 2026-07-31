@@ -5,6 +5,8 @@
 @import './components.css';
 
 :root {
+  color-scheme: light;
+
   /* Light Mode - Pearl Perfect theme */
   --color-bg: #FBF9E4;
   --color-surface: #FFFFFF;
@@ -24,6 +26,8 @@
 }
 
 html.dark {
+  color-scheme: dark;
+
   /* Dark Mode - Noir + Ocean theme */
   --color-bg: #000000;
   --color-surface: #122C4F;
@@ -79,7 +83,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-accent) transparent; 
 /* ─── COMPONENT CLASSES ─────────────────────────────────────── */
 @layer components {
   .card {
-    @apply rounded-2xl border overflow-hidden transition-all duration-200;
+    @apply rounded-2xl border overflow-hidden transition duration-200;
     background: var(--color-surface);
     border-color: var(--color-border);
   }
@@ -101,7 +105,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-accent) transparent; 
   }
 
   .btn-primary {
-    @apply px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 active:scale-95;
+    @apply px-5 py-2.5 rounded-xl font-semibold text-sm transition duration-200 active:scale-95;
     background: var(--color-primary);
     color: var(--color-pearl);
   }
@@ -112,7 +116,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-accent) transparent; 
   }
 
   .btn-secondary {
-    @apply px-5 py-2.5 rounded-xl font-semibold text-sm border transition-all duration-200 active:scale-95;
+    @apply px-5 py-2.5 rounded-xl font-semibold text-sm border transition duration-200 active:scale-95;
     background: transparent;
     border-color: var(--color-border);
     color: var(--color-text);
@@ -122,7 +126,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-accent) transparent; 
   }
 
   .input-field {
-    @apply flex-1 px-4 py-2.5 rounded-xl text-sm outline-none transition-all duration-200;
+    @apply flex-1 px-4 py-2.5 rounded-xl text-sm outline-none transition duration-200;
     background: var(--color-surface-alt);
     border: 1.5px solid var(--color-border);
     color: var(--color-text);
@@ -155,7 +159,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-accent) transparent; 
   }
 
   .anime-card {
-    @apply block overflow-hidden rounded-xl border transition-all duration-200;
+    @apply block overflow-hidden rounded-xl border transition duration-200;
     background: var(--color-surface);
     border-color: var(--color-border);
   }
@@ -214,6 +218,16 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-accent) transparent; 
 
 /* ─── SPRING EASING ─────────────────────────────────────────── */
 .ease-spring { transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* ─── REDUCED MOTION ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 /* ─── GRADIENT TEXT ─────────────────────────────────────────── */
 .gradient-text {

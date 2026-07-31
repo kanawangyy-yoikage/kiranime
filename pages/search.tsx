@@ -19,10 +19,10 @@ interface WebtoonResult {
 }
 
 const TABS: { key: SearchType; label: string; icon: typeof PlayCircle; placeholder: string }[] = [
-  { key: 'anime', label: 'Anime', icon: PlayCircle, placeholder: 'Cari anime berdasarkan judul...' },
-  { key: 'manga', label: 'Manga', icon: BookOpen, placeholder: 'Cari manga berdasarkan judul...' },
-  { key: 'webtoon', label: 'Webtoon', icon: ScrollText, placeholder: 'Cari webtoon berdasarkan judul...' },
-  { key: 'novel', label: 'Novel', icon: BookMarked, placeholder: 'Cari novel berdasarkan judul...' },
+  { key: 'anime', label: 'Anime', icon: PlayCircle, placeholder: 'Cari anime berdasarkan judul\u2026' },
+  { key: 'manga', label: 'Manga', icon: BookOpen, placeholder: 'Cari manga berdasarkan judul\u2026' },
+  { key: 'webtoon', label: 'Webtoon', icon: ScrollText, placeholder: 'Cari webtoon berdasarkan judul\u2026' },
+  { key: 'novel', label: 'Novel', icon: BookMarked, placeholder: 'Cari novel berdasarkan judul\u2026' },
 ]
 
 export default function SearchPage() {
@@ -115,14 +115,13 @@ export default function SearchPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={currentTab.placeholder}
               className="input-field pr-12"
-              autoFocus
             />
             <button
               type="submit"
               className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-ocean hover:bg-oceanAccent-secondary rounded-lg transition-colors"
               aria-label="Cari"
             >
-              <Search size={18} className="text-pearl" />
+              <Search size={18} className="text-pearl" aria-hidden="true" />
             </button>
           </form>
 
@@ -138,7 +137,7 @@ export default function SearchPage() {
                     : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
                 }`}
               >
-                <Icon size={16} />
+                <Icon size={16} aria-hidden="true" />
                 {label}
               </button>
             ))}
@@ -149,7 +148,7 @@ export default function SearchPage() {
         {loading && (
           <div className="text-center py-12">
             <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-[var(--color-text-muted)]">Mencari {currentTab.label.toLowerCase()}...</p>
+            <p className="text-[var(--color-text-muted)]">Mencari {currentTab.label.toLowerCase()}\u2026</p>
           </div>
         )}
 
@@ -231,7 +230,7 @@ export default function SearchPage() {
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute top-2 right-2 bg-yellow-500/90 text-noir text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
-                          <Star size={12} className="fill-noir" /> {anime.score?.toFixed(1) || 'N/A'}
+                          <Star size={12} className="fill-noir" aria-hidden="true" /> {anime.score?.toFixed(1) || 'N/A'}
                         </div>
                       </div>
                       <div className="p-3">

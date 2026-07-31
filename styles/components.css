@@ -13,7 +13,7 @@
   border-radius: 0.75rem;
   border: 1px solid var(--color-border);
   background-color: var(--color-surface);
-  transition: all 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
 .anime-card:hover {
@@ -93,7 +93,7 @@
   color: var(--color-pearl);
   font-weight: 600;
   font-size: 0.875rem;
-  transition: all 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
 }
 
 .btn-primary:hover {
@@ -115,7 +115,7 @@
   color: var(--color-text);
   font-weight: 600;
   font-size: 0.875rem;
-  transition: all 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
 }
 
 .btn-secondary:hover {
