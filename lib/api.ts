@@ -337,6 +337,7 @@ export interface Comic {
   slug: string
   image: string
   chapter?: string
+  genres?: string[]
   score?: string
   type?: string
   status?: string
@@ -366,7 +367,17 @@ export interface ChapterPages {
   pages: string[]
 }
 
-// ─── COMIC / MANGA API FUNCTIONS ─────────────────────────────
+export interface ChapterNav {
+  prevSlug?: string
+  nextSlug?: string
+}
+
+export interface ComicGenre {
+  name: string
+  slug: string
+}
+
+// ─── COMIC / MANGA API FUNCTIONS (animasu-api / Komiku.org) ──
 
 const comicClient: AxiosInstance = axios.create({
   baseURL: 'https://www.sankavollerei.web.id',
@@ -390,10 +401,19 @@ function extractComics(raw: any): Comic[] {
     slug: item.slug || cleanSlug(item.link || item.href || item.url || ''),
     image: item.poster || item.image || item.thumbnail || item.cover || '',
     chapter: item.chapter || item.latestChapter || '',
+    genres: (item.genres || item.genreList || []).map((g: any) => (typeof g === 'object' ? g.name || '' : g)).filter(Boolean),
     score: item.score || item.rating || '',
     type: item.type || 'Manga',
     status: item.status || '',
   }))
+}
+
+function extractGenres(raw: any): ComicGenre[] {
+  const arr = raw?.genres || raw?.genreList || raw?.data?.genres || raw?.data || (Array.isArray(raw) ? raw : [])
+  if (!Array.isArray(arr)) return []
+  return arr
+    .map((g: any) => (typeof g === 'string' ? { name: g, slug: cleanSlug(g) } : { name: g.name || g.title || '', slug: g.slug || cleanSlug(g.href || g.url || g.name || '') }))
+    .filter((g: ComicGenre) => g.name)
 }
 
 export async function fetchComicLatest(page = 1): Promise<Comic[]> {
@@ -410,9 +430,77 @@ export async function fetchComicPopular(page = 1): Promise<Comic[]> {
   } catch { return [] }
 }
 
+export async function fetchComicTrending(page = 1): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_TRENDING(page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
 export async function fetchComicAll(page = 1): Promise<Comic[]> {
   try {
     const { data } = await comicClient.get(ENDPOINTS.COMIC_UNLIMITED(page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+// Filter by type: 'manga' | 'manhwa' | 'manhua'
+export async function fetchComicByType(type: string, page = 1): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_TYPE(type, page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+export async function fetchComicGenres(): Promise<ComicGenre[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_GENRES)
+    return extractGenres(data)
+  } catch { return [] }
+}
+
+export async function fetchComicByGenre(genreSlug: string, page = 1): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_GENRE(genreSlug, page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+export async function fetchComicHomepage(): Promise<{ popular: Comic[]; latest: Comic[]; trending: Comic[] }> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_HOMEPAGE)
+    const d = data.data || data
+    return {
+      popular: extractComics(d.popular || d.populer || []),
+      latest: extractComics(d.latest || d.terbaru || []),
+      trending: extractComics(d.trending || []),
+    }
+  } catch { return { popular: [], latest: [], trending: [] } }
+}
+
+export async function fetchComicRandom(): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_RANDOM)
+    return extractComics(data)
+  } catch { return [] }
+}
+
+export async function fetchComicRecommendations(page = 1): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_RECOMMENDATIONS(page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+// Browse dengan kombinasi filter: type, order (latest/popular/title), genre
+export async function fetchComicBrowse(filters: { type?: string; order?: string; genre?: string; page?: number }): Promise<Comic[]> {
+  try {
+    const params: Record<string, string> = {}
+    if (filters.type) params.type = filters.type
+    if (filters.order) params.order = filters.order
+    if (filters.genre) params.genre = filters.genre
+    if (filters.page) params.page = String(filters.page)
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_BROWSE(params))
     return extractComics(data)
   } catch { return [] }
 }
@@ -467,6 +555,17 @@ export async function fetchChapterPages(chapterSlug: string): Promise<ChapterPag
     return {
       title: d.title || d.chapter || '',
       pages,
+    }
+  } catch { return null }
+}
+
+export async function fetchChapterNavigation(chapterSlug: string): Promise<ChapterNav | null> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_CHAPTER_NAV(chapterSlug))
+    const d = data.data || data
+    return {
+      prevSlug: d.prev || d.prevChapter || d.previous || d.prevSlug || '',
+      nextSlug: d.next || d.nextChapter || d.nextSlug || '',
     }
   } catch { return null }
 }

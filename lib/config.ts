@@ -50,15 +50,22 @@ export const ENDPOINTS = {
   JIKAN_SEARCH: (query: string) => `/anime?q=${encodeURIComponent(query)}&limit=10`,
   JIKAN_DETAIL: (malId: number) => `/anime/${malId}/full`,
 
-  // Comic / Manga (Sankavollerei — sumber "bacakomik", lihat referensi anizone-comic)
-  COMIC_LATEST: (page = 1) => `/comic/bacakomik/latest?page=${page}`,
-  COMIC_POPULAR: (page = 1) => `/comic/bacakomik/populer?page=${page}`,
-  COMIC_SEARCH: (q: string, page = 1) => `/comic/bacakomik/search/${encodeURIComponent(q)}?page=${page}`,
-  COMIC_DETAIL: (slug: string) => `/comic/bacakomik/detail/${slug}`,
-  COMIC_CHAPTER: (slug: string) => `/comic/bacakomik/chapter/${slug}`,
-  COMIC_GENRES: '/comic/komikindo/genres',
-  COMIC_GENRE: (slug: string) => `/comic/bacakomik/genre/${encodeURIComponent(slug)}`,
+  // Comic / Manga (animasu-api — scraper Komiku.org, lihat "Available Endpoints Comic")
+  COMIC_LATEST: (page = 1) => `/comic/terbaru?page=${page}`,
+  COMIC_POPULAR: (page = 1) => `/comic/populer?page=${page}`,
+  COMIC_TRENDING: (page = 1) => `/comic/trending?page=${page}`,
+  COMIC_SEARCH: (q: string, page = 1) => `/comic/search?q=${encodeURIComponent(q)}&page=${page}`,
+  COMIC_DETAIL: (slug: string) => `/comic/comic/${encodeURIComponent(slug)}`,
+  COMIC_CHAPTER: (slug: string) => `/comic/chapter/${encodeURIComponent(slug)}`,
+  COMIC_CHAPTER_NAV: (slug: string) => `/comic/chapter/${encodeURIComponent(slug)}/navigation`,
+  COMIC_GENRES: '/comic/genres',
+  COMIC_GENRE: (slug: string, page = 1) => `/comic/genre/${encodeURIComponent(slug)}?page=${page}`,
+  COMIC_TYPE: (type: string, page = 1) => `/comic/type/${encodeURIComponent(type)}?page=${page}`,
   COMIC_UNLIMITED: (page = 1) => `/comic/unlimited?page=${page}`,
+  COMIC_HOMEPAGE: '/comic/homepage',
+  COMIC_RANDOM: '/comic/random',
+  COMIC_RECOMMENDATIONS: (page = 1) => `/comic/recommendations?page=${page}`,
+  COMIC_BROWSE: (params: Record<string, string>) => `/comic/browse?${new URLSearchParams(params)}`,
 
   // Novel (Sankavollerei — lihat dokumentasi sankavollerei.web.id/comic bagian "Novel")
   // Novel (Sankavollerei — sumber SakuraNovel, lihat dokumentasi sankavollerei.web.id/novel/sakuranovel)

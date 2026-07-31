@@ -2,22 +2,27 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import { ArrowLeft, Frown } from 'lucide-react'
-import { fetchChapterPages, ChapterPages } from '@/lib/api'
+import { ArrowLeft, ChevronLeft, ChevronRight, Frown } from 'lucide-react'
+import { fetchChapterPages, fetchChapterNavigation, ChapterPages, ChapterNav } from '@/lib/api'
 
 export default function ChapterReaderPage() {
   const router = useRouter()
   const { slug } = router.query
 
   const [chapter, setChapter] = useState<ChapterPages | null>(null)
+  const [nav, setNav] = useState<ChapterNav | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!slug || typeof slug !== 'string') return
     const load = async () => {
       try {
-        const data = await fetchChapterPages(slug)
+        const [data, navData] = await Promise.all([
+          fetchChapterPages(slug),
+          fetchChapterNavigation(slug),
+        ])
         setChapter(data)
+        setNav(navData)
       } catch (err) {
         console.error(err)
       } finally {
@@ -81,10 +86,26 @@ export default function ChapterReaderPage() {
         </div>
 
         {/* Navigation Bottom */}
-        <div className="card p-4 flex justify-center gap-4">
+        <div className="card p-4 flex flex-wrap justify-center items-center gap-3">
+          {nav?.prevSlug && (
+            <button
+              onClick={() => router.push(`/manga/read/${nav.prevSlug}`)}
+              className="btn-secondary text-sm inline-flex items-center gap-1.5"
+            >
+              <ChevronLeft size={16} /> Chapter Sebelumnya
+            </button>
+          )}
           <button onClick={() => router.back()} className="btn-secondary">
             Kembali ke Daftar Chapter
           </button>
+          {nav?.nextSlug && (
+            <button
+              onClick={() => router.push(`/manga/read/${nav.nextSlug}`)}
+              className="btn-primary text-sm inline-flex items-center gap-1.5"
+            >
+              Chapter Selanjutnya <ChevronRight size={16} />
+            </button>
+          )}
         </div>
       </div>
     </>
