@@ -106,7 +106,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-pearl">Loading...</p>
+          <p className="text-[var(--color-text-muted)]">Loading...</p>
         </div>
       </div>
     )
@@ -167,7 +167,7 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
-                <label className="absolute bottom-0 right-0 p-2 bg-ocean rounded-full cursor-pointer hover:bg-accent-secondary transition-colors">
+                <label className="absolute bottom-0 right-0 p-2 bg-ocean rounded-full cursor-pointer hover:bg-oceanAccent-secondary transition-colors">
                   <svg className="w-4 h-4 text-pearl" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                     )}
                     <button
                       onClick={() => setEditMode(true)}
-                      className="mt-2 text-sm text-ocean hover:text-accent-secondary transition-colors inline-flex items-center gap-1.5"
+                      className="mt-2 text-sm text-ocean hover:text-oceanAccent-secondary transition-colors inline-flex items-center gap-1.5"
                     >
                       <Pencil size={14} /> Edit Profil
                     </button>

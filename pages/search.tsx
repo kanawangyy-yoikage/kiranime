@@ -119,7 +119,7 @@ export default function SearchPage() {
             />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-ocean hover:bg-accent-secondary rounded-lg transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-ocean hover:bg-oceanAccent-secondary rounded-lg transition-colors"
               aria-label="Cari"
             >
               <Search size={18} className="text-pearl" />
@@ -132,10 +132,10 @@ export default function SearchPage() {
               <button
                 key={key}
                 onClick={() => switchTab(key)}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all shrink-0 ${
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors border shrink-0 ${
                   activeType === key
-                    ? 'bg-ocean text-white'
-                    : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
+                    ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
+                    : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
                 }`}
               >
                 <Icon size={16} />
@@ -149,7 +149,7 @@ export default function SearchPage() {
         {loading && (
           <div className="text-center py-12">
             <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-pearl">Mencari {currentTab.label.toLowerCase()}...</p>
+            <p className="text-[var(--color-text-muted)]">Mencari {currentTab.label.toLowerCase()}...</p>
           </div>
         )}
 
@@ -190,13 +190,13 @@ export default function SearchPage() {
                                 className="object-cover transition-transform duration-300 group-hover:scale-105"
                               />
                             ) : (
-                              <div className="flex h-full w-full items-center justify-center text-pearl/40">
+                              <div className="flex h-full w-full items-center justify-center text-[var(--color-text-muted)]">
                                 <ImageOff size={20} />
                               </div>
                             )}
                           </div>
                           <div className="p-2.5">
-                            <h3 className="line-clamp-2 text-xs font-semibold sm:text-sm text-pearl">{item.title}</h3>
+                            <h3 className="line-clamp-2 text-xs font-semibold sm:text-sm text-[var(--color-text)]">{item.title}</h3>
                           </div>
                         </Link>
                       ))}
@@ -206,9 +206,9 @@ export default function SearchPage() {
               </>
             ) : (
               <div className="text-center py-12 card p-6">
-                <Frown className="mx-auto mb-3 text-pearl/40" size={36} />
-                <p className="text-pearl/80">Nggak ketemu hasil buat "{q}"</p>
-                <p className="text-sm text-pearl/60 mt-2">Coba kata kunci lain</p>
+                <Frown className="mx-auto mb-3 text-[var(--color-text-muted)]" size={36} />
+                <p className="text-[var(--color-text)]">Nggak ketemu hasil buat "{q}"</p>
+                <p className="text-sm text-[var(--color-text-muted)] mt-2">Coba kata kunci lain</p>
               </div>
             )}
 
@@ -235,7 +235,7 @@ export default function SearchPage() {
                         </div>
                       </div>
                       <div className="p-3">
-                        <h3 className="font-medium text-pearl text-sm truncate">
+                        <h3 className="font-medium text-[var(--color-text)] text-sm truncate">
                           {anime.title}
                         </h3>
                       </div>
@@ -251,8 +251,8 @@ export default function SearchPage() {
         {!loading && !q && (
           <div className="text-center py-12 card p-6">
             <Search className="mx-auto mb-4 text-ocean" size={40} />
-            <h2 className="text-xl font-bold text-pearl mb-2">Cari {currentTab.label} Favoritmu</h2>
-            <p className="text-pearl/60">Ketik judul {currentTab.label.toLowerCase()} di atas untuk memulai pencarian</p>
+            <h2 className="text-xl font-bold text-[var(--color-text)] mb-2">Cari {currentTab.label} Favoritmu</h2>
+            <p className="text-[var(--color-text-muted)]">Ketik judul {currentTab.label.toLowerCase()} di atas untuk memulai pencarian</p>
           </div>
         )}
       </div>

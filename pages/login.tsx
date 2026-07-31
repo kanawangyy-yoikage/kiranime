@@ -284,7 +284,7 @@ export default function LoginPage() {
                   <div className="mt-6 text-center">
                     <button
                       onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-                      className="text-sm text-ocean hover:text-accent-secondary transition-colors"
+                      className="text-sm text-ocean hover:text-oceanAccent-secondary transition-colors"
                     >
                       {mode === 'login' ? 'Belum punya akun? Register' : 'Sudah punya akun? Login'}
                     </button>
@@ -356,7 +356,7 @@ export default function LoginPage() {
                       <button
                         type="button"
                         onClick={resetPhoneFlow}
-                        className="w-full text-sm text-ocean hover:text-accent-secondary transition-colors"
+                        className="w-full text-sm text-ocean hover:text-oceanAccent-secondary transition-colors"
                       >
                         Ganti nomor HP
                       </button>

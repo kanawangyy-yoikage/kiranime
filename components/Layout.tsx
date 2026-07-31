@@ -1,5 +1,8 @@
 import { ReactNode } from 'react'
-import Sidebar from './Sidebar'
+import TopNavbar from './TopNavbar'
+import Footer from './Footer'
+import MobileNav from './MobileNav'
+import InstallPwaPrompt from './InstallPwaPrompt'
 
 interface LayoutProps {
   children: ReactNode
@@ -7,13 +10,16 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark transition-colors duration-300">
-      <Sidebar />
-      <main className="lg:ml-64 pt-16 lg:pt-0 min-h-screen">
-        <div className="max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 animate-fade-in">
+    <div className="min-h-screen bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark transition-colors duration-300 flex flex-col">
+      <TopNavbar />
+      <main className="flex-1 pt-16">
+        <div className="mx-auto max-w-[1600px] px-4 md:px-6 lg:px-8 pb-24 lg:pb-12 animate-fade-in">
           {children}
         </div>
       </main>
+      <Footer />
+      <MobileNav />
+      <InstallPwaPrompt />
     </div>
   )
 }

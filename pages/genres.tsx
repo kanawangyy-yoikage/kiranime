@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
-import Link from 'next/link'
+import { Tags } from 'lucide-react'
 import { fetchGenres, fetchByGenre, type Anime } from '@/lib/api'
 import AnimeGrid from '@/components/AnimeGrid'
+import AnimeMenuAside from '@/components/AnimeMenuAside'
 
 export default function GenresPage() {
   const [genres, setGenres] = useState<{ name: string; slug: string }[]>([])
@@ -16,8 +17,7 @@ export default function GenresPage() {
       try {
         const data = await fetchGenres()
         setGenres(data)
-        
-        // Auto-select first genre
+
         if (data.length > 0) {
           setSelectedGenre(data[0].slug)
           loadAnimesByGenre(data[0].slug)
@@ -45,68 +45,71 @@ export default function GenresPage() {
     }
   }
 
+  const activeGenreName = genres.find((g) => g.slug === selectedGenre)?.name || 'Anime'
+
   return (
     <>
       <Head>
         <title>Genre Anime - KiraStream</title>
       </Head>
 
-      <div className="space-y-6">
-        <div className="card p-6">
-          <h1 className="section-title">Genre Anime</h1>
-          <p className="text-pearl/60 mb-4">Jelajahi anime berdasarkan genre favorit</p>
+      <div className="flex items-start gap-6">
+        <div className="flex-1 min-w-0 space-y-6">
+          <div className="card px-5 py-4">
+            <h1 className="section-title flex items-center gap-2">
+              <Tags size={22} className="text-ocean" /> Genre Anime
+            </h1>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">Jelajahi anime berdasarkan genre favorit</p>
+          </div>
 
           {/* Genre Pills */}
-          {loading ? (
-            <div className="flex gap-2 flex-wrap">
-              {[...Array(12)].map((_, i) => (
-                <div key={i} className="loading-skeleton w-24 h-10 rounded-full" />
-              ))}
+          <div className="card p-5">
+            {loading ? (
+              <div className="flex flex-wrap gap-2">
+                {[...Array(12)].map((_, i) => (
+                  <div key={i} className="skeleton h-9 w-24 rounded-full" />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {genres.map((genre) => (
+                  <button
+                    key={genre.slug}
+                    onClick={() => loadAnimesByGenre(genre.slug)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                      selectedGenre === genre.slug
+                        ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
+                        : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
+                    }`}
+                  >
+                    {genre.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Anime Grid */}
+          {loadingAnimes ? (
+            <div className="anime-grid">
+              {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
+            </div>
+          ) : animes.length > 0 ? (
+            <div className="space-y-4">
+              <h2 className="section-title flex items-baseline gap-2">
+                {activeGenreName}
+                <span className="text-sm font-normal text-[var(--color-text-muted)]">({animes.length} hasil)</span>
+              </h2>
+              <AnimeGrid animes={animes} />
             </div>
           ) : (
-            <div className="flex gap-2 flex-wrap">
-              {genres.map((genre) => (
-                <button
-                  key={genre.slug}
-                  onClick={() => loadAnimesByGenre(genre.slug)}
-                  className={`px-4 py-2 rounded-full font-medium transition-all ${
-                    selectedGenre === genre.slug
-                      ? 'bg-ocean text-white'
-                      : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
-                  }`}
-                >
-                  {genre.name}
-                </button>
-              ))}
+            <div className="card p-6 text-center text-[var(--color-text-muted)]">
+              Belum ada anime di genre ini, coba pilih genre lain
             </div>
           )}
         </div>
 
-        {/* Anime Grid */}
-        {loadingAnimes ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-pearl">Loading anime...</p>
-          </div>
-        ) : (
-          <>
-            {animes.length > 0 ? (
-              <div>
-                <h2 className="section-title mb-4">
-                  {genres.find(g => g.slug === selectedGenre)?.name || 'Anime'}
-                  <span className="text-sm text-pearl/60 font-normal ml-2">
-                    ({animes.length} hasil)
-                  </span>
-                </h2>
-                <AnimeGrid animes={animes} />
-              </div>
-            ) : (
-              <div className="text-center py-12 card p-6">
-                <p className="text-pearl/60">Belum ada anime di genre ini, coba pilih genre lain</p>
-              </div>
-            )}
-          </>
-        )}
+        <AnimeMenuAside />
       </div>
     </>
   )

@@ -54,7 +54,7 @@ export default function InstallPwaPrompt() {
 
   return (
     <div
-      className="fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-md items-center gap-3 rounded-2xl border p-4 shadow-lg backdrop-blur-md animate-slide-up md:inset-x-auto md:right-6 md:left-auto"
+      className="fixed inset-x-4 bottom-24 z-50 mx-auto flex max-w-md items-center gap-3 rounded-2xl border p-4 shadow-lg backdrop-blur-md animate-slide-up md:inset-x-auto md:right-6 md:left-auto lg:bottom-4"
       style={{
         backgroundColor: 'var(--color-surface)',
         borderColor: 'var(--color-border)',

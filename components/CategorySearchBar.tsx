@@ -30,7 +30,7 @@ export default function CategorySearchBar({ type, placeholder, className }: Cate
       />
       <button
         type="submit"
-        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-ocean hover:bg-accent-secondary rounded-full transition-colors"
+        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-ocean hover:bg-oceanAccent-secondary rounded-full transition-colors"
         aria-label="Cari"
       >
         <Search size={14} className="text-white" />

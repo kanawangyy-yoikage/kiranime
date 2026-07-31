@@ -57,6 +57,30 @@
   color: var(--color-text);
 }
 
+/* Tabs */
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-bottom: 2px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--color-text);
+}
+
+.tab.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
 /* Buttons */
 .btn-primary {
   display: inline-flex;

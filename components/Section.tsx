@@ -15,7 +15,7 @@ export default function Section({ title, viewAll, children }: SectionProps) {
         {viewAll && (
           <Link
             href={viewAll}
-            className="text-sm font-medium text-ocean hover:text-accent-secondary transition-colors flex items-center gap-1"
+            className="text-sm font-medium text-ocean hover:text-oceanAccent-secondary transition-colors flex items-center gap-1"
           >
             Lihat Semua
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Calendar } from 'lucide-react'
 import { fetchSchedule, type Anime } from '@/lib/api'
+import AnimeMenuAside from '@/components/AnimeMenuAside'
 
 export default function SchedulePage() {
   const [schedule, setSchedule] = useState<Record<string, Anime[]>>({})
@@ -33,7 +34,8 @@ export default function SchedulePage() {
         <title>Jadwal Rilis - KiraStream</title>
       </Head>
 
-      <div className="space-y-6">
+      <div className="flex items-start gap-6">
+        <div className="flex-1 min-w-0 space-y-6">
         <div className="card px-5 py-4">
           <h1 className="section-title flex items-center gap-2"><Calendar size={22} className="text-ocean" /> Jadwal Rilis Anime</h1>
           <p className="mt-1 text-sm text-[var(--color-text-muted)]">Jadwal anime yang tayang setiap hari</p>
@@ -84,6 +86,9 @@ export default function SchedulePage() {
             })}
           </div>
         )}
+        </div>
+
+        <AnimeMenuAside />
       </div>
     </>
   )

@@ -228,6 +228,15 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-accent) transparent; 
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
 }
 
+/* ─── HERO PANEL (landing) ──────────────────────────────────── */
+.hero-panel {
+  background:
+    radial-gradient(900px 320px at 15% -10%, rgba(91, 136, 178, 0.18), transparent 60%),
+    radial-gradient(700px 280px at 85% 110%, rgba(122, 175, 212, 0.12), transparent 60%),
+    var(--color-surface);
+  border-color: var(--color-border);
+}
+
 /* ─── IMAGE CARD ────────────────────────────────────────────── */
 .img-card {
   @apply relative overflow-hidden rounded-2xl;

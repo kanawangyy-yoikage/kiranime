@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { CheckCircle } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import CategorySearchBar from '@/components/CategorySearchBar'
+import AnimeMenuAside from '@/components/AnimeMenuAside'
 import { fetchCompleted, type Anime } from '@/lib/api'
 
 export default function CompletedPage() {
@@ -23,7 +24,8 @@ export default function CompletedPage() {
   return (
     <>
       <Head><title>Anime Selesai - KiraStream</title></Head>
-      <div className="space-y-6">
+      <div className="flex items-start gap-6">
+        <div className="flex-1 min-w-0 space-y-6">
         <div className="card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2"><CheckCircle size={22} className="text-ocean" /> Anime Selesai</h1>
@@ -45,6 +47,8 @@ export default function CompletedPage() {
             )}
           </>
         )}
+        </div>
+        <AnimeMenuAside />
       </div>
     </>
   )
