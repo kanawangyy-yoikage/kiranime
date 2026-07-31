@@ -9,13 +9,15 @@ import {
   fetchComicLatest,
   fetchComicTrending,
   fetchComicByType,
+  fetchComicAll,
   type Comic,
 } from '@/lib/api'
 
-type Tab = 'popular' | 'latest' | 'trending'
+type Tab = 'all' | 'popular' | 'latest' | 'trending'
 type TypeFilter = 'manga' | 'manhwa' | 'manhua' | ''
 
 const TAB_META: Record<Tab, { label: string; icon: typeof Flame }> = {
+  all: { label: 'Semua Komik', icon: BookOpen },
   popular: { label: 'Populer', icon: Flame },
   latest: { label: 'Terbaru', icon: Sparkles },
   trending: { label: 'Trending', icon: TrendingUp },
@@ -32,7 +34,11 @@ export default function MangaListPage() {
 
   // Tab & filter tipe dikontrol lewat query string (?tab=..&type=..) yang
   // datang dari submenu "Komik" di Sidebar, bukan dari tombol di halaman ini.
-  const tab: Tab = router.query.tab === 'latest' || router.query.tab === 'trending' ? router.query.tab : 'popular'
+  // Default (gak ada query sama sekali) = "Semua Komik" -> endpoint /comic/unlimited
+  const tab: Tab =
+    router.query.tab === 'popular' || router.query.tab === 'latest' || router.query.tab === 'trending'
+      ? router.query.tab
+      : 'all'
   const typeFilter: TypeFilter = router.query.type === 'manga' || router.query.type === 'manhwa' || router.query.type === 'manhua' ? router.query.type : ''
 
   const [comics, setComics] = useState<Comic[]>([])
@@ -48,7 +54,9 @@ export default function MangaListPage() {
         ? await fetchComicTrending(currentPage)
         : currentTab === 'latest'
         ? await fetchComicLatest(currentPage)
-        : await fetchComicPopular(currentPage)
+        : currentTab === 'popular'
+        ? await fetchComicPopular(currentPage)
+        : await fetchComicAll(currentPage)
     setComics(prev => (currentPage === 1 ? data : [...prev, ...data]))
     setLoading(false)
   }, [])
