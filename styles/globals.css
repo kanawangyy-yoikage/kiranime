@@ -29,7 +29,7 @@ html.dark {
   color-scheme: dark;
 
   /* Dark Mode - Noir + Ocean theme */
-  --color-bg: #000000;
+  --color-bg: #0A0E16;
   --color-surface: #122C4F;
   --color-surface-alt: #1A3A60;
   --color-border: rgba(251, 249, 228, 0.10);
@@ -57,7 +57,7 @@ body {
 }
 
 html {
-  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  font-family: var(--font-jakarta, 'Plus Jakarta Sans'), 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
 }
@@ -227,19 +227,6 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-accent) transparent; 
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* ─── GRADIENT TEXT ─────────────────────────────────────────── */
-.gradient-text {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ─── HERO GRADIENT ─────────────────────────────────────────── */
-.hero-gradient {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
 }
 
 /* ─── HERO PANEL (landing) ──────────────────────────────────── */

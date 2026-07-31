@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ReactNode } from 'react'
+import { ArrowRight } from 'lucide-react'
 
 interface SectionProps {
   title: string
@@ -9,7 +10,7 @@ interface SectionProps {
 
 export default function Section({ title, viewAll, children }: SectionProps) {
   return (
-    <section className="space-y-4">
+    <section className="space-y-5">
       <div className="flex items-center justify-between">
         <h2 className="section-title">{title}</h2>
         {viewAll && (
@@ -18,9 +19,7 @@ export default function Section({ title, viewAll, children }: SectionProps) {
             className="text-sm font-medium text-ocean hover:text-oceanAccent-secondary transition-colors flex items-center gap-1"
           >
             Lihat Semua
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            <ArrowRight size={16} aria-hidden="true" />
           </Link>
         )}
       </div>

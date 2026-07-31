@@ -12,7 +12,7 @@ const config: Config = {
       colors: {
         midnight: '#122C4F',
         pearl: 'rgb(var(--pearl-rgb) / <alpha-value>)',
-        noir: '#000000',
+        noir: '#0A0E16',
         ocean: '#5B88B2',
         oceanAccent: {
           primary: '#5B88B2',
@@ -26,15 +26,15 @@ const config: Config = {
           hover: 'rgb(var(--surface-hover-rgb) / <alpha-value>)',
         },
         'bg-light': '#FBF9E4',
-        'bg-dark': '#000000',
+        'bg-dark': '#0A0E16',
         'text-light': '#122C4F',
         'text-dark': '#FBF9E4',
         primary: '#122C4F',
         accent: '#5B88B2'
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

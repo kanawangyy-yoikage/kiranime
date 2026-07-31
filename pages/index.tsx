@@ -2,7 +2,7 @@ import { useEffect, useState, FormEvent } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { BookOpen, CalendarDays, Clapperboard, Compass, Flame, ImageOff, ScrollText, Search, Sparkles, BookMarked, ArrowRight } from 'lucide-react'
+import { BookOpen, Clapperboard, ImageOff, ScrollText, Search, BookMarked } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import Section from '@/components/Section'
 import { fetchLatest, fetchPopular, fetchSchedule, fetchMALSeason } from '@/lib/api'
@@ -65,10 +65,10 @@ export default function Home() {
   }
 
   const quickLinks = [
-    { href: '/popular', label: 'Anime', desc: 'Streaming anime', Icon: Clapperboard },
-    { href: '/manga', label: 'Komik', desc: 'Manga, manhwa, manhua', Icon: BookOpen },
-    { href: '/webtoon', label: 'Webtoon', desc: 'Baca webtoon', Icon: ScrollText },
-    { href: '/novel', label: 'Novel', desc: 'Baca novel', Icon: BookMarked },
+    { href: '/popular', label: 'Anime', Icon: Clapperboard },
+    { href: '/manga', label: 'Komik', Icon: BookOpen },
+    { href: '/webtoon', label: 'Webtoon', Icon: ScrollText },
+    { href: '/novel', label: 'Novel', Icon: BookMarked },
   ]
 
   return (
@@ -78,15 +78,24 @@ export default function Home() {
         <meta name="description" content="Streaming anime subtitle Indonesia dengan UI modern, manga, webtoon, dan jadwal rilis." />
       </Head>
 
-      <div className="space-y-10">
+      <div className="space-y-12 md:space-y-16">
         {/* Hero / Landing */}
-        <section className="hero-panel relative overflow-hidden rounded-3xl border px-6 py-12 md:px-10 md:py-16">
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <p className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-ocean/30 bg-ocean/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.2em] text-ocean">
-              <Sparkles size={13} aria-hidden="true" /> Midnight Pearl Ocean
-            </p>
+        <section className="hero-panel relative overflow-hidden rounded-3xl border px-6 py-14 md:px-10 md:py-20">
+          {data.popular[0]?.image && (
+            <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+              <Image
+                src={`/api/mal-image?url=${encodeURIComponent(data.popular[0].image)}`}
+                alt=""
+                fill
+                sizes="100vw"
+                className="object-cover object-top opacity-20 dark:opacity-25"
+              />
+              <div className="absolute inset-0 bg-surface/70 dark:bg-noir/60" />
+            </div>
+          )}
 
-            <h1 className="text-4xl font-black tracking-tight md:text-6xl gradient-text">KiraStream</h1>
+          <div className="relative z-10 flex flex-col items-center text-center">
+            <h1 className="text-4xl font-extrabold tracking-tighter md:text-6xl text-primary dark:text-pearl">KiraStream</h1>
 
             <p className="mt-4 max-w-2xl text-sm leading-7 md:text-base" style={textStyle(true)}>
               Streaming anime subtitle Indonesia, baca manga, manhwa, manhua, webtoon, dan novel. Cepat, bersih, dan nyaman di desktop maupun mobile.
@@ -110,25 +119,18 @@ export default function Home() {
             </form>
 
             {/* Quick category links */}
-            <div className="mt-7 grid w-full max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
-              {quickLinks.map(({ href, label, desc, Icon }) => (
+            <div className="mt-8 grid w-full max-w-2xl grid-cols-2 gap-2.5 sm:grid-cols-4">
+              {quickLinks.map(({ href, label, Icon }) => (
                 <Link
                   key={href}
                   href={href}
-                  className="group card flex flex-col items-center gap-2 p-4 text-center hover:-translate-y-1"
+                  className="flex items-center justify-center gap-2 rounded-full border border-[var(--color-border)] bg-surface px-4 py-2.5 text-sm font-semibold text-text-light dark:bg-surface-dark dark:text-text-dark transition-colors hover:border-ocean hover:text-ocean dark:hover:border-accent dark:hover:text-accent"
                 >
-                  <Icon size={24} className="text-ocean transition-transform group-hover:scale-110" aria-hidden="true" />
-                  <div>
-                    <p className="font-bold text-sm" style={textStyle()}>{label}</p>
-                    <p className="text-xs mt-0.5" style={textStyle(true)}>{desc}</p>
-                  </div>
+                  <Icon size={16} className="text-ocean dark:text-accent" aria-hidden="true" />
+                  {label}
                 </Link>
               ))}
             </div>
-
-            <Link href="/ongoing" className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-ocean hover:text-oceanAccent-secondary transition-colors">
-              Jelajahi anime terbaru <ArrowRight size={16} />
-            </Link>
           </div>
         </section>
 
@@ -210,21 +212,6 @@ export default function Home() {
             </div>
           </Section>
         )}
-
-        <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {[
-            { href: '/movies', label: 'Movies', desc: 'Anime Movie', Icon: Clapperboard },
-            { href: '/ongoing', label: 'Ongoing', desc: 'Sedang Tayang', Icon: Flame },
-            { href: '/schedule', label: 'Jadwal', desc: 'Rilis Harian', Icon: CalendarDays },
-            { href: '/search', label: 'Search', desc: 'Cari Anime', Icon: Compass },
-          ].map(({ href, label, desc, Icon }) => (
-            <Link key={href} href={href} className="card p-5 transition-transform hover:-translate-y-1">
-              <Icon className="mb-3" size={24} style={textStyle()} />
-              <h3 className="font-bold" style={textStyle()}>{label}</h3>
-              <p className="mt-1 text-sm" style={textStyle(true)}>{desc}</p>
-            </Link>
-          ))}
-        </section>
       </div>
     </>
   )
