@@ -42,7 +42,7 @@ export default function AnimeMenuAside() {
                     : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
                 }`}
               >
-                <Icon size={16} />
+                <Icon size={16} aria-hidden="true" />
                 {label}
               </Link>
             )
@@ -68,7 +68,7 @@ export default function AnimeMenuAside() {
               href={href}
               className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent transition-colors"
             >
-              <Icon size={16} />
+              <Icon size={16} aria-hidden="true" />
               {label}
             </Link>
           ))}

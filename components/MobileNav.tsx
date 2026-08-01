@@ -36,7 +36,7 @@ export default function MobileNav() {
                 active ? 'text-primary dark:text-accent' : 'text-text-light/50 dark:text-text-dark/50'
               }`}
             >
-              <Icon size={20} className={active ? 'scale-110' : ''} />
+              <Icon size={20} className={active ? 'scale-110' : ''} aria-hidden="true" />
               {label}
             </Link>
           )

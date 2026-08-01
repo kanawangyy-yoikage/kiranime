@@ -2,6 +2,7 @@ import { useEffect, useState, FormEvent } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { BookOpen, Clapperboard, ImageOff, ScrollText, Search, BookMarked } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import Section from '@/components/Section'
@@ -30,6 +31,7 @@ function textStyle(muted = false) {
 }
 
 export default function Home() {
+  const router = useRouter()
   const [data, setData] = useState<HomeData>({ latest: [], popular: [], completed: [], schedule: {}, malSeason: [], webtoons: [], completedWebtoons: [] })
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -67,7 +69,7 @@ export default function Home() {
   const handleSearch = (e: FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
     }
   }
 
@@ -117,7 +119,10 @@ export default function Home() {
               <div className="relative">
                 <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light/40 dark:text-text-dark/40" aria-hidden="true" />
                 <input
-                  type="text"
+                  type="search"
+                  name="q"
+                  autoComplete="off"
+                  aria-label="Cari anime, komik, webtoon, novel"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari anime, komik, webtoon, novel\u2026"

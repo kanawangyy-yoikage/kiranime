@@ -22,7 +22,10 @@ export default function CategorySearchBar({ type, placeholder, className }: Cate
   return (
     <form onSubmit={handleSubmit} className={`relative w-full sm:w-72 shrink-0 ${className || ''}`}>
       <input
-        type="text"
+        type="search"
+        name="q"
+        autoComplete="off"
+        aria-label={placeholder?.replace(/\u2026$/, '') || 'Cari judul'}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder || 'Cari judul\u2026'}

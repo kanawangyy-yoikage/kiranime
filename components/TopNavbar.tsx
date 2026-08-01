@@ -44,6 +44,7 @@ export default function TopNavbar() {
   const [loggingOut, setLoggingOut] = useState(false)
   const reduceMotion = useReducedMotion()
   const navRef = useRef<HTMLElement | null>(null)
+  const drawerRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'))
@@ -64,12 +65,45 @@ export default function TopNavbar() {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  useEffect(() => {
+    if (!drawerOpen) return
+    const drawer = drawerRef.current
+    if (!drawer) return
+
+    const focusables = drawer.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])'
+    )
+    const first = focusables[0]
+    const last = focusables[focusables.length - 1]
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    first?.focus()
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setDrawerOpen(false)
+        previouslyFocused?.focus()
+        return
+      }
+      if (e.key !== 'Tab' || focusables.length === 0) return
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last?.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first?.focus()
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [drawerOpen])
+
   const toggleTheme = () => {
     const root = document.documentElement
     const next = root.classList.contains('dark') ? 'light' : 'dark'
     root.classList.toggle('dark', next === 'dark')
     localStorage.setItem('theme', next)
     setIsDark(next === 'dark')
+    document.getElementById('theme-color-meta')?.setAttribute('content', next === 'dark' ? '#000000' : '#F5F5F7')
   }
 
   const handleSearch = (e: FormEvent) => {
@@ -194,11 +228,14 @@ export default function TopNavbar() {
             >
               <Search size={20} className="shrink-0 text-text-light/40 dark:text-text-dark/40" aria-hidden="true" />
               <input
-                type="text"
+                type="search"
+                name="q"
+                autoComplete="off"
+                aria-label="Cari anime, komik, webtoon, novel"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari anime, komik, webtoon, novel\u2026"
-                className="flex-1 bg-transparent outline-none text-sm text-text-light dark:text-text-dark placeholder:text-text-light/40 dark:placeholder:text-text-dark/40"
+                className="flex-1 bg-transparent text-sm text-text-light dark:text-text-dark placeholder:text-text-light/40 dark:placeholder:text-text-dark/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
               <button type="submit" className="btn-primary text-xs shrink-0">
                 Cari
@@ -212,20 +249,26 @@ export default function TopNavbar() {
       <AnimatePresence>
         {drawerOpen && (
           <>
-            <motion.div
+            <motion.button
+              type="button"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={reduceMotion ? { duration: 0 } : undefined}
               className="fixed inset-0 bg-noir/50 backdrop-blur-sm lg:hidden"
               onClick={() => setDrawerOpen(false)}
+              aria-label="Tutup menu"
             />
             <motion.aside
+              ref={drawerRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menu navigasi"
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={reduceMotion ? { duration: 0 } : { type: 'spring', damping: 28, stiffness: 260 }}
-              className="fixed top-16 bottom-0 left-0 w-72 bg-surface dark:bg-surface-dark z-50 lg:hidden overflow-y-auto custom-scrollbar border-r border-pearl/10 shadow-xl"
+              className="fixed top-16 bottom-0 left-0 w-72 bg-surface dark:bg-surface-dark z-50 lg:hidden overflow-y-auto overscroll-contain custom-scrollbar border-r border-pearl/10 shadow-xl"
             >
               <nav className="p-4 space-y-1">
                 {NAV_LINKS.map((link) => (

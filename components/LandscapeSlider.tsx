@@ -56,14 +56,14 @@ export default function LandscapeSlider({ kind, items, imageProxy, interval = 60
           <button
             onClick={prev}
             aria-label="Sebelumnya"
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white border border-white/20 hover:bg-black/75 hover:scale-105 transition-all opacity-0 group-hover:opacity-100"
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white border border-white/20 hover:bg-black/75 hover:scale-105 focus-visible:opacity-100 transition-[opacity,transform,background-color] opacity-0 group-hover:opacity-100"
           >
             <ChevronLeft size={20} />
           </button>
           <button
             onClick={next}
             aria-label="Berikutnya"
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white border border-white/20 hover:bg-black/75 hover:scale-105 transition-all opacity-0 group-hover:opacity-100"
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm text-white border border-white/20 hover:bg-black/75 hover:scale-105 focus-visible:opacity-100 transition-[opacity,transform,background-color] opacity-0 group-hover:opacity-100"
           >
             <ChevronRight size={20} />
           </button>
@@ -74,11 +74,18 @@ export default function LandscapeSlider({ kind, items, imageProxy, interval = 60
               <button
                 key={i}
                 onClick={() => goTo(i)}
-                aria-label={`Slide ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === index ? 'w-6 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
+                aria-label={`Ke slide ${i + 1}`}
+                aria-current={i === index}
+                className={`p-2 -m-2 flex items-center transition-[width,background-color] duration-300 ${
+                  i === index ? 'w-6' : 'w-1.5'
                 }`}
-              />
+              >
+                <span
+                  className={`h-1.5 w-full rounded-full transition-colors duration-300 ${
+                    i === index ? 'bg-white' : 'bg-white/50 hover:bg-white/80'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </>

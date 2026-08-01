@@ -38,7 +38,7 @@ export default function LandscapeSpotlight({
   return (
     <Link
       href={href}
-      className="group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-alt)] p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl sm:min-h-[260px] sm:p-8"
+      className="group relative flex min-h-[200px] flex-col justify-end overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-alt)] p-5 shadow-sm transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-xl sm:min-h-[260px] sm:p-8"
     >
       {/* Background image */}
       {image && (
@@ -109,7 +109,7 @@ export default function LandscapeSpotlight({
 
         {/* CTA */}
         <div className="shrink-0">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-bold text-black shadow-lg transition-all duration-200 group-hover:scale-105 sm:px-6 sm:py-3 sm:text-sm">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-bold text-black shadow-lg transition-[transform,box-shadow] duration-200 group-hover:scale-105 sm:px-6 sm:py-3 sm:text-sm">
             <CtaIcon size={18} aria-hidden="true" />
             {ctaLabel}
           </span>

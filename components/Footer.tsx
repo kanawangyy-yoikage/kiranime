@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Heart, Mail, MessageCircle } from 'lucide-react'
+import { Heart, Mail } from 'lucide-react'
 
 const NAV_COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -80,15 +80,6 @@ export default function Footer() {
                   className="flex items-center gap-2.5 hover:text-primary dark:hover:text-accent transition-colors"
                 >
                   <Mail size={16} aria-hidden="true" /> kira@kirastream.example
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  onClick={(e) => e.preventDefault()}
-                  className="flex items-center gap-2.5 hover:text-primary dark:hover:text-accent transition-colors"
-                >
-                  <MessageCircle size={16} aria-hidden="true" /> Komunitas Discord
                 </a>
               </li>
             </ul>
