@@ -9,23 +9,13 @@ import {
   Sun,
   Menu,
   X,
-  ChevronDown,
   LogIn,
   Home,
-  Flame,
-  Film,
-  PlayCircle,
-  CheckCircle,
-  Calendar,
-  Tags,
   BookOpen,
-  Sparkles,
-  TrendingUp,
   ScrollText,
   BookMarked,
   Clapperboard,
   LogOut,
-  ListOrdered,
   User,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
@@ -36,52 +26,21 @@ interface NavItem {
   icon: ReactNode
 }
 
-const ANIME_ITEMS: NavItem[] = [
-  { label: 'Populer', href: '/popular', icon: <Flame size={15} /> },
-  { label: 'Movies', href: '/movies', icon: <Film size={15} /> },
-  { label: 'Ongoing', href: '/ongoing', icon: <PlayCircle size={15} /> },
-  { label: 'Selesai', href: '/completed', icon: <CheckCircle size={15} /> },
-  { label: 'Jadwal', href: '/schedule', icon: <Calendar size={15} /> },
-  { label: 'Genres', href: '/genres', icon: <Tags size={15} /> },
-  { label: 'A-Z List', href: '/animelist?letter=a', icon: <ListOrdered size={15} /> },
-]
-
-const KOMIK_ITEMS: NavItem[] = [
-  { label: 'Semua Komik', href: '/manga', icon: <BookOpen size={15} /> },
-  { label: 'Populer', href: '/manga?tab=popular', icon: <Flame size={15} /> },
-  { label: 'Terbaru', href: '/manga?tab=latest', icon: <Sparkles size={15} /> },
-  { label: 'Trending', href: '/manga?tab=trending', icon: <TrendingUp size={15} /> },
-  { label: 'Manga', href: '/manga?type=manga', icon: <BookOpen size={15} /> },
-  { label: 'Manhwa', href: '/manga?type=manhwa', icon: <BookOpen size={15} /> },
-  { label: 'Manhua', href: '/manga?type=manhua', icon: <BookOpen size={15} /> },
-]
-
-const SIMPLE_LINKS: NavItem[] = [
+const NAV_LINKS: NavItem[] = [
+  { label: 'Beranda', href: '/', icon: <Home size={16} /> },
+  { label: 'Anime', href: '/popular', icon: <Clapperboard size={16} /> },
+  { label: 'Komik', href: '/manga', icon: <BookOpen size={16} /> },
   { label: 'Webtoon', href: '/webtoon', icon: <ScrollText size={16} /> },
   { label: 'Novel', href: '/novel', icon: <BookMarked size={16} /> },
-]
-
-interface DropdownGroup {
-  key: string
-  label: string
-  icon: ReactNode
-  items: NavItem[]
-}
-
-const DROPDOWN_GROUPS: DropdownGroup[] = [
-  { key: 'anime', label: 'Anime', icon: <Clapperboard size={18} />, items: ANIME_ITEMS },
-  { key: 'komik', label: 'Komik', icon: <BookOpen size={18} />, items: KOMIK_ITEMS },
 ]
 
 export default function TopNavbar() {
   const router = useRouter()
   const { user, profile, loading: authLoading, logout } = useAuth()
   const [isDark, setIsDark] = useState(true)
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [openGroup, setOpenGroup] = useState<string | null>(null)
   const [loggingOut, setLoggingOut] = useState(false)
   const reduceMotion = useReducedMotion()
   const navRef = useRef<HTMLElement | null>(null)
@@ -91,7 +50,6 @@ export default function TopNavbar() {
   }, [])
 
   useEffect(() => {
-    setOpenDropdown(null)
     setDrawerOpen(false)
     setSearchOpen(false)
   }, [router.pathname, router.asPath])
@@ -99,7 +57,6 @@ export default function TopNavbar() {
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setOpenDropdown(null)
         setDrawerOpen(false)
       }
     }
@@ -135,8 +92,8 @@ export default function TopNavbar() {
   }
 
   const isActive = (href: string) => {
-    if (href.includes('?')) return router.asPath === href
-    return router.pathname === href
+    if (href === '/') return router.pathname === '/'
+    return router.pathname === href || router.pathname.startsWith(`${href}/`)
   }
 
   return (
@@ -161,68 +118,14 @@ export default function TopNavbar() {
 
           {/* Center: Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
-            <Link
-              href="/"
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                router.pathname === '/' ? 'text-primary dark:text-accent' : 'text-text-light/70 dark:text-text-dark/70 hover:text-primary dark:hover:text-accent'
-              }`}
-            >
-              <Home size={16} aria-hidden="true" /> Beranda
-            </Link>
-
-            {DROPDOWN_GROUPS.map((group) => {
-              const groupActive = group.items.some((i) => isActive(i.href))
-              const open = openDropdown === group.key
-              return (
-                <div key={group.key} className="relative">
-                  <button
-                    onClick={() => setOpenDropdown(open ? null : group.key)}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                      groupActive || open ? 'text-primary dark:text-accent' : 'text-text-light/70 dark:text-text-dark/70 hover:text-primary dark:hover:text-accent'
-                    }`}
-                  >
-                    {group.label}
-                    <ChevronDown size={14} aria-hidden="true" className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  <AnimatePresence>
-                    {open && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 8 }}
-                        transition={reduceMotion ? { duration: 0 } : { duration: 0.15 }}
-                        className="absolute top-full left-0 mt-2 w-56 rounded-2xl border border-pearl/10 bg-surface dark:bg-surface-dark shadow-xl overflow-hidden"
-                      >
-                        <div className="py-2 px-2 space-y-0.5">
-                          {group.items.map((item) => (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                                isActive(item.href)
-                                  ? 'bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent'
-                                  : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
-                              }`}
-                            >
-                              {item.icon}
-                              {item.label}
-                            </Link>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              )
-            })}
-
-            {SIMPLE_LINKS.map((link) => (
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                  isActive(link.href) ? 'text-primary dark:text-accent' : 'text-text-light/70 dark:text-text-dark/70 hover:text-primary dark:hover:text-accent'
+                  isActive(link.href)
+                    ? 'text-primary dark:text-accent'
+                    : 'text-text-light/70 dark:text-text-dark/70 hover:text-primary dark:hover:text-accent'
                 }`}
               >
                 {link.icon} {link.label}
@@ -325,69 +228,7 @@ export default function TopNavbar() {
               className="fixed top-16 bottom-0 left-0 w-72 bg-surface dark:bg-surface-dark z-50 lg:hidden overflow-y-auto custom-scrollbar border-r border-pearl/10 shadow-xl"
             >
               <nav className="p-4 space-y-1">
-                <Link
-                  href="/"
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
-                    router.pathname === '/'
-                      ? 'bg-primary/10 text-primary border border-primary/20'
-                      : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
-                  }`}
-                >
-                  <Home size={18} aria-hidden="true" /> Beranda
-                </Link>
-
-                {DROPDOWN_GROUPS.map((group) => {
-                  const isOpen = openGroup === group.key
-                  const groupActive = group.items.some((i) => isActive(i.href))
-                  return (
-                    <div key={group.key}>
-                      <button
-                        onClick={() => setOpenGroup(isOpen ? null : group.key)}
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium transition-colors ${
-                          groupActive
-                            ? 'bg-primary/10 text-primary border border-primary/20'
-                            : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
-                        }`}
-                      >
-                        <span className="flex items-center gap-3">
-                          {group.icon}
-                          {group.label}
-                        </span>
-                        <ChevronDown size={16} aria-hidden="true" className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-                      </button>
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={reduceMotion ? { duration: 0 } : { duration: 0.2 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="mt-1 ml-4 pl-3 border-l border-pearl/10 space-y-0.5">
-                              {group.items.map((item) => (
-                                <Link
-                                  key={item.href}
-                                  href={item.href}
-                                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                                    isActive(item.href)
-                                      ? 'bg-primary/10 text-primary font-semibold'
-                                      : 'text-text-light/60 dark:text-text-dark/60 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
-                                  }`}
-                                >
-                                  {item.icon}
-                                  {item.label}
-                                </Link>
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  )
-                })}
-
-                {SIMPLE_LINKS.map((link) => (
+                {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}

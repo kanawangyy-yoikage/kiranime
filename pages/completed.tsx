@@ -4,6 +4,7 @@ import { CheckCircle } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import CategorySearchBar from '@/components/CategorySearchBar'
 import AnimeMenuAside from '@/components/AnimeMenuAside'
+import LandscapeSpotlight from '@/components/LandscapeSpotlight'
 import { fetchCompleted, type Anime } from '@/lib/api'
 
 export default function CompletedPage() {
@@ -37,7 +38,20 @@ export default function CompletedPage() {
           <div className="text-center py-12"><div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto" /></div>
         ) : (
           <>
-            <AnimeGrid animes={animes} />
+            {animes.length > 0 && (
+              <LandscapeSpotlight
+                kind="anime"
+                title={animes[0].title}
+                href={`/anime/${animes[0].slug}`}
+                image={animes[0].image}
+                imageProxy={(url) => `/api/mal-image?url=${encodeURIComponent(url)}`}
+                score={animes[0].score}
+                type={animes[0].type}
+                episode={animes[0].episode}
+                genres={animes[0].genres}
+              />
+            )}
+            <AnimeGrid animes={page > 1 ? animes : animes.slice(1)} />
             {animes.length > 0 && (
               <div className="text-center pt-2">
                 <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-secondary">

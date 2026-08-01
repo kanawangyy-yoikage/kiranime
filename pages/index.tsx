@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { BookOpen, Clapperboard, ImageOff, ScrollText, Search, BookMarked } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import Section from '@/components/Section'
-import { fetchLatest, fetchPopular, fetchSchedule, fetchMALSeason } from '@/lib/api'
+import LandscapeSpotlight from '@/components/LandscapeSpotlight'
+import { fetchLatest, fetchPopular, fetchSchedule, fetchMALSeason, fetchCompleted } from '@/lib/api'
 import type { Anime, MALAnime } from '@/lib/api'
 
 interface WebtoonItem {
@@ -17,9 +18,11 @@ interface WebtoonItem {
 interface HomeData {
   latest: Anime[]
   popular: Anime[]
+  completed: Anime[]
   schedule: Record<string, Anime[]>
   malSeason: MALAnime[]
   webtoons: WebtoonItem[]
+  completedWebtoons: WebtoonItem[]
 }
 
 function textStyle(muted = false) {
@@ -27,27 +30,31 @@ function textStyle(muted = false) {
 }
 
 export default function Home() {
-  const [data, setData] = useState<HomeData>({ latest: [], popular: [], schedule: {}, malSeason: [], webtoons: [] })
+  const [data, setData] = useState<HomeData>({ latest: [], popular: [], completed: [], schedule: {}, malSeason: [], webtoons: [], completedWebtoons: [] })
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [latest, popular, schedule, malSeason, webtoonRes] = await Promise.allSettled([
+        const [latest, popular, completed, schedule, malSeason, webtoonRes, webtoonCompletedRes] = await Promise.allSettled([
           fetchLatest(),
           fetchPopular(),
+          fetchCompleted(),
           fetchSchedule(),
           fetchMALSeason(),
           fetch('/api/webtoon?action=trending&day=trending').then((res) => res.json()),
+          fetch('/api/webtoon?action=trending&day=completed').then((res) => res.json()),
         ])
 
         setData({
           latest: latest.status === 'fulfilled' ? latest.value : [],
           popular: popular.status === 'fulfilled' ? popular.value : [],
+          completed: completed.status === 'fulfilled' ? completed.value : [],
           schedule: schedule.status === 'fulfilled' ? schedule.value : {},
           malSeason: malSeason.status === 'fulfilled' ? malSeason.value : [],
           webtoons: webtoonRes.status === 'fulfilled' ? webtoonRes.value.items || [] : [],
+          completedWebtoons: webtoonCompletedRes.status === 'fulfilled' ? webtoonCompletedRes.value.items || [] : [],
         })
       } finally {
         setLoading(false)
@@ -141,6 +148,43 @@ export default function Home() {
         <Section title="Terbaru" viewAll="/ongoing">
           {loading ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div> : <AnimeGrid animes={data.latest.slice(0, 8)} />}
         </Section>
+
+        {data.completed.length > 0 && (
+          <Section title="Selesai Tayang" viewAll="/completed">
+            {loading ? (
+              <div className="skeleton min-h-[200px] rounded-3xl" />
+            ) : (
+              <LandscapeSpotlight
+                kind="anime"
+                title={data.completed[0].title}
+                href={`/anime/${data.completed[0].slug}`}
+                image={data.completed[0].image}
+                imageProxy={(url) => `/api/mal-image?url=${encodeURIComponent(url)}`}
+                score={data.completed[0].score}
+                type={data.completed[0].type}
+                episode={data.completed[0].episode}
+                genres={data.completed[0].genres}
+              />
+            )}
+          </Section>
+        )}
+
+        {data.completedWebtoons.length > 0 && (
+          <Section title="Selesai Dibaca" viewAll="/webtoon?day=completed">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {data.completedWebtoons.slice(0, 2).map((item) => (
+                <LandscapeSpotlight
+                  key={item.url}
+                  kind="comic"
+                  title={item.title}
+                  href={`/webtoon/${encodeURIComponent(item.url)}`}
+                  image={item.thumbnail || ''}
+                  imageProxy={(url) => `/api/proxy?url=${encodeURIComponent(url)}`}
+                />
+              ))}
+            </div>
+          </Section>
+        )}
 
         <Section title="Populer" viewAll="/popular">
           {loading ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div> : <AnimeGrid animes={data.popular.slice(0, 8)} />}
