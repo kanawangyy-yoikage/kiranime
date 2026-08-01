@@ -52,9 +52,11 @@ export default function TopNavbar() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [loggingOut, setLoggingOut] = useState(false)
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const reduceMotion = useReducedMotion()
   const navRef = useRef<HTMLElement | null>(null)
   const drawerRef = useRef<HTMLElement | null>(null)
+  const profileMenuRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'))
@@ -63,12 +65,15 @@ export default function TopNavbar() {
   useEffect(() => {
     setDrawerOpen(false)
     setSearchOpen(false)
+    setProfileMenuOpen(false)
   }, [router.pathname, router.asPath])
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
         setDrawerOpen(false)
+        setSearchOpen(false)
+        setProfileMenuOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
@@ -198,18 +203,49 @@ export default function TopNavbar() {
             {authLoading ? (
               <div className="hidden sm:block w-9 h-9 rounded-full bg-pearl/10 animate-pulse" />
             ) : user ? (
-              <Link href="/profile" className="hidden sm:flex items-center gap-2 pl-1 pr-2 py-1 rounded-full border border-pearl/10 hover:bg-pearl/10 transition-colors">
-                <div className="w-8 h-8 rounded-full bg-primary dark:bg-accent flex items-center justify-center overflow-hidden">
-                  {profile?.photoURL ? (
-                    <img src={profile.photoURL} alt={profile?.displayName || 'Avatar'} className="w-full h-full object-cover" />
-                  ) : (
-                    <User size={16} className="text-white" />
-                  )}
-                </div>
-                <span className="hidden xl:block text-sm font-semibold max-w-[100px] truncate">
-                  {profile?.displayName || user.displayName || 'KiraFan'}
-                </span>
-              </Link>
+              <div ref={profileMenuRef} className="hidden sm:relative sm:block">
+                <button
+                  onClick={() => setProfileMenuOpen((v) => !v)}
+                  className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full border border-pearl/10 hover:bg-pearl/10 transition-colors"
+                  aria-haspopup="menu"
+                  aria-expanded={profileMenuOpen}
+                >
+                  <div className="w-8 h-8 rounded-full bg-primary dark:bg-accent flex items-center justify-center overflow-hidden">
+                    {profile?.photoURL ? (
+                      <img src={profile.photoURL} alt={profile?.displayName || 'Avatar'} className="w-full h-full object-cover" />
+                    ) : (
+                      <User size={16} className="text-white" />
+                    )}
+                  </div>
+                  <span className="hidden xl:block text-sm font-semibold max-w-[100px] truncate">
+                    {profile?.displayName || user.displayName || 'KiraFan'}
+                  </span>
+                </button>
+
+                {profileMenuOpen && (
+                  <div
+                    role="menu"
+                    className="absolute right-0 top-full mt-2 w-52 card p-1.5 shadow-xl z-50"
+                  >
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors"
+                      role="menuitem"
+                    >
+                      <User size={16} /> Profil
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      disabled={loggingOut}
+                      className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                      role="menuitem"
+                    >
+                      <LogOut size={16} aria-hidden="true" />
+                      {loggingOut ? 'Logging out\u2026' : 'Logout'}
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <Link
                 href="/login"

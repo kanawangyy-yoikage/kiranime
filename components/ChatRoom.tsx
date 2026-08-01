@@ -107,10 +107,11 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
                 </button>
                 <button
                   onClick={() => handleDeleteSticker(s.id)}
-                  className="absolute -top-1 -right-1 p-1 bg-red-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute -top-1.5 -right-1.5 p-1.5 bg-red-500/90 text-white rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                   aria-label="Hapus stiker"
+                  title="Hapus stiker"
                 >
-                  <Trash2 size={10} />
+                  <Trash2 size={11} />
                 </button>
               </div>
             ))}

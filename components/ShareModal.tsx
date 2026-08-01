@@ -183,7 +183,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                       {searchResults.length > 0 && (
                         <div className="space-y-1.5 mb-2">
                           {searchResults.map((u) => (
-                            <div key={u.uid} className="flex items-center gap-3 p-2.5 rounded-xl bg-surface-dark">
+                            <div key={u.uid} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl bg-surface-dark">
                               <Avatar user={u} />
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-pearl truncate">{u.displayName}</p>
@@ -205,7 +205,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                         </p>
                       ) : (
                         friends.map((f) => (
-                          <div key={f.uid} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
+                          <div key={f.uid} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
                             <Avatar user={f} />
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-pearl truncate">{f.displayName}</p>
@@ -232,7 +232,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                         </div>
                       ) : (
                         groups.map((g) => (
-                          <div key={g.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
+                          <div key={g.id} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
                             <div className="w-10 h-10 rounded-full bg-ocean/20 text-ocean flex items-center justify-center shrink-0">
                               <Users size={18} />
                             </div>

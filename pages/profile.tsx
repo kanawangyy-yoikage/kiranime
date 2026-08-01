@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
-import { Pencil, Clapperboard, Clock, Star, BookmarkPlus, PlayCircle, CheckCircle, Ban, Sparkles } from 'lucide-react'
+import { Pencil, Clapperboard, Clock, Star, BookmarkPlus, PlayCircle, CheckCircle, Ban, Sparkles, LogOut } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { getUserFirestore, uploadAvatarBase64, updateUserFirestore } from '@/lib/firebase'
 import { getHistory, getFavorites, getWatchlistByStatus, getContinueWatching } from '@/lib/firebase'
 
 export default function ProfilePage() {
   const router = useRouter()
-  const { user, updateProfile, refreshProfile, loading: authLoading } = useAuth()
+  const { user, logout, updateProfile, refreshProfile, loading: authLoading } = useAuth()
   
   const [profile, setProfile] = useState<any>(null)
   const [history, setHistory] = useState<any[]>([])
@@ -17,6 +17,7 @@ export default function ProfilePage() {
   const [watchlist, setWatchlist] = useState<any[]>([])
   const [continueWatching, setContinueWatching] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [loggingOut, setLoggingOut] = useState(false)
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'favorites' | 'watchlist'>('overview')
   
   // Edit state
@@ -73,6 +74,16 @@ export default function ProfilePage() {
       console.error('Failed to save profile:', error)
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    try {
+      await logout()
+      router.push('/')
+    } finally {
+      setLoggingOut(false)
     }
   }
 
@@ -235,6 +246,14 @@ export default function ProfilePage() {
                       className="mt-2 text-sm text-ocean hover:text-oceanAccent-secondary transition-colors inline-flex items-center gap-1.5"
                     >
                       <Pencil size={14} aria-hidden="true" /> Edit Profil
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      disabled={loggingOut}
+                      className="mt-2 ml-4 text-sm text-red-400 hover:text-red-300 transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
+                    >
+                      <LogOut size={14} aria-hidden="true" />
+                      {loggingOut ? 'Logging out\u2026' : 'Logout'}
                     </button>
                   </>
                 )}

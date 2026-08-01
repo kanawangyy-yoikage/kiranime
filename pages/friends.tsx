@@ -111,7 +111,7 @@ export default function FriendsPage() {
               </p>
             ) : (
               friends.map((f) => (
-                <div key={f.uid} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
+                <div key={f.uid} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
                   {f.photoURL ? (
                     <img src={f.photoURL} alt={f.displayName} className="w-11 h-11 rounded-full object-cover shrink-0" />
                   ) : (
@@ -123,16 +123,18 @@ export default function FriendsPage() {
                     <p className="font-medium text-pearl truncate">{f.displayName}</p>
                     <p className="text-xs text-pearl/50 truncate">{f.email || ''}</p>
                   </div>
-                  <Link href={`/messages/${f.uid}`} className="btn-secondary text-xs px-3 py-1.5 inline-flex items-center gap-1.5">
-                    <MessageCircle size={14} /> Chat
-                  </Link>
-                  <button
-                    onClick={() => runAction(f.uid, () => removeFriend(f.uid))}
-                    disabled={busyId === f.uid}
-                    className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
-                  >
-                    {busyId === f.uid ? <Loader2 size={14} className="animate-spin" /> : 'Hapus'}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <Link href={`/messages/${f.uid}`} className="btn-secondary text-xs px-3 py-1.5 inline-flex items-center gap-1.5">
+                      <MessageCircle size={14} /> Chat
+                    </Link>
+                    <button
+                      onClick={() => runAction(f.uid, () => removeFriend(f.uid))}
+                      disabled={busyId === f.uid}
+                      className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
+                    >
+                      {busyId === f.uid ? <Loader2 size={14} className="animate-spin" /> : 'Hapus'}
+                    </button>
+                  </div>
                 </div>
               ))
             )}
@@ -146,7 +148,7 @@ export default function FriendsPage() {
               <p className="text-center text-sm text-pearl/50 py-8">Tidak ada permintaan teman masuk.</p>
             ) : (
               requests.map((r) => (
-                <div key={r.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
+                <div key={r.id} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
                   {r.from.photoURL ? (
                     <img src={r.from.photoURL} alt={r.from.displayName} className="w-11 h-11 rounded-full object-cover shrink-0" />
                   ) : (
@@ -158,7 +160,7 @@ export default function FriendsPage() {
                     <p className="font-medium text-pearl truncate">{r.from.displayName}</p>
                     <p className="text-xs text-pearl/50">minta jadi teman</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => runAction(r.from.uid, () => acceptFriendRequest(r.from.uid))}
                       disabled={busyId === r.from.uid}
@@ -207,7 +209,7 @@ export default function FriendsPage() {
             {results.length > 0 && (
               <div className="space-y-2">
                 {results.map((u) => (
-                  <div key={u.uid} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
+                  <div key={u.uid} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
                     {u.photoURL ? (
                       <img src={u.photoURL} alt={u.displayName} className="w-11 h-11 rounded-full object-cover shrink-0" />
                     ) : (

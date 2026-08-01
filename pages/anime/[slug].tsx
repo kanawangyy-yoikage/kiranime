@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -27,6 +27,19 @@ export default function AnimeDetailPage() {
   const [isFavorited, setIsFavorited] = useState(false)
   const [selectedServer, setSelectedServer] = useState(0)
   const [shareOpen, setShareOpen] = useState(false)
+  const [watchlistOpen, setWatchlistOpen] = useState(false)
+  const watchlistRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!watchlistOpen) return
+    const handleClick = (e: MouseEvent) => {
+      if (watchlistRef.current && !watchlistRef.current.contains(e.target as Node)) {
+        setWatchlistOpen(false)
+      }
+    }
+    document.addEventListener('click', handleClick)
+    return () => document.removeEventListener('click', handleClick)
+  }, [watchlistOpen])
 
   // Load anime detail
   useEffect(() => {
@@ -306,36 +319,43 @@ export default function AnimeDetailPage() {
                   {isFavorited ? 'Favorit' : 'Tambah Favorit'}
                 </button>
 
-                <div className="relative group">
-                  <button className="btn-secondary inline-flex items-center gap-2">
+                <div ref={watchlistRef} className="relative">
+                  <button
+                    onClick={() => setWatchlistOpen((v) => !v)}
+                    className="btn-secondary inline-flex items-center gap-2"
+                    aria-haspopup="menu"
+                    aria-expanded={watchlistOpen}
+                  >
                     <ListPlus size={16} /> Watchlist <ChevronDown size={14} />
                   </button>
-                  <div className="absolute top-full left-0 mt-2 hidden group-hover:block dropdown min-w-[150px]">
-                    <button
-                      onClick={() => handleAddToWatchlist('planning')}
-                      className="dropdown-item w-full text-left"
-                    >
-                      Mau Nonton
-                    </button>
-                    <button
-                      onClick={() => handleAddToWatchlist('watching')}
-                      className="dropdown-item w-full text-left"
-                    >
-                      Sedang Nonton
-                    </button>
-                    <button
-                      onClick={() => handleAddToWatchlist('completed')}
-                      className="dropdown-item w-full text-left"
-                    >
-                      Selesai
-                    </button>
-                    <button
-                      onClick={() => handleAddToWatchlist('dropped')}
-                      className="dropdown-item w-full text-left"
-                    >
-                      Dropped
-                    </button>
-                  </div>
+                  {watchlistOpen && (
+                    <div className="absolute top-full left-0 mt-2 dropdown min-w-[150px] z-10">
+                      <button
+                        onClick={() => { handleAddToWatchlist('planning'); setWatchlistOpen(false) }}
+                        className="dropdown-item w-full text-left"
+                      >
+                        Mau Nonton
+                      </button>
+                      <button
+                        onClick={() => { handleAddToWatchlist('watching'); setWatchlistOpen(false) }}
+                        className="dropdown-item w-full text-left"
+                      >
+                        Sedang Nonton
+                      </button>
+                      <button
+                        onClick={() => { handleAddToWatchlist('completed'); setWatchlistOpen(false) }}
+                        className="dropdown-item w-full text-left"
+                      >
+                        Selesai
+                      </button>
+                      <button
+                        onClick={() => { handleAddToWatchlist('dropped'); setWatchlistOpen(false) }}
+                        className="dropdown-item w-full text-left"
+                      >
+                        Dropped
+                      </button>
+                    </div>
+                  )}
                 </div>
               </>
             )}

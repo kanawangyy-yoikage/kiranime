@@ -80,7 +80,7 @@ export default function DirectMessagePage() {
     <>
       <Head><title>{other.displayName} - Pesan</title></Head>
       <div className="space-y-5">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link href="/messages" className="btn-secondary p-2" aria-label="Kembali">
             <ArrowLeft size={18} />
           </Link>
