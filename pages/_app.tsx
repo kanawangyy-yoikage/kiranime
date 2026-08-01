@@ -17,7 +17,7 @@ const jakarta = Plus_Jakarta_Sans({
   variable: '--font-jakarta',
 })
 
-const APP_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('theme');var dark=t?t==='dark':true;if(dark)document.documentElement.classList.add('dark');var m=document.getElementById('theme-color-meta');if(m)m.setAttribute('content',dark?'#000000':'#F5F5F7');var s=localStorage.getItem('kiranime-settings');if(s){var o=JSON.parse(s);var r=document.documentElement;if(o.accent)r.setAttribute('data-accent',o.accent);r.setAttribute('data-animations',o.animations===false?'off':'on');if(o.language){r.lang=o.language;r.dir=(o.language==='ar'||o.language==='ur'||o.language==='fa')?'rtl':'ltr';}}}catch(e){}})();`
+const APP_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('theme');var dark=t?t==='dark':true;if(dark)document.documentElement.classList.add('dark');var m=document.getElementById('theme-color-meta');if(m)m.setAttribute('content',dark?'#000000':'#F5F5F7');var s=localStorage.getItem('kiranime-settings');if(s){var o=JSON.parse(s);var r=document.documentElement;if(o.accent)r.setAttribute('data-accent',o.accent);r.setAttribute('data-animations',o.animations===false?'off':'on');}}catch(e){}})();`
 
 function AppShell({ children }: { children: ReactNode }) {
   const { animations } = useSettings()
