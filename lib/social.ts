@@ -139,21 +139,41 @@ export async function searchUsersByKeyword(keyword: string): Promise<SocialUser[
   if (!q) return []
 
   try {
-    // Cari persis di field displayName (lowercase disimpan via lucene? nggak —
-    // kita simpan field `searchName` lowercase saat register/sync).
     const userRef = collection(db, 'users')
-    const snap = await getDocs(
-      query(userRef, where('searchName', '>=', q), where('searchName', '<=', q + '\uf8ff'), limit(10))
-    )
-    return snap.docs
-      .map((d) => d.data())
-      .filter((u: any) => u.uid !== me.uid)
-      .map((u: any): SocialUser => ({
-        uid: u.uid,
-        displayName: u.displayName || u.email?.split('@')[0] || 'KiraFan',
-        photoURL: u.photoURL || '',
-        email: u.email || '',
-      }))
+
+    // Query 1: array-contains di `keywords` — cocok dengan kata apa pun di nama/email
+    // (mis. cari "Santoso" ketemu "Budi Santoso").
+    const [byKeyword, byPrefix] = await Promise.all([
+      getDocs(query(userRef, where('keywords', 'array-contains', q), limit(10))),
+      // Query 2: prefix searchName sebagai cadangan buat user lama yang belum punya `keywords`
+      getDocs(
+        query(
+          userRef,
+          where('searchName', '>=', q),
+          where('searchName', '<=', q + '\uf8ff'),
+          limit(10)
+        )
+      ),
+    ])
+
+    const seen = new Set<string>()
+    const results: SocialUser[] = []
+
+    for (const snap of [byKeyword, byPrefix]) {
+      for (const d of snap.docs) {
+        const u: any = d.data()
+        if (u.uid === me.uid || seen.has(u.uid)) continue
+        seen.add(u.uid)
+        results.push({
+          uid: u.uid,
+          displayName: u.displayName || u.email?.split('@')[0] || 'KiraFan',
+          photoURL: u.photoURL || '',
+          email: u.email || '',
+        })
+      }
+    }
+
+    return results
   } catch {
     return []
   }

@@ -172,6 +172,7 @@ export async function updateUserProfile(user: User, updates: { displayName?: str
       await updateUserFirestore(user.uid, {
         displayName: updates.displayName,
         searchName: updates.displayName.toLowerCase(),
+        keywords: buildUserSearchTokens(updates.displayName, user.email || ''),
       })
     }
     if (updates.photoURL) {
@@ -185,6 +186,22 @@ export async function updateUserProfile(user: User, updates: { displayName?: str
 
 // ─── FIRESTORE FUNCTIONS ─────────────────────────────────────
 
+// Token pencarian untuk user: dipakai query `array-contains` di Firestore.
+// Contoh: "Budi Santoso" => ["budi", "santoso", "budi santoso", "budi@gmail.com", ...]
+function buildUserSearchTokens(displayName: string, email: string): string[] {
+  const tokens = new Set<string>()
+  const name = (displayName || email?.split('@')[0] || 'kirafan').trim().toLowerCase()
+  tokens.add(name)
+  name.split(/\s+/).filter(Boolean).forEach((w) => tokens.add(w))
+  const emailLower = (email || '').trim().toLowerCase()
+  if (emailLower) {
+    tokens.add(emailLower)
+    const local = emailLower.split('@')[0]
+    if (local) tokens.add(local)
+  }
+  return Array.from(tokens)
+}
+
 export async function syncUserToFirestore(user: User) {
   const userRef = doc(db, 'users', user.uid)
   const userSnap = await getDoc(userRef)
@@ -196,6 +213,7 @@ export async function syncUserToFirestore(user: User) {
       email: user.email || '',
       displayName: user.displayName || 'KiraFan',
       searchName: (user.displayName || user.email?.split('@')[0] || 'kirafan').toLowerCase(),
+      keywords: buildUserSearchTokens(user.displayName || '', user.email || ''),
       photoURL: user.photoURL || '',
       role: 'user',
       createdAt: serverTimestamp(),
@@ -220,6 +238,10 @@ export async function syncUserToFirestore(user: User) {
     if (user.photoURL && !data.photoURL) updates.photoURL = user.photoURL
     if (!data.searchName) {
       updates.searchName = (user.displayName || user.email?.split('@')[0] || 'kirafan').toLowerCase()
+    }
+    // Backfill keywords buat user lama yang belum punya (biar bisa ketemu saat dicari).
+    if (!data.keywords) {
+      updates.keywords = buildUserSearchTokens(user.displayName || '', user.email || '')
     }
     
     if (Object.keys(updates).length > 0) {
