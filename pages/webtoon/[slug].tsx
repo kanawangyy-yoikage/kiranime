@@ -79,7 +79,7 @@ export default function WebtoonDetailPage() {
             ) : null}
           </div>
           <div className="flex-1 space-y-3">
-            <h1 className="text-2xl font-bold text-pearl">{webtoon.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-pearl">{webtoon.title}</h1>
             <button onClick={() => setShareOpen(true)} className="btn-secondary inline-flex items-center gap-2 text-sm">
               <Share2 size={16} /> Bagikan
             </button>
