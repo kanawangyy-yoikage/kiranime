@@ -1,40 +1,45 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Heart, Mail } from 'lucide-react'
-
-const NAV_COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
-  {
-    title: 'Anime',
-    links: [
-      { label: 'Populer', href: '/popular' },
-      { label: 'Movies', href: '/movies' },
-      { label: 'Ongoing', href: '/ongoing' },
-      { label: 'Selesai', href: '/completed' },
-      { label: 'Jadwal', href: '/schedule' },
-      { label: 'Genres', href: '/genres' },
-    ],
-  },
-  {
-    title: 'Komik',
-    links: [
-      { label: 'Semua Komik', href: '/manga' },
-      { label: 'Manga', href: '/manga?type=manga' },
-      { label: 'Manhwa', href: '/manga?type=manhwa' },
-      { label: 'Manhua', href: '/manga?type=manhua' },
-    ],
-  },
-  {
-    title: 'Lainnya',
-    links: [
-      { label: 'Webtoon', href: '/webtoon' },
-      { label: 'Novel', href: '/novel' },
-      { label: 'A-Z List', href: '/animelist?letter=a' },
-      { label: 'Cari', href: '/search' },
-    ],
-  },
-]
+import { Mail } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 export default function Footer() {
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
+
+  const NAV_COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
+    {
+      title: t('nav.anime'),
+      links: [
+        { label: t('footer.popular'), href: '/popular' },
+        { label: t('footer.movies'), href: '/movies' },
+        { label: t('footer.ongoing'), href: '/ongoing' },
+        { label: t('footer.completed'), href: '/completed' },
+        { label: t('footer.schedule'), href: '/schedule' },
+        { label: t('footer.genres'), href: '/genres' },
+      ],
+    },
+    {
+      title: t('nav.manga'),
+      links: [
+        { label: t('footer.allComics'), href: '/manga' },
+        { label: t('footer.manga'), href: '/manga?type=manga' },
+        { label: t('footer.manhwa'), href: '/manga?type=manhwa' },
+        { label: t('footer.manhua'), href: '/manga?type=manhua' },
+      ],
+    },
+    {
+      title: t('footer.others'),
+      links: [
+        { label: t('nav.webtoon'), href: '/webtoon' },
+        { label: t('nav.novel'), href: '/novel' },
+        { label: t('footer.azList'), href: '/animelist?letter=a' },
+        { label: t('nav.search'), href: '/search' },
+      ],
+    },
+  ]
+
   return (
     <footer className="border-t border-pearl/10 bg-surface dark:bg-surface-dark mt-10 pb-24 lg:pb-8">
       <div className="mx-auto max-w-[1600px] px-4 md:px-6 lg:px-8 py-10">
@@ -46,8 +51,7 @@ export default function Footer() {
               <Image src="/logo-title.png" alt="KiraStream" width={130} height={43} className="h-8 w-auto object-contain" />
             </Link>
             <p className="mt-4 text-sm leading-6 text-text-light/60 dark:text-text-dark/60">
-              Platform streaming anime, baca manga, manhwa, manhua, webtoon, dan novel subtitle/bahasa Indonesia dengan
-              tampilan cepat, bersih, dan nyaman.
+              {t('footer.tagline')}
             </p>
           </div>
 
@@ -72,7 +76,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-bold text-sm uppercase tracking-wider mb-4">Kontak</h3>
+            <h3 className="font-bold text-sm uppercase tracking-wider mb-4">{t('footer.contact')}</h3>
             <ul className="space-y-3 text-sm text-text-light/60 dark:text-text-dark/60">
               <li>
                 <a
@@ -89,19 +93,14 @@ export default function Footer() {
         {/* Disclaimer */}
         <div className="mt-10 rounded-2xl border border-pearl/10 bg-pearl/[0.03] p-5">
           <p className="text-xs leading-5 text-text-light/50 dark:text-text-dark/50">
-            Disclaimer: KiraStream tidak menyimpan file video, gambar, atau konten apa pun di server kami. Seluruh konten
-            (anime, manga, webtoon, dan novel) berasal dari sumber pihak ketiga yang tersedia di internet. Seluruh hak cipta
-            dan trademark milik masing-masing pemiliknya. Jika kamu merasa konten di situs ini melanggar hak cipta, silakan
-            hubungi kami.
+            {t('footer.disclaimer')}
           </p>
         </div>
 
         {/* Bottom */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-light/40 dark:text-text-dark/40">
-          <p>&copy; 2026 KiraStream. All rights reserved.</p>
-          <p className="inline-flex items-center gap-1">
-            Made with <Heart size={12} className="fill-red-400 text-red-400" aria-hidden="true" /> by Kira, matchadesu_
-          </p>
+          <p>{t('footer.rights')}</p>
+          <p>{t('footer.madeWith')}</p>
         </div>
       </div>
     </footer>

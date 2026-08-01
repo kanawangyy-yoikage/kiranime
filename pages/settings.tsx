@@ -1,0 +1,150 @@
+import Head from 'next/head'
+import { Palette, Sparkles, Languages, Settings as SettingsIcon, Check } from 'lucide-react'
+import { ACCENT_COLORS, AccentKey, useSettings } from '@/contexts/SettingsContext'
+import { LANGUAGES, translate } from '@/lib/i18n'
+
+const ACCENTS: AccentKey[] = ['blue', 'violet', 'emerald', 'rose', 'amber', 'cyan']
+
+function SectionCard({
+  icon,
+  title,
+  desc,
+  children,
+}: {
+  icon: React.ReactNode
+  title: string
+  desc: string
+  children: React.ReactNode
+}) {
+  return (
+    <section className="card p-6">
+      <div className="flex items-start gap-3 mb-5">
+        <div className="w-10 h-10 rounded-xl bg-ocean/10 text-ocean flex items-center justify-center shrink-0">
+          {icon}
+        </div>
+        <div>
+          <h2 className="font-bold text-pearl">{title}</h2>
+          <p className="mt-0.5 text-sm" style={{ color: 'var(--color-text-muted)' }}>
+            {desc}
+          </p>
+        </div>
+      </div>
+      {children}
+    </section>
+  )
+}
+
+export default function SettingsPage() {
+  const { accent, animations, language, setAccent, setAnimations, setLanguage } = useSettings()
+  const t = (key: string) => translate(language, key)
+
+  return (
+    <>
+      <Head>
+        <title>{t('settings.title')} - KiraStream</title>
+      </Head>
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div className="flex items-center gap-3">
+          <h1 className="section-title flex items-center gap-2">
+            <SettingsIcon size={22} className="text-ocean" aria-hidden="true" /> {t('settings.title')}
+          </h1>
+        </div>
+        <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>
+          {t('settings.subtitle')}
+        </p>
+
+        <SectionCard
+          icon={<Palette size={20} aria-hidden="true" />}
+          title={t('settings.accent')}
+          desc={t('settings.accentDesc')}
+        >
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            {ACCENTS.map((key) => {
+              const selected = accent === key
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setAccent(key)}
+                  aria-pressed={selected}
+                  className={`flex flex-col items-center gap-2 rounded-xl border p-3 transition-colors ${
+                    selected
+                      ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
+                      : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40'
+                  }`}
+                >
+                  <span
+                    className="w-9 h-9 rounded-full border-2 border-pearl/20 shadow-sm flex items-center justify-center"
+                    style={{ backgroundColor: ACCENT_COLORS[key] }}
+                  >
+                    {selected && <Check size={18} className="text-white" aria-hidden="true" />}
+                  </span>
+                  <span className="text-xs font-semibold">{t(`accent.${key}`)}</span>
+                </button>
+              )
+            })}
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          icon={<Sparkles size={20} aria-hidden="true" />}
+          title={t('settings.animation')}
+          desc={t('settings.animationDesc')}
+        >
+          <button
+            type="button"
+            role="switch"
+            aria-checked={animations}
+            onClick={() => setAnimations(!animations)}
+            className={`relative h-8 w-14 rounded-full transition-colors ${
+              animations ? 'bg-ocean' : 'bg-pearl/20'
+            }`}
+          >
+            <span
+              className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform ${
+                animations ? 'translate-x-7' : 'translate-x-1'
+              }`}
+            />
+          </button>
+          <p className="mt-2 text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
+            {animations ? t('settings.on') : t('settings.off')}
+          </p>
+        </SectionCard>
+
+        <SectionCard
+          icon={<Languages size={20} aria-hidden="true" />}
+          title={t('settings.language')}
+          desc={t('settings.languageDesc')}
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-80 overflow-y-auto custom-scrollbar pr-1">
+            {LANGUAGES.map((lang) => {
+              const selected = language === lang.code
+              return (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => setLanguage(lang.code)}
+                  aria-pressed={selected}
+                  className={`flex flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                    selected
+                      ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
+                      : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40'
+                  }`}
+                >
+                  <span className="text-sm font-semibold text-pearl">{lang.nativeName}</span>
+                  <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                    {lang.englishName}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </SectionCard>
+
+        <p className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+          <Check size={14} className="text-ocean" aria-hidden="true" /> {t('settings.saved')}
+        </p>
+      </div>
+    </>
+  )
+}

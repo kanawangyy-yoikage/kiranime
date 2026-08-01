@@ -13,11 +13,11 @@ const config: Config = {
         midnight: '#000000',
         pearl: 'rgb(var(--pearl-rgb) / <alpha-value>)',
         noir: '#000000',
-        ocean: '#0071E3',
+        ocean: 'rgb(var(--primary-rgb) / <alpha-value>)',
         oceanAccent: {
-          primary: '#0071E3',
-          secondary: '#2997FF',
-          light: '#66BBFF',
+          primary: 'rgb(var(--primary-rgb) / <alpha-value>)',
+          secondary: 'rgb(var(--accent-rgb) / <alpha-value>)',
+          light: 'rgb(var(--primary-rgb) / <alpha-value>)',
         },
         surface: {
           DEFAULT: '#FFFFFF',
@@ -29,8 +29,8 @@ const config: Config = {
         'bg-dark': '#000000',
         'text-light': '#1D1D1F',
         'text-dark': '#F5F5F7',
-        primary: '#0071E3',
-        accent: '#2997FF'
+        primary: 'rgb(var(--primary-rgb) / <alpha-value>)',
+        accent: 'rgb(var(--accent-rgb) / <alpha-value>)'
       },
       fontFamily: {
         sans: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],

@@ -11,6 +11,8 @@ import LandscapeSpotlight from '@/components/LandscapeSpotlight'
 import { fetchLatest, fetchPopular, fetchSchedule, fetchMALSeason, fetchCompleted } from '@/lib/api'
 import type { Anime, MALAnime } from '@/lib/api'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 interface WebtoonItem {
   title: string
@@ -34,6 +36,8 @@ function textStyle(muted = false) {
 
 export default function Home() {
   const router = useRouter()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   const [data, setData] = useState<HomeData>({ latest: [], popular: [], completed: [], schedule: {}, malSeason: [], webtoons: [], completedWebtoons: [] })
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -95,10 +99,10 @@ export default function Home() {
   }
 
   const quickLinks = [
-    { href: '/anime', label: 'Anime', Icon: Clapperboard },
-    { href: '/manga', label: 'Komik', Icon: BookOpen },
-    { href: '/webtoon', label: 'Webtoon', Icon: ScrollText },
-    { href: '/novel', label: 'Novel', Icon: BookMarked },
+    { href: '/anime', label: t('nav.anime'), Icon: Clapperboard },
+    { href: '/manga', label: t('nav.manga'), Icon: BookOpen },
+    { href: '/webtoon', label: t('nav.webtoon'), Icon: ScrollText },
+    { href: '/novel', label: t('nav.novel'), Icon: BookMarked },
   ]
 
   return (
@@ -130,7 +134,7 @@ export default function Home() {
             initial={reduce ? false : 'hidden'}
             animate="visible"
           >
-            <motion.span variants={heroItem} className="badge mb-5">Streaming Anime & Komik</motion.span>
+            <motion.span variants={heroItem} className="badge mb-5">{t('hero.badge')}</motion.span>
 
             <motion.h1
               variants={heroItem}
@@ -140,7 +144,7 @@ export default function Home() {
             </motion.h1>
 
             <motion.p variants={heroItem} className="mt-5 max-w-2xl text-sm leading-7 md:text-base" style={textStyle(true)}>
-              Streaming anime subtitle Indonesia, baca manga, manhwa, manhua, webtoon, dan novel. Cepat, bersih, dan nyaman di desktop maupun mobile.
+              {t('hero.tagline')}
             </motion.p>
 
             {/* Search */}
@@ -151,14 +155,14 @@ export default function Home() {
                   type="search"
                   name="q"
                   autoComplete="off"
-                  aria-label="Cari anime, komik, webtoon, novel"
+                  aria-label={t('hero.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari anime, komik, webtoon, novel\u2026"
+                  placeholder={t('hero.searchPlaceholder')}
                   className="input-field w-full py-3.5 pl-12 pr-28 text-sm rounded-full"
                 />
                 <button type="submit" className="btn-primary absolute right-1.5 top-1/2 -translate-y-1/2 px-5 py-2 text-xs rounded-full">
-                  Cari
+                  {t('nav.search')}
                 </button>
               </div>
             </motion.form>
@@ -179,12 +183,12 @@ export default function Home() {
           </motion.div>
         </section>
 
-        <Section title="Terbaru" viewAll="/ongoing">
+        <Section title={t('section.latest')} viewAll="/ongoing">
           {loading ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div> : <AnimeGrid animes={data.latest.slice(0, 8)} />}
         </Section>
 
         {data.completed.length > 0 && (
-          <Section title="Selesai Tayang" viewAll="/completed">
+          <Section title={t('section.completedAiring')} viewAll="/completed">
             {loading ? (
               <div className="skeleton min-h-[200px] rounded-3xl" />
             ) : (
@@ -204,7 +208,7 @@ export default function Home() {
         )}
 
         {data.completedWebtoons.length > 0 && (
-          <Section title="Selesai Dibaca" viewAll="/webtoon?day=completed">
+          <Section title={t('section.finishedReading')} viewAll="/webtoon?day=completed">
             <div className="grid gap-4 sm:grid-cols-2">
               {data.completedWebtoons.slice(0, 2).map((item) => (
                 <LandscapeSpotlight
@@ -220,11 +224,11 @@ export default function Home() {
           </Section>
         )}
 
-        <Section title="Populer" viewAll="/popular">
+        <Section title={t('section.popular')} viewAll="/popular">
           {loading ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div> : <AnimeGrid animes={data.popular.slice(0, 8)} />}
         </Section>
 
-        <Section title="Webtoon" viewAll="/webtoon">
+        <Section title={t('nav.webtoon')} viewAll="/webtoon">
           {loading ? (
             <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
           ) : data.webtoons.length === 0 ? (
@@ -252,7 +256,7 @@ export default function Home() {
         </Section>
 
         {Object.keys(data.schedule).length > 0 && (
-          <Section title="Jadwal Rilis" viewAll="/schedule">
+          <Section title={t('section.schedule')} viewAll="/schedule">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {Object.entries(data.schedule).slice(0, 6).map(([day, animes]) => (
                 <div key={day} className="card p-4">
@@ -278,7 +282,7 @@ export default function Home() {
         )}
 
         {data.malSeason.length > 0 && (
-          <Section title="Seasonal Anime" viewAll="/seasonal">
+          <Section title={t('section.seasonal')} viewAll="/seasonal">
             <div className="anime-grid">
               {data.malSeason.slice(0, 8).map((anime) => (
                 <Link key={anime.mal_id} href={`/mal/${anime.mal_id}`} className="anime-card group">

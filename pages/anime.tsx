@@ -8,6 +8,8 @@ import LandscapeSpotlight from '@/components/LandscapeSpotlight'
 import CategorySearchBar from '@/components/CategorySearchBar'
 import { fetchLatest, fetchPopular, fetchCompleted, type Anime } from '@/lib/api'
 import type { SpotlightItem } from '@/components/LandscapeSpotlight'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 const imageProxy = (url: string) => `/api/mal-image?url=${encodeURIComponent(url)}`
 
@@ -25,6 +27,8 @@ function toSpotlight(anime: Anime): SpotlightItem {
 }
 
 export default function AnimeHomePage() {
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   const [latest, setLatest] = useState<Anime[]>([])
   const [popular, setPopular] = useState<Anime[]>([])
   const [completed, setCompleted] = useState<Anime[]>([])
@@ -55,10 +59,10 @@ export default function AnimeHomePage() {
               <PlayCircle size={24} className="text-ocean" aria-hidden="true" /> Anime
             </h1>
             <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              Streaming anime subtitle Indonesia.
+              {t('page.anime.subtitle')}
             </p>
           </div>
-          <CategorySearchBar type="anime" placeholder="Cari anime\u2026" />
+          <CategorySearchBar type="anime" placeholder={t('hero.searchPlaceholder')} />
         </div>
 
         {/* Slider geser */}
@@ -68,20 +72,20 @@ export default function AnimeHomePage() {
           <LandscapeSlider kind="anime" items={slides} imageProxy={imageProxy} />
         ) : null}
 
-        <Section title="Ongoing" viewAll="/ongoing">
+        <Section title={t('section.ongoing')} viewAll="/ongoing">
           {loading
             ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
             : <AnimeGrid animes={latest.slice(0, 8)} />}
         </Section>
 
-        <Section title="Populer" viewAll="/popular">
+        <Section title={t('section.popular')} viewAll="/popular">
           {loading
             ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
             : <AnimeGrid animes={popular.slice(0, 8)} />}
         </Section>
 
         {!loading && completed.length > 0 && (
-          <Section title="Selesai Tayang" viewAll="/completed">
+          <Section title={t('section.completedAiring')} viewAll="/completed">
             <div className="grid gap-4 md:grid-cols-2">
               {completed.slice(0, 2).map((a) => (
                 <LandscapeSpotlight key={a.slug} {...toSpotlight(a)} imageProxy={imageProxy} />

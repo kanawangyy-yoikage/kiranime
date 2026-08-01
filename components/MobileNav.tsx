@@ -1,18 +1,22 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Home, Clapperboard, BookOpen, ScrollText, BookMarked, User } from 'lucide-react'
-
-const ITEMS = [
-  { label: 'Home', href: '/', icon: Home },
-  { label: 'Anime', href: '/anime', icon: Clapperboard },
-  { label: 'Komik', href: '/manga', icon: BookOpen },
-  { label: 'Webtoon', href: '/webtoon', icon: ScrollText },
-  { label: 'Novel', href: '/novel', icon: BookMarked },
-  { label: 'Profil', href: '/profile', icon: User },
-]
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 export default function MobileNav() {
   const router = useRouter()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
+
+  const ITEMS = [
+    { label: t('nav.home'), href: '/', icon: Home },
+    { label: t('nav.anime'), href: '/anime', icon: Clapperboard },
+    { label: t('nav.manga'), href: '/manga', icon: BookOpen },
+    { label: t('nav.webtoon'), href: '/webtoon', icon: ScrollText },
+    { label: t('nav.novel'), href: '/novel', icon: BookMarked },
+    { label: t('nav.profile'), href: '/profile', icon: User },
+  ]
 
   const isActive = (href: string) => {
     if (href === '/') return router.pathname === '/'
