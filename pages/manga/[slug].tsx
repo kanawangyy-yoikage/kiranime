@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import { BookOpen, Frown } from 'lucide-react'
+import { BookOpen, Frown, Share2 } from 'lucide-react'
 import { fetchComicDetail, ComicDetail } from '@/lib/api'
+import ShareModal from '@/components/ShareModal'
 
 export default function ComicDetailPage() {
   const router = useRouter()
@@ -11,6 +12,7 @@ export default function ComicDetailPage() {
 
   const [comic, setComic] = useState<ComicDetail | null>(null)
   const [loading, setLoading] = useState(true)
+  const [shareOpen, setShareOpen] = useState(false)
 
   useEffect(() => {
     if (!slug || typeof slug !== 'string') return
@@ -82,6 +84,12 @@ export default function ComicDetailPage() {
               ))}
             </div>
 
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button onClick={() => setShareOpen(true)} className="btn-secondary inline-flex items-center gap-2 text-sm">
+                <Share2 size={16} /> Bagikan
+              </button>
+            </div>
+
             {comic.description && (
               <div className="pt-4 border-t border-ocean/20">
                 <p className="text-sm leading-relaxed text-pearl/80 whitespace-pre-line">{comic.description}</p>
@@ -115,6 +123,21 @@ export default function ComicDetailPage() {
             </div>
           )}
         </div>
+
+        {/* Share Modal */}
+        {comic && (
+          <ShareModal
+            open={shareOpen}
+            onClose={() => setShareOpen(false)}
+            item={{
+              kind: 'manga',
+              slug: slug as string,
+              title: comic.title,
+              image: comic.image,
+              href: `/manga/${slug}`,
+            }}
+          />
+        )}
       </div>
     </>
   )

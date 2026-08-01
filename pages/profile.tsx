@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
-import { Pencil, Clapperboard, Clock, Star, BookmarkPlus, PlayCircle, CheckCircle, Ban } from 'lucide-react'
+import { Pencil, Clapperboard, Clock, Star, BookmarkPlus, PlayCircle, CheckCircle, Ban, Sparkles } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { getUserFirestore, uploadAvatarBase64, updateUserFirestore } from '@/lib/firebase'
 import { getHistory, getFavorites, getWatchlistByStatus, getContinueWatching } from '@/lib/firebase'
@@ -289,6 +289,51 @@ export default function ProfilePage() {
             {/* Overview */}
             {activeTab === 'overview' && (
               <div className="space-y-6">
+                {/* Recap */}
+                {history.length > 0 && (
+                  <div className="rounded-xl p-4"
+                    style={{ background: 'var(--color-surface-alt)' }}
+                  >
+                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Sparkles size={18} className="text-ocean" /> Recap Tontonanmu</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                      <div className="card p-3 text-center">
+                        <div className="text-xl font-bold text-ocean">{history.length}</div>
+                        <div className="text-xs text-pearl/60">Judul Ditonton</div>
+                      </div>
+                      <div className="card p-3 text-center">
+                        <div className="text-xl font-bold text-ocean">{favorites.length}</div>
+                        <div className="text-xs text-pearl/60">Favorit</div>
+                      </div>
+                      <div className="card p-3 text-center">
+                        <div className="text-xl font-bold text-ocean">
+                          {watchlist.filter((w: any) => w.status === 'completed').length}
+                        </div>
+                        <div className="text-xs text-pearl/60">Selesai Ditonton</div>
+                      </div>
+                      <div className="card p-3 text-center">
+                        <div className="text-xl font-bold text-ocean">
+                          {(() => {
+                            const counts: Record<string, number> = {}
+                            history.forEach((h: any) => {
+                              const k = h.slug
+                              counts[k] = (counts[k] || 0) + 1
+                            })
+                            const most = Object.entries(counts).sort((a, b) => (b[1] as number) - (a[1] as number))[0]
+                            return most ? (most[1] as number) : 0
+                          })()}
+                        </div>
+                        <div className="text-xs text-pearl/60">Sering Ditonton</div>
+                      </div>
+                    </div>
+                    {history.length > 0 && (
+                      <p className="text-xs text-pearl/50 mt-3">
+                        Lanjutkan semangat nontonmu! Anime terakhir yang kamu buka:{' '}
+                        <span className="text-pearl">{history[0]?.title}</span>
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 {/* Continue Watching */}
                 {continueWatching.length > 0 && (
                   <div>

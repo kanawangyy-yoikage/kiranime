@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { ArrowLeft, Frown } from 'lucide-react'
+import ReaderScrollControls from '@/components/ReaderScrollControls'
 
 export default function WebtoonReader() {
   const router = useRouter()
@@ -75,6 +76,8 @@ export default function WebtoonReader() {
           </div>
         </div>
       )}
+
+      <ReaderScrollControls />
     </>
   )
 }

@@ -173,7 +173,10 @@ export async function updateUserProfile(user: User, updates: { displayName?: str
       await updateProfile(user, { displayName: updates.displayName })
     }
     if (updates.displayName) {
-      await updateUserFirestore(user.uid, { displayName: updates.displayName })
+      await updateUserFirestore(user.uid, {
+        displayName: updates.displayName,
+        searchName: updates.displayName.toLowerCase(),
+      })
     }
     if (updates.photoURL) {
       await updateUserFirestore(user.uid, { photoURL: updates.photoURL })
@@ -196,6 +199,7 @@ export async function syncUserToFirestore(user: User) {
       uid: user.uid,
       email: user.email || '',
       displayName: user.displayName || 'KiraFan',
+      searchName: (user.displayName || user.email?.split('@')[0] || 'kirafan').toLowerCase(),
       photoURL: user.photoURL || '',
       role: 'user',
       createdAt: serverTimestamp(),
@@ -218,6 +222,9 @@ export async function syncUserToFirestore(user: User) {
     if (user.email && data.email !== user.email) updates.email = user.email
     if (user.displayName && !data.displayName) updates.displayName = user.displayName
     if (user.photoURL && !data.photoURL) updates.photoURL = user.photoURL
+    if (!data.searchName) {
+      updates.searchName = (user.displayName || user.email?.split('@')[0] || 'kirafan').toLowerCase()
+    }
     
     if (Object.keys(updates).length > 0) {
       await updateDoc(userRef, updates)
@@ -512,7 +519,7 @@ export async function getContinueWatching() {
 // biaya/kebutuhan Firebase Storage sepenuhnya — cocok untuk free tier.
 // Firestore document limit ~1MB, jadi avatar dibatasi resolusi kecil (aman jauh di bawah itu).
 
-function resizeAndCompressImage(
+export function resizeAndCompressImage(
   file: File,
   maxDimension: number,
   quality: number

@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { ArrowLeft, ChevronLeft, ChevronRight, Frown } from 'lucide-react'
 import { fetchChapterPages, fetchChapterNavigation, ChapterPages, ChapterNav } from '@/lib/api'
+import ReaderScrollControls from '@/components/ReaderScrollControls'
 
 export default function ChapterReaderPage() {
   const router = useRouter()
@@ -108,6 +109,8 @@ export default function ChapterReaderPage() {
           )}
         </div>
       </div>
+
+      <ReaderScrollControls />
     </>
   )
 }

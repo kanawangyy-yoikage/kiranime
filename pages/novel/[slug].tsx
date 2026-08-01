@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import { BookMarked, Frown } from 'lucide-react'
+import { BookMarked, Frown, Share2 } from 'lucide-react'
 import { fetchNovelDetail, fetchNovelCoverByTitle, NovelDetail } from '@/lib/api'
+import ShareModal from '@/components/ShareModal'
 
 export default function NovelDetailPage() {
   const router = useRouter()
@@ -11,6 +12,7 @@ export default function NovelDetailPage() {
 
   const [novel, setNovel] = useState<NovelDetail | null>(null)
   const [loading, setLoading] = useState(true)
+  const [shareOpen, setShareOpen] = useState(false)
 
   useEffect(() => {
     if (!slug || typeof slug !== 'string') return
@@ -110,6 +112,12 @@ export default function NovelDetailPage() {
               </div>
             )}
 
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button onClick={() => setShareOpen(true)} className="btn-secondary inline-flex items-center gap-2 text-sm">
+                <Share2 size={16} /> Bagikan
+              </button>
+            </div>
+
             {novel.synopsis && (
               <div className="pt-4 border-t border-ocean/20">
                 <p className="text-sm leading-relaxed text-pearl/80 whitespace-pre-line">{novel.synopsis}</p>
@@ -143,6 +151,21 @@ export default function NovelDetailPage() {
             </div>
           )}
         </div>
+
+        {/* Share Modal */}
+        {novel && (
+          <ShareModal
+            open={shareOpen}
+            onClose={() => setShareOpen(false)}
+            item={{
+              kind: 'novel',
+              slug: slug as string,
+              title: novel.title,
+              image: novel.image,
+              href: `/novel/${slug}`,
+            }}
+          />
+        )}
       </div>
     </>
   )

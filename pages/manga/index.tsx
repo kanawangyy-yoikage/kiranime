@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -57,9 +57,35 @@ export default function MangaListPage() {
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
 
+  // ─── INCREMENTAL RENDER ─────────────────────────────────────
+  // Bikin komik "unlimited" gak nge-lag: cuma render sebagian dulu
+  // (BATCH_SIZE per langkah), sisanya muncul bertahap pas user scroll.
+  // Data tetap di-fetch semua, tapi DOM-nya dibatasi jumlah node-nya.
+  const [visibleCount, setVisibleCount] = useState(24)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  const BATCH_SIZE = 24
+
   useEffect(() => {
     fetchComicGenres().then(setGenres)
   }, [])
+
+  useEffect(() => {
+    setVisibleCount(24)
+  }, [tab, typeFilter])
+
+  useEffect(() => {
+    if (!sentinelRef.current) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, comics.length))
+        }
+      },
+      { rootMargin: '600px 0px' }
+    )
+    observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [comics.length, visibleCount])
 
   const loadPage = useCallback(async (currentTab: Tab, currentType: TypeFilter, currentPage: number) => {
     setLoading(true)
@@ -178,7 +204,12 @@ export default function MangaListPage() {
           <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>Manga belum bisa dimuat, coba refresh halaman ini sebentar lagi.</div>
         ) : (
           <>
-            <ComicGrid comics={comics} />
+            <ComicGrid comics={comics.slice(0, visibleCount)} />
+            {visibleCount < comics.length && (
+              <div ref={sentinelRef} className="text-center py-4">
+                <div className="inline-block w-8 h-8 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin" />
+              </div>
+            )}
             <div className="text-center">
               <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-secondary">
                 {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}

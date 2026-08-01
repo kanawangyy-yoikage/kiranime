@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import { ScrollText, Frown } from 'lucide-react'
+import { ScrollText, Frown, Share2 } from 'lucide-react'
+import ShareModal from '@/components/ShareModal'
 
 interface WebtoonEpisode {
   title: string
@@ -23,6 +24,7 @@ export default function WebtoonDetailPage() {
   const [webtoon, setWebtoon] = useState<WebtoonDetailData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
   const imageProxy = (url: string) => `/api/proxy?url=${encodeURIComponent(url)}`
 
   useEffect(() => {
@@ -78,6 +80,9 @@ export default function WebtoonDetailPage() {
           </div>
           <div className="flex-1 space-y-3">
             <h1 className="text-2xl font-bold text-pearl">{webtoon.title}</h1>
+            <button onClick={() => setShareOpen(true)} className="btn-secondary inline-flex items-center gap-2 text-sm">
+              <Share2 size={16} /> Bagikan
+            </button>
           </div>
         </div>
 
@@ -104,6 +109,21 @@ export default function WebtoonDetailPage() {
             </div>
           )}
         </div>
+
+        {/* Share Modal */}
+        {webtoon && (
+          <ShareModal
+            open={shareOpen}
+            onClose={() => setShareOpen(false)}
+            item={{
+              kind: 'webtoon',
+              slug: slug as string,
+              title: webtoon.title,
+              image: webtoon.thumbnail,
+              href: `/webtoon/${slug}`,
+            }}
+          />
+        )}
       </div>
     </>
   )

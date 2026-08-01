@@ -17,6 +17,9 @@ import {
   Clapperboard,
   LogOut,
   User,
+  Newspaper,
+  Users,
+  MessageCircle,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -32,6 +35,13 @@ const NAV_LINKS: NavItem[] = [
   { label: 'Komik', href: '/manga', icon: <BookOpen size={16} /> },
   { label: 'Webtoon', href: '/webtoon', icon: <ScrollText size={16} /> },
   { label: 'Novel', href: '/novel', icon: <BookMarked size={16} /> },
+  { label: 'Berita', href: '/news', icon: <Newspaper size={16} /> },
+]
+
+const SOCIAL_LINKS: NavItem[] = [
+  { label: 'Teman', href: '/friends', icon: <Users size={16} /> },
+  { label: 'Grup', href: '/groups', icon: <MessageCircle size={16} /> },
+  { label: 'Pesan', href: '/messages', icon: <MessageCircle size={16} /> },
 ]
 
 export default function TopNavbar() {
@@ -284,6 +294,24 @@ export default function TopNavbar() {
                     {link.icon} {link.label}
                   </Link>
                 ))}
+
+                {/* Sosial */}
+                <div className="pt-3 mt-3 border-t border-pearl/10 space-y-1">
+                  <p className="px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-pearl/40">Sosial</p>
+                  {SOCIAL_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                        isActive(link.href)
+                          ? 'bg-primary/10 text-primary border border-primary/20'
+                          : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
+                      }`}
+                    >
+                      {link.icon} {link.label}
+                    </Link>
+                  ))}
+                </div>
 
                 {/* Account */}
                 <div className="pt-3 mt-3 border-t border-pearl/10 space-y-2">

@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Download, Heart, ListPlus, ChevronDown } from 'lucide-react'
+import { Download, Heart, ListPlus, ChevronDown, Share2 } from 'lucide-react'
 import { fetchDetail, fetchEpisode, type AnimeDetail, type StreamData } from '@/lib/api'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
@@ -14,6 +14,7 @@ import {
   addToWatchlist,
   type WatchlistStatus 
 } from '@/lib/firebase'
+import ShareModal from '@/components/ShareModal'
 
 export default function AnimeDetailPage() {
   const router = useRouter()
@@ -26,6 +27,7 @@ export default function AnimeDetailPage() {
   const [playingEpisode, setPlayingEpisode] = useState<string | null>(null)
   const [isFavorited, setIsFavorited] = useState(false)
   const [selectedServer, setSelectedServer] = useState(0)
+  const [shareOpen, setShareOpen] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   // Load anime detail
@@ -300,6 +302,13 @@ export default function AnimeDetailPage() {
 
           {/* Action Buttons */}
           <div className="p-6 flex flex-wrap gap-3">
+            <button
+              onClick={() => setShareOpen(true)}
+              className="btn-secondary inline-flex items-center gap-2"
+            >
+              <Share2 size={16} /> Bagikan
+            </button>
+
             {user && (
               <>
                 <button
@@ -345,6 +354,21 @@ export default function AnimeDetailPage() {
             )}
           </div>
         </motion.div>
+
+        {/* Share Modal */}
+        {anime && (
+          <ShareModal
+            open={shareOpen}
+            onClose={() => setShareOpen(false)}
+            item={{
+              kind: 'anime',
+              slug: slug as string,
+              title: anime.title,
+              image: anime.image,
+              href: `/anime/${slug}`,
+            }}
+          />
+        )}
 
         {/* Synopsis & Info */}
         <div className="grid md:grid-cols-3 gap-6">
