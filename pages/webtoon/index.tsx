@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ScrollText, ImageOff, Flame, CalendarDays, CheckCircle } from 'lucide-react'
 import CategorySearchBar from '@/components/CategorySearchBar'
+import LandscapeSpotlight from '@/components/LandscapeSpotlight'
 
 const DAY_ORDER = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu']
 
@@ -71,6 +72,17 @@ export default function WebtoonPage() {
           </div>
           <CategorySearchBar type="webtoon" placeholder="Cari webtoon\u2026" />
         </div>
+
+        {/* Featured landscape */}
+        {!loading && items.length > 0 && (
+          <LandscapeSpotlight
+            kind="comic"
+            title={items[0].title}
+            href={`/webtoon/${encodeURIComponent(items[0].url)}`}
+            image={items[0].thumbnail || ''}
+            imageProxy={(url) => `/api/proxy?url=${encodeURIComponent(url)}`}
+          />
+        )}
 
         {/* Quick Menu */}
         <div className="card p-4">

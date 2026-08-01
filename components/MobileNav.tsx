@@ -4,7 +4,7 @@ import { Home, Clapperboard, BookOpen, ScrollText, BookMarked, User } from 'luci
 
 const ITEMS = [
   { label: 'Home', href: '/', icon: Home },
-  { label: 'Anime', href: '/ongoing', icon: Clapperboard },
+  { label: 'Anime', href: '/anime', icon: Clapperboard },
   { label: 'Komik', href: '/manga', icon: BookOpen },
   { label: 'Webtoon', href: '/webtoon', icon: ScrollText },
   { label: 'Novel', href: '/novel', icon: BookMarked },

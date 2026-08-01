@@ -28,7 +28,7 @@ interface NavItem {
 
 const NAV_LINKS: NavItem[] = [
   { label: 'Beranda', href: '/', icon: <Home size={16} /> },
-  { label: 'Anime', href: '/popular', icon: <Clapperboard size={16} /> },
+  { label: 'Anime', href: '/anime', icon: <Clapperboard size={16} /> },
   { label: 'Komik', href: '/manga', icon: <BookOpen size={16} /> },
   { label: 'Webtoon', href: '/webtoon', icon: <ScrollText size={16} /> },
   { label: 'Novel', href: '/novel', icon: <BookMarked size={16} /> },

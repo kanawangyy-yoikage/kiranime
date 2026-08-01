@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { BookOpen, Flame, Sparkles, TrendingUp, LayoutGrid } from 'lucide-react'
 import ComicGrid from '@/components/ComicGrid'
 import CategorySearchBar from '@/components/CategorySearchBar'
+import LandscapeSpotlight from '@/components/LandscapeSpotlight'
 import {
   fetchComicPopular,
   fetchComicLatest,
@@ -104,6 +105,22 @@ export default function MangaListPage() {
           </div>
           <CategorySearchBar type="manga" placeholder="Cari manga\u2026" />
         </div>
+
+        {/* Featured landscape */}
+        {!loading && page === 1 && comics.length > 0 && (
+          <LandscapeSpotlight
+            kind="comic"
+            title={comics[0].title}
+            href={`/manga/${comics[0].slug}`}
+            image={comics[0].image}
+            imageProxy={(url) => `/api/proxy?url=${encodeURIComponent(url)}`}
+            score={comics[0].score}
+            type={comics[0].type}
+            chapter={comics[0].chapter}
+            genres={comics[0].genres}
+            status={comics[0].status}
+          />
+        )}
 
         {/* Quick Menu */}
         <div className="card p-4">

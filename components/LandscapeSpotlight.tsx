@@ -1,18 +1,21 @@
 import Link from 'next/link'
 import { Star, CheckCircle2, PlayCircle, BookOpen } from 'lucide-react'
 
-interface LandscapeSpotlightProps {
+export interface SpotlightItem {
   kind: 'anime' | 'comic'
   title: string
   href: string
   image: string
-  imageProxy: (url: string) => string
   score?: string
   type?: string
   episode?: string
   chapter?: string
   genres?: string[]
   status?: string
+}
+
+interface LandscapeSpotlightProps extends SpotlightItem {
+  imageProxy: (url: string) => string
 }
 
 export default function LandscapeSpotlight({

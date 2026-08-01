@@ -72,7 +72,7 @@ export default function Home() {
   }
 
   const quickLinks = [
-    { href: '/popular', label: 'Anime', Icon: Clapperboard },
+    { href: '/anime', label: 'Anime', Icon: Clapperboard },
     { href: '/manga', label: 'Komik', Icon: BookOpen },
     { href: '/webtoon', label: 'Webtoon', Icon: ScrollText },
     { href: '/novel', label: 'Novel', Icon: BookMarked },
