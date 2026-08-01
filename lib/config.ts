@@ -66,6 +66,11 @@ export const ENDPOINTS = {
   COMIC_RANDOM: '/comic/random',
   COMIC_RECOMMENDATIONS: (page = 1) => `/comic/recommendations?page=${page}`,
   COMIC_BROWSE: (params: Record<string, string>) => `/comic/browse?${new URLSearchParams(params)}`,
+  COMIC_SCROLL: (offset = 0) => `/comic/scroll?offset=${offset}`,
+  COMIC_INFINITE: (page = 1, type = 'latest') => `/comic/infinite?page=${page}&type=${type}`,
+  COMIC_ADVANCED_SEARCH: (params: Record<string, string>) => `/comic/advanced-search?${new URLSearchParams(params)}`,
+  COMIC_COLORED: (page = 1) => `/comic/berwarna/${page}`,
+  COMIC_LIBRARY: (page = 1) => `/comic/pustaka/${page}`,
 
   // Novel (Sankavollerei — lihat dokumentasi sankavollerei.web.id/comic bagian "Novel")
   // Novel (Sankavollerei — sumber SakuraNovel, lihat dokumentasi sankavollerei.web.id/novel/sakuranovel)
@@ -80,6 +85,7 @@ export const ENDPOINTS = {
   NOVEL_TAGS: '/novel/sakuranovel/tags',
   NOVEL_TAG: (slug: string, page = 1) => `/novel/sakuranovel/tag/${encodeURIComponent(slug)}${page > 1 ? `?page=${page}` : ''}`,
   NOVEL_DAFTAR: '/novel/sakuranovel/daftar-novel',
+  NOVEL_ADVANCED_SEARCH: (params: Record<string, string>) => `/novel/sakuranovel/advanced-search?${new URLSearchParams(params)}`,
 
   // Novel (Sankavollerei versi lama, novelId based — DIPAKE KHUSUS buat nyari cover gambar
   // dari nacdn.novelhubapp.com berdasarkan judul, karena poster SakuraNovel keblokir)

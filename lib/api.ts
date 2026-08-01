@@ -90,6 +90,11 @@ export interface MALAnime {
   studios?: { mal_id: number; name: string }[]
 }
 
+export interface AnimeCharacterType {
+  name: string
+  slug: string
+}
+
 // ─── ANIME API FUNCTIONS ─────────────────────────────────────
 
 export async function fetchHome(page = 1): Promise<Anime[]> {
@@ -181,6 +186,39 @@ export async function fetchByGenre(slug: string, page = 1): Promise<Anime[]> {
 export async function fetchAnimeList(letter: string, page = 1): Promise<Anime[]> {
   try {
     const { data } = await animeClient.get(ENDPOINTS.ANIMELIST(letter, page))
+    return extractAnimes(data)
+  } catch {
+    return []
+  }
+}
+
+export async function fetchAdvancedSearch(params: Record<string, string>): Promise<Anime[]> {
+  try {
+    const { data } = await animeClient.get(ENDPOINTS.ADV_SEARCH(params))
+    return extractAnimes(data)
+  } catch {
+    return []
+  }
+}
+
+export async function fetchCharacters(): Promise<AnimeCharacterType[]> {
+  try {
+    const { data } = await animeClient.get(ENDPOINTS.CHARACTERS)
+    const list = Array.isArray(data) ? data : (data.characters || data.data || [])
+    return list
+      .map((c: any) => ({
+        name: c.name || c.title || c.slug || '',
+        slug: c.slug || (c.name || '').toLowerCase().replace(/\s+/g, '-'),
+      }))
+      .filter((c: AnimeCharacterType) => c.name)
+  } catch {
+    return []
+  }
+}
+
+export async function fetchByCharacter(slug: string, page = 1): Promise<Anime[]> {
+  try {
+    const { data } = await animeClient.get(ENDPOINTS.CHARACTER(slug, page))
     return extractAnimes(data)
   } catch {
     return []
@@ -393,16 +431,21 @@ function extractComics(raw: any): Comic[] {
     raw?.comics ||
     raw?.data?.komikList ||
     raw?.data?.comics ||
+    raw?.data?.results ||
     raw?.data ||
     (Array.isArray(raw) ? raw : [])
   if (!Array.isArray(arr)) return []
+  const chapterOf = (c: any): string =>
+    typeof c === 'string' ? c : (c?.title || '')
   return arr.map((item: any) => ({
     title: item.title || item.name || '',
-    slug: item.slug || cleanSlug(item.link || item.href || item.url || ''),
+    slug: item.slug || cleanSlug(item.detailUrl || item.link || item.href || item.url || ''),
     image: item.poster || item.image || item.thumbnail || item.cover || '',
-    chapter: item.chapter || item.latestChapter || '',
-    genres: (item.genres || item.genreList || []).map((g: any) => (typeof g === 'object' ? g.name || '' : g)).filter(Boolean),
-    score: item.score || item.rating || '',
+    chapter: chapterOf(item.chapter) || chapterOf(item.latestChapter) || chapterOf(item.firstChapter) || '',
+    genres: Array.isArray(item.genres || item.genreList)
+      ? (item.genres || item.genreList).map((g: any) => (typeof g === 'object' ? g.name || '' : g)).filter(Boolean)
+      : (typeof item.genre === 'string' && item.genre ? [item.genre] : []),
+    score: item.score || item.rating || item.stats || '',
     type: item.type || 'Manga',
     status: item.status || '',
   }))
@@ -501,6 +544,54 @@ export async function fetchComicBrowse(filters: { type?: string; order?: string;
     if (filters.genre) params.genre = filters.genre
     if (filters.page) params.page = String(filters.page)
     const { data } = await comicClient.get(ENDPOINTS.COMIC_BROWSE(params))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+// Simulasi infinite scroll dengan offset pagination
+export async function fetchComicScroll(offset = 0): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_SCROLL(offset))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+// Infinite scroll dengan pagination (default type latest)
+export async function fetchComicInfinite(page = 1, type = 'latest'): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_INFINITE(page, type))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+// Pencarian dengan multiple filter (q wajib, plus type/status/genre/year/sort)
+export async function fetchComicAdvancedSearch(params: { q: string; type?: string; status?: string; genre?: string; year?: string; sort?: string; page?: number }): Promise<Comic[]> {
+  if (!params.q?.trim()) return []
+  try {
+    const query: Record<string, string> = { q: params.q }
+    if (params.type) query.type = params.type
+    if (params.status) query.status = params.status
+    if (params.genre) query.genre = params.genre
+    if (params.year) query.year = params.year
+    if (params.sort) query.sort = params.sort
+    if (params.page) query.page = String(params.page)
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_ADVANCED_SEARCH(query))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+// Daftar komik berwarna (paginasi per halaman)
+export async function fetchComicColored(page = 1): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_COLORED(page))
+    return extractComics(data)
+  } catch { return [] }
+}
+
+// Perpustakaan komik (paginasi per halaman)
+export async function fetchComicLibrary(page = 1): Promise<Comic[]> {
+  try {
+    const { data } = await comicClient.get(ENDPOINTS.COMIC_LIBRARY(page))
     return extractComics(data)
   } catch { return [] }
 }
@@ -676,6 +767,15 @@ export async function searchNovel(keyword: string, page = 1): Promise<Novel[]> {
   } catch { return [] }
 }
 
+// Pencarian lanjutan novel dengan filter (q/genre/status/page, dll)
+export async function fetchNovelAdvancedSearch(params: Record<string, string>): Promise<Novel[]> {
+  try {
+    const { data } = await novelClient.get(ENDPOINTS.NOVEL_ADVANCED_SEARCH(params))
+    const results = data?.data?.results
+    return Array.isArray(results) ? results.map(mapNovel) : []
+  } catch { return [] }
+}
+
 export async function fetchNovelGenres(): Promise<NovelGenreTag[]> {
   try {
     const { data } = await novelClient.get(ENDPOINTS.NOVEL_GENRES)
@@ -841,7 +941,7 @@ function extractAnimes(raw: any): Anime[] {
     score: item.score || item.rating || '',
     episode: item.episode != null ? String(item.episode) : '',
     type: item.type || '',
-    status: item.status || '',
+    status: item.status || item.status_or_day || item.statusOrDay || '',
     genres: Array.isArray(item.genres) ? item.genres : [],
     release: item.release_day || item.releaseDay || '',
   }))
