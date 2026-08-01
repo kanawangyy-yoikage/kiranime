@@ -7,46 +7,46 @@
 :root {
   color-scheme: light;
 
-  /* Valora Light - zinc-200 + white surfaces, red-600 accent */
-  --color-bg: #E4E4E7;
+  /* Apple Light - F5F5F7 + white surfaces, #0071E3 blue */
+  --color-bg: #F5F5F7;
   --color-surface: #FFFFFF;
-  --color-surface-alt: #F4F4F5;
-  --color-border: rgba(24, 24, 27, 0.10);
-  --color-primary: #DC2626;
-  --color-accent: #B91C1C;
-  --color-text: #27272A;
-  --color-text-muted: rgba(39, 39, 42, 0.60);
+  --color-surface-alt: #E8E8ED;
+  --color-border: rgba(29, 29, 31, 0.12);
+  --color-primary: #0071E3;
+  --color-accent: #0066CC;
+  --color-text: #1D1D1F;
+  --color-text-muted: rgba(29, 29, 31, 0.56);
   --color-pearl: #FFFFFF;
 
   /* Adaptive tokens (RGB triplets so Tailwind opacity modifiers like /60 work) */
-  --pearl-rgb: 39 39 42;          /* body text on cards */
-  --primary-rgb: 220 38 38;       /* valora red */
-  --accent-rgb: 185 28 28;        /* deep red for light bg contrast */
+  --pearl-rgb: 29 29 31;          /* body text on cards */
+  --primary-rgb: 0 113 227;       /* apple blue */
+  --accent-rgb: 0 102 204;        /* deep blue for light bg contrast */
   --surface-dark-rgb: 255 255 255;
-  --surface-card-rgb: 244 244 245;
-  --surface-hover-rgb: 228 228 231;
+  --surface-card-rgb: 232 232 237;
+  --surface-hover-rgb: 221 221 226;
 }
 
 html.dark {
   color-scheme: dark;
 
-  /* Valora Dark - zinc-950 + indigo surfaces, red-600 accent */
-  --color-bg: #09090B;
-  --color-surface: #1F1F2E;
-  --color-surface-alt: #2A2B3D;
-  --color-border: rgba(255, 255, 255, 0.10);
-  --color-primary: #DC2626;
-  --color-accent: #F87171;
-  --color-text: #FAFAFA;
-  --color-text-muted: rgba(250, 250, 250, 0.60);
+  /* Apple Dark - pure black + #1D1D1F surfaces, #2997FF blue */
+  --color-bg: #000000;
+  --color-surface: #1D1D1F;
+  --color-surface-alt: #2C2C2E;
+  --color-border: rgba(255, 255, 255, 0.14);
+  --color-primary: #2997FF;
+  --color-accent: #2997FF;
+  --color-text: #F5F5F7;
+  --color-text-muted: rgba(134, 134, 139, 0.75);
   --color-pearl: #FFFFFF;
 
-  --pearl-rgb: 250 250 250;
-  --primary-rgb: 220 38 38;
-  --accent-rgb: 248 113 113;
-  --surface-dark-rgb: 31 31 46;
-  --surface-card-rgb: 42 43 61;
-  --surface-hover-rgb: 63 64 88;
+  --pearl-rgb: 245 245 247;
+  --primary-rgb: 41 151 255;
+  --accent-rgb: 41 151 255;
+  --surface-dark-rgb: 29 29 31;
+  --surface-card-rgb: 44 44 46;
+  --surface-hover-rgb: 58 58 60;
 }
 
 body {
@@ -108,18 +108,18 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-primary) transparent;
   }
 
   .btn-primary {
-    @apply px-5 py-2.5 rounded-xl font-semibold text-sm transition duration-200 active:scale-95;
+    @apply px-5 py-2.5 rounded-full font-semibold text-sm transition duration-200 active:scale-95;
     background: var(--color-primary);
     color: #FFFFFF;
   }
   .btn-primary:hover {
     opacity: 0.88;
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.45);
+    box-shadow: 0 4px 16px rgba(0, 113, 227, 0.45);
   }
 
   .btn-secondary {
-    @apply px-5 py-2.5 rounded-xl font-semibold text-sm border transition duration-200 active:scale-95;
+    @apply px-5 py-2.5 rounded-full font-semibold text-sm border transition duration-200 active:scale-95;
     background: transparent;
     border-color: var(--color-border);
     color: var(--color-text);
@@ -136,7 +136,7 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-primary) transparent;
   }
   .input-field:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
   }
   .input-field::placeholder {
     color: var(--color-text-muted);
@@ -235,8 +235,8 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-primary) transparent;
 /* ─── HERO PANEL (landing) ──────────────────────────────────── */
 .hero-panel {
   background:
-    radial-gradient(900px 320px at 15% -10%, rgba(220, 38, 38, 0.16), transparent 60%),
-    radial-gradient(700px 280px at 85% 110%, rgba(248, 113, 113, 0.10), transparent 60%),
+    radial-gradient(900px 320px at 15% -10%, rgba(0, 113, 227, 0.16), transparent 60%),
+    radial-gradient(700px 280px at 85% 110%, rgba(41, 151, 255, 0.10), transparent 60%),
     var(--color-surface);
   border-color: var(--color-border);
 }
@@ -260,6 +260,6 @@ html { scrollbar-width: thin; scrollbar-color: var(--color-primary) transparent;
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 html.dark .glass {
-  background: rgba(31, 31, 46, 0.55);
+  background: rgba(29, 29, 31, 0.55);
   border-color: rgba(255, 255, 255, 0.08);
 }

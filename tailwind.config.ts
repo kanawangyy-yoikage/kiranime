@@ -10,14 +10,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        midnight: '#09090B',
+        midnight: '#000000',
         pearl: 'rgb(var(--pearl-rgb) / <alpha-value>)',
-        noir: '#09090B',
-        ocean: '#DC2626',
+        noir: '#000000',
+        ocean: '#0071E3',
         oceanAccent: {
-          primary: '#DC2626',
-          secondary: '#F87171',
-          light: '#FCA5A5',
+          primary: '#0071E3',
+          secondary: '#2997FF',
+          light: '#66BBFF',
         },
         surface: {
           DEFAULT: '#FFFFFF',
@@ -25,12 +25,12 @@ const config: Config = {
           card: 'rgb(var(--surface-card-rgb) / <alpha-value>)',
           hover: 'rgb(var(--surface-hover-rgb) / <alpha-value>)',
         },
-        'bg-light': '#E4E4E7',
-        'bg-dark': '#09090B',
-        'text-light': '#27272A',
-        'text-dark': '#FAFAFA',
-        primary: '#DC2626',
-        accent: '#F87171'
+        'bg-light': '#F5F5F7',
+        'bg-dark': '#000000',
+        'text-light': '#1D1D1F',
+        'text-dark': '#F5F5F7',
+        primary: '#0071E3',
+        accent: '#2997FF'
       },
       fontFamily: {
         sans: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],

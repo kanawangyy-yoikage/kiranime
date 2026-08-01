@@ -6,7 +6,7 @@ export default function Document() {
       <Head>
         {/* PWA */}
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#09090B" />
+        <meta name="theme-color" content="#000000" />
         <meta name="application-name" content="KiraStream" />
 
         {/* iOS PWA support */}
