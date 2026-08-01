@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { MessageCircle, Loader2 } from 'lucide-react'
+import { MessageCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { getConversations, getUserById, formatMessageTime, type Conversation } from '@/lib/social'
 

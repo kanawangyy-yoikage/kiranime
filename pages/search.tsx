@@ -206,7 +206,7 @@ export default function SearchPage() {
             ) : (
               <div className="text-center py-12 card p-6">
                 <Frown className="mx-auto mb-3 text-[var(--color-text-muted)]" size={36} />
-                <p className="text-[var(--color-text)]">Nggak ketemu hasil buat "{q}"</p>
+                <p className="text-[var(--color-text)]">Nggak ketemu hasil buat &quot;{q}&quot;</p>
                 <p className="text-sm text-[var(--color-text-muted)] mt-2">Coba kata kunci lain</p>
               </div>
             )}

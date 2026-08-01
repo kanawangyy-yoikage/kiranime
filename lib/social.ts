@@ -211,7 +211,7 @@ export async function sendFriendRequest(toUid: string): Promise<{ success: boole
       createdAt: serverTimestamp(),
     })
     return { success: true }
-  } catch (error) {
+  } catch {
     return { success: false, error: 'Gagal kirim permintaan' }
   }
 }

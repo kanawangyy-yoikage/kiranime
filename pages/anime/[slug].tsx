@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -10,7 +10,6 @@ import {
   toggleFavorite, 
   checkFavorite, 
   saveHistory,
-  saveContinueWatching,
   addToWatchlist,
   type WatchlistStatus 
 } from '@/lib/firebase'
@@ -28,7 +27,6 @@ export default function AnimeDetailPage() {
   const [isFavorited, setIsFavorited] = useState(false)
   const [selectedServer, setSelectedServer] = useState(0)
   const [shareOpen, setShareOpen] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
 
   // Load anime detail
   useEffect(() => {
@@ -115,17 +113,6 @@ export default function AnimeDetailPage() {
   }
 
   // Video progress tracking
-  const handleVideoProgress = () => {
-    if (!videoRef.current || !user || !playingEpisode) return
-    
-    const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100
-    
-    // Save every 10 seconds
-    if (Math.floor(videoRef.current.currentTime) % 10 === 0) {
-      saveContinueWatching(slug as string, playingEpisode, progress)
-    }
-  }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">

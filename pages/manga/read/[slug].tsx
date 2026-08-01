@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import Link from 'next/link'
 import { ArrowLeft, ChevronLeft, ChevronRight, Frown } from 'lucide-react'
 import { fetchChapterPages, fetchChapterNavigation, ChapterPages, ChapterNav } from '@/lib/api'
 import ReaderScrollControls from '@/components/ReaderScrollControls'

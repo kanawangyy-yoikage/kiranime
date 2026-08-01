@@ -45,7 +45,7 @@ export default function LoginPage() {
       } else {
         setError('Login Google-nya gagal, coba sekali lagi ya.')
       }
-    } catch (err) {
+    } catch {
       setError('Ada gangguan pas coba login. Coba beberapa saat lagi.')
     } finally {
       setLoading(false)
@@ -78,7 +78,7 @@ export default function LoginPage() {
           setError('Registrasi gagal, mungkin email ini sudah dipakai.')
         }
       }
-    } catch (err) {
+    } catch {
       setError('Ada yang error di sistem. Coba lagi sebentar ya.')
     } finally {
       setLoading(false)
@@ -99,7 +99,7 @@ export default function LoginPage() {
       } else {
         setError('Kode OTP gagal dikirim, coba cek lagi nomor HP-nya.')
       }
-    } catch (err) {
+    } catch {
       setError('Lagi ada masalah di server. Coba lagi sebentar.')
     } finally {
       setLoading(false)
@@ -119,7 +119,7 @@ export default function LoginPage() {
       } else {
         setError('Kode OTP-nya salah atau sudah keburu kadaluarsa.')
       }
-    } catch (err) {
+    } catch {
       setError('Verifikasinya gagal karena ada gangguan. Coba lagi ya.')
     } finally {
       setLoading(false)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
-import { PlayCircle, Flame, Sparkles, CheckCircle } from 'lucide-react'
+import { PlayCircle } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import Section from '@/components/Section'
 import LandscapeSlider from '@/components/LandscapeSlider'

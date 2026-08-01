@@ -94,7 +94,7 @@ export default function ProfilePage() {
       } else {
         setAvatarError(typeof result.error === 'string' ? result.error : 'Gagal upload avatar, coba lagi ya~')
       }
-    } catch (error) {
+    } catch {
       setAvatarError('Gagal upload avatar, coba lagi ya~')
     } finally {
       setAvatarUploading(false)

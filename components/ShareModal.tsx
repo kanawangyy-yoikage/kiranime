@@ -7,8 +7,6 @@ import {
   getFriends,
   getMyGroups,
   sendFriendRequest,
-  getIncomingRequests,
-  acceptFriendRequest,
   getOrCreateConversation,
   sendMessage,
   searchUsersByKeyword,
@@ -32,7 +30,6 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
   const [groups, setGroups] = useState<Group[]>([])
   const [searchResults, setSearchResults] = useState<SocialUser[]>([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [loading, setLoading] = useState(false)
   const [sendingTo, setSendingTo] = useState('')
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null)
 

@@ -13,8 +13,6 @@ import {
   User,
   sendPasswordResetEmail,
   updateProfile,
-  updateEmail,
-  updatePassword,
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
@@ -33,8 +31,6 @@ import {
   limit,
   getDocs,
   serverTimestamp,
-  DocumentData,
-  QueryDocumentSnapshot,
 } from 'firebase/firestore'
 
 // ─── CONFIG ──────────────────────────────────────────────────
