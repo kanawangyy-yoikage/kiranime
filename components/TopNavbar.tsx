@@ -180,6 +180,19 @@ export default function TopNavbar() {
                 {link.icon} {link.label}
               </Link>
             ))}
+            {SOCIAL_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  isActive(link.href)
+                    ? 'text-primary dark:text-accent'
+                    : 'text-text-light/70 dark:text-text-dark/70 hover:text-primary dark:hover:text-accent'
+                }`}
+              >
+                {link.icon} {link.label}
+              </Link>
+            ))}
           </nav>
 
           {/* Right: Actions */}
