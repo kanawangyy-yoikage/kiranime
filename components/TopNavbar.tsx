@@ -41,7 +41,6 @@ const NAV_LINKS: NavItem[] = [
 const SOCIAL_LINKS: NavItem[] = [
   { label: 'Teman', href: '/friends', icon: <Users size={16} /> },
   { label: 'Grup', href: '/groups', icon: <MessageCircle size={16} /> },
-  { label: 'Pesan', href: '/messages', icon: <MessageCircle size={16} /> },
 ]
 
 export default function TopNavbar() {
