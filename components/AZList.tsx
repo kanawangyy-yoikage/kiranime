@@ -21,8 +21,8 @@ export default function AZList({ compact }: AZListProps) {
             href={`/animelist?letter=${letter.toLowerCase()}`}
             className={`flex items-center justify-center rounded-md text-xs font-bold py-1.5 transition-colors border ${
               active
-                ? 'bg-primary text-pearl dark:bg-accent dark:text-noir border-primary dark:border-accent'
-                : 'bg-surface-alt dark:bg-surface-dark text-text-light/70 dark:text-text-dark/70 border-transparent hover:bg-primary hover:text-pearl dark:hover:bg-accent dark:hover:text-noir'
+                ? 'bg-primary text-white dark:bg-accent dark:text-noir border-primary dark:border-accent'
+                : 'bg-surface-alt dark:bg-surface-dark text-text-light/70 dark:text-text-dark/70 border-transparent hover:bg-primary hover:text-white dark:hover:bg-accent dark:hover:text-noir'
             }`}
           >
             {letter}

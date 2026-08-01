@@ -44,12 +44,12 @@ export default function NovelGenrePage() {
     <>
       <Head><title>Genre {genreName} - Novel - KiraStream</title></Head>
       <div className="space-y-6">
-        <div className="card px-5 py-4 flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <Link href="/novel" className="inline-flex items-center gap-1.5 text-sm text-pearl/60 hover:text-pearl mb-1">
+            <Link href="/novel" className="inline-flex items-center gap-1.5 text-sm hover:underline mb-1" style={{ color: 'var(--color-text-muted)' }}>
               <ArrowLeft size={14} /> Kembali ke Novel
             </Link>
-            <h1 className="section-title flex items-center gap-2"><Tag size={20} className="text-ocean" /> Genre: {genreName}</h1>
+            <h1 className="section-title flex items-center gap-2"><Tag size={20} style={{ color: 'var(--color-primary)' }} /> Genre: {genreName}</h1>
           </div>
         </div>
 
@@ -58,7 +58,7 @@ export default function NovelGenrePage() {
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
         ) : novels.length === 0 ? (
-          <div className="card p-6 text-center text-pearl/60">Belum ada novel di genre ini.</div>
+          <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>Belum ada novel di genre ini.</div>
         ) : (
           <>
             <NovelGrid novels={novels} />
@@ -70,7 +70,7 @@ export default function NovelGenrePage() {
               >
                 <ChevronLeft size={16} /> Sebelumnya
               </button>
-              <span className="text-sm text-pearl/70">Halaman {page}</span>
+              <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Halaman {page}</span>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 className="btn-secondary inline-flex items-center gap-1 text-sm"

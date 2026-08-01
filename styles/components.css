@@ -1,11 +1,10 @@
-/* ─── KIRA-NIME DESIGN SYSTEM ─────────────────────────────── */
+/* ─── KIRA-NIME DESIGN SYSTEM — CINEMA ─────────────────────── */
 
 /* NB: .card sengaja gak didefinisikan lagi di sini — sudah ada di globals.css
    lewat @layer components (include overflow-hidden). File ini di-@import di
    globals.css SETELAH posisi @tailwind components dikompilasi, jadi kalau .card
    didefinisikan ulang di sini (tanpa overflow-hidden) dia bakal menang di cascade
-   dan bikin gambar/konten "bocor" keluar dari card (ini yang kejadian di halaman
-   detail anime — backdrop gambar meluber ke luar card). */
+   dan bikin gambar/konten "bocor" keluar dari card. */
 
 .anime-card {
   display: block;
@@ -17,7 +16,7 @@
 }
 
 .anime-card:hover {
-  border-color: var(--color-accent);
+  border-color: var(--color-primary);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transform: translateY(-4px);
 }
@@ -77,8 +76,8 @@
 }
 
 .tab.active {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
 /* Buttons */
@@ -90,7 +89,7 @@
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
   background-color: var(--color-primary);
-  color: var(--color-pearl);
+  color: #FFFFFF;
   font-weight: 600;
   font-size: 0.875rem;
   transition: opacity 0.2s, transform 0.2s;

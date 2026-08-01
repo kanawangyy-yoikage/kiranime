@@ -118,10 +118,10 @@ export default function SearchPage() {
             />
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-ocean hover:bg-oceanAccent-secondary rounded-lg transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary dark:bg-accent hover:opacity-90 text-white dark:text-noir rounded-lg transition-colors"
               aria-label="Cari"
             >
-              <Search size={18} className="text-pearl" aria-hidden="true" />
+              <Search size={18} aria-hidden="true" />
             </button>
           </form>
 
@@ -147,7 +147,7 @@ export default function SearchPage() {
         {/* Loading */}
         {loading && (
           <div className="text-center py-12">
-            <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
+            <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
             <p className="text-[var(--color-text-muted)]">Mencari {currentTab.label.toLowerCase()}\u2026</p>
           </div>
         )}
@@ -229,8 +229,8 @@ export default function SearchPage() {
                           alt={anime.title}
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute top-2 right-2 bg-yellow-500/90 text-noir text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
-                          <Star size={12} className="fill-noir" aria-hidden="true" /> {anime.score?.toFixed(1) || 'N/A'}
+                        <div className="absolute top-2 right-2 bg-primary/90 dark:bg-accent/90 text-white dark:text-noir text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
+                          <Star size={12} className="fill-current" aria-hidden="true" /> {anime.score?.toFixed(1) || 'N/A'}
                         </div>
                       </div>
                       <div className="p-3">
@@ -249,7 +249,7 @@ export default function SearchPage() {
         {/* Empty State */}
         {!loading && !q && (
           <div className="text-center py-12 card p-6">
-            <Search className="mx-auto mb-4 text-ocean" size={40} />
+            <Search className="mx-auto mb-4" style={{ color: 'var(--color-primary)' }} size={40} />
             <h2 className="text-xl font-bold text-[var(--color-text)] mb-2">Cari {currentTab.label} Favoritmu</h2>
             <p className="text-[var(--color-text-muted)]">Ketik judul {currentTab.label.toLowerCase()} di atas untuk memulai pencarian</p>
           </div>

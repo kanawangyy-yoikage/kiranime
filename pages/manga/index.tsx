@@ -95,7 +95,7 @@ export default function MangaListPage() {
       <Head><title>{activeLabel} Manga - KiraStream</title></Head>
       <div className="space-y-6">
         {/* Header + Search */}
-        <div className="card px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">
               <ActiveIcon size={22} className="text-ocean" aria-hidden="true" /> {activeLabel}
@@ -158,12 +158,12 @@ export default function MangaListPage() {
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
         ) : comics.length === 0 ? (
-          <div className="card p-6 text-center text-pearl/60">Manga belum bisa dimuat, coba refresh halaman ini sebentar lagi.</div>
+          <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>Manga belum bisa dimuat, coba refresh halaman ini sebentar lagi.</div>
         ) : (
           <>
             <ComicGrid comics={comics} />
             <div className="text-center">
-              <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-primary">
+              <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-secondary">
                 {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
               </button>
             </div>

@@ -41,7 +41,7 @@ export default function NovelListPage() {
     <>
       <Head><title>Novel - KiraStream</title></Head>
       <div className="space-y-6">
-        <div className="card px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2"><BookMarked size={22} className="text-ocean" aria-hidden="true" /> Novel</h1>
             <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca novel favorit kamu.</p>
@@ -99,7 +99,7 @@ export default function NovelListPage() {
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
         ) : novels.length === 0 ? (
-          <div className="card p-6 text-center text-pearl/60">Novel belum bisa dimuat, coba refresh halaman ini sebentar lagi.</div>
+          <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>Novel belum bisa dimuat, coba refresh halaman ini sebentar lagi.</div>
         ) : (
           <>
             <NovelGrid novels={novels} />
@@ -111,7 +111,7 @@ export default function NovelListPage() {
               >
                 <ChevronLeft size={16} aria-hidden="true" /> Sebelumnya
               </button>
-              <span className="text-sm text-pearl/70">Halaman {page}</span>
+              <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Halaman {page}</span>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 className="btn-secondary inline-flex items-center gap-1 text-sm"

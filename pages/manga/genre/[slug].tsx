@@ -35,12 +35,12 @@ export default function MangaGenrePage() {
     <>
       <Head><title>{slug.replace(/-/g, ' ')} - Manga - KiraStream</title></Head>
       <div className="space-y-6">
-        <div className="card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">
-              <Tags size={22} className="text-ocean" aria-hidden="true" /> Genre: {slug.replace(/-/g, ' ')}
+              <Tags size={22} style={{ color: 'var(--color-primary)' }} aria-hidden="true" /> Genre: {slug.replace(/-/g, ' ')}
             </h1>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">Kumpulan komik dengan genre ini.</p>
+            <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>Kumpulan komik dengan genre ini.</p>
           </div>
           <Link href="/manga" className="btn-secondary text-sm">Kembali ke Komik</Link>
         </div>
@@ -50,12 +50,12 @@ export default function MangaGenrePage() {
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
         ) : comics.length === 0 ? (
-          <div className="card p-6 text-center text-pearl/60">Belum ada komik di genre ini.</div>
+          <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>Belum ada komik di genre ini.</div>
         ) : (
           <>
             <ComicGrid comics={comics} />
             <div className="text-center">
-              <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-primary">
+              <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-secondary">
                 {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
               </button>
             </div>

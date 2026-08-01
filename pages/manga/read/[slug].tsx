@@ -35,8 +35,8 @@ export default function ChapterReaderPage() {
   if (loading) {
     return (
       <div className="text-center py-20">
-        <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-pearl">Membuka lembaran chapter\u2026</p>
+        <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
+        <p style={{ color: 'var(--color-text-muted)' }}>Membuka lembaran chapter\u2026</p>
       </div>
     )
   }
@@ -44,8 +44,8 @@ export default function ChapterReaderPage() {
   if (!chapter || !chapter.pages || chapter.pages.length === 0) {
     return (
       <div className="text-center py-20 card p-6">
-        <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
-        <p className="text-xl text-pearl mb-4">Halaman chapter-nya kosong atau gagal kebuka</p>
+        <Frown className="mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} size={40} />
+        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>Halaman chapter-nya kosong atau gagal kebuka</p>
         <button onClick={() => router.back()} className="btn-primary">Kembali</button>
       </div>
     )
@@ -69,7 +69,7 @@ export default function ChapterReaderPage() {
         </div>
 
         {/* Comic Pages list */}
-        <div className="flex flex-col items-center bg-noir rounded-lg overflow-hidden py-4 shadow-xl border border-ocean/10">
+        <div className="flex flex-col items-center bg-black rounded-lg overflow-hidden py-4 shadow-xl border border-ocean/10">
           {chapter.pages.map((imgUrl, index) => (
             <div key={index} className="w-full max-w-3xl relative">
               <img
@@ -78,7 +78,7 @@ export default function ChapterReaderPage() {
                 className="w-full h-auto select-none"
                 loading={index < 3 ? 'eager' : 'lazy'}
               />
-              <div className="absolute bottom-2 right-2 bg-noir/70 text-pearl text-xs px-2 py-1 rounded">
+              <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                 {index + 1} / {chapter.pages.length}
               </div>
             </div>

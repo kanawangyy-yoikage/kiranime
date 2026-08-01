@@ -33,8 +33,8 @@ export default function NovelReaderPage() {
   if (loading) {
     return (
       <div className="text-center py-20">
-        <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-pearl">Membuka chapter\u2026</p>
+        <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
+        <p style={{ color: 'var(--color-text-muted)' }}>Membuka chapter\u2026</p>
       </div>
     )
   }
@@ -42,8 +42,8 @@ export default function NovelReaderPage() {
   if (error || !chapter) {
     return (
       <div className="text-center py-20 card p-6">
-        <Frown className="mx-auto mb-3 text-pearl/60" size={40} />
-        <p className="text-xl text-pearl mb-4">Chapter ini gagal kebuka atau memang belum ada isinya</p>
+        <Frown className="mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} size={40} />
+        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>Chapter ini gagal kebuka atau memang belum ada isinya</p>
         <button onClick={() => router.back()} className="btn-primary">Kembali</button>
       </div>
     )

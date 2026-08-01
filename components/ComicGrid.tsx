@@ -30,19 +30,19 @@ export default function ComicGrid({ comics }: ComicGridProps) {
             )}
             
             {comic.score && (
-              <div className="absolute top-2 right-2 bg-yellow-500/90 text-noir text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
-                <Star size={12} className="fill-noir" /> {comic.score}
+              <div className="absolute top-2 right-2 bg-primary/90 dark:bg-accent/90 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm">
+                <Star size={12} className="fill-white" /> {comic.score}
               </div>
             )}
 
             {comic.chapter && (
-              <div className="absolute bottom-2 left-2 bg-ocean/90 text-pearl text-xs font-medium px-2 py-1 rounded">
+              <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full">
                 Ch. {comic.chapter.replace(/chapter\s+/gi, '')}
               </div>
             )}
 
             {comic.type && (
-              <div className="absolute top-2 left-2 bg-purple-600/90 text-pearl text-xs font-bold px-2 py-0.5 rounded capitalize">
+              <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white/90 text-xs font-semibold px-2 py-0.5 rounded-full capitalize">
                 {comic.type}
               </div>
             )}

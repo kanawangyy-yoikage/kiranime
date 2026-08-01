@@ -266,7 +266,7 @@ export default function TopNavbar() {
             ) : (
               <Link
                 href="/login"
-                className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold bg-primary dark:bg-accent text-pearl dark:text-noir hover:opacity-90 transition-opacity"
+                className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold bg-primary dark:bg-accent text-white dark:text-noir hover:opacity-90 transition-opacity"
               >
                 <LogIn size={16} aria-hidden="true" /> Login
               </Link>

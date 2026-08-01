@@ -80,7 +80,7 @@ export default function Home() {
 
       <div className="space-y-12 md:space-y-16">
         {/* Hero / Landing */}
-        <section className="hero-panel relative overflow-hidden rounded-3xl border px-6 py-14 md:px-10 md:py-20">
+        <section className="hero-panel relative overflow-hidden rounded-3xl border px-6 py-16 md:px-10 md:py-24">
           {data.popular[0]?.image && (
             <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
               <Image
@@ -90,19 +90,23 @@ export default function Home() {
                 sizes="100vw"
                 className="object-cover object-top opacity-20 dark:opacity-25"
               />
-              <div className="absolute inset-0 bg-surface/70 dark:bg-noir/60" />
+              <div className="absolute inset-0 bg-gradient-to-b from-surface/80 via-surface/60 to-surface dark:from-noir/70 dark:via-noir/50 dark:to-noir" />
             </div>
           )}
 
           <div className="relative z-10 flex flex-col items-center text-center">
-            <h1 className="text-4xl font-extrabold tracking-tighter md:text-6xl text-primary dark:text-pearl">KiraStream</h1>
+            <span className="badge mb-5">Streaming Anime & Komik</span>
 
-            <p className="mt-4 max-w-2xl text-sm leading-7 md:text-base" style={textStyle(true)}>
+            <h1 className="text-5xl font-extrabold tracking-tighter md:text-7xl text-primary dark:text-pearl">
+              Kira<span className="text-ocean dark:text-accent">Stream</span>
+            </h1>
+
+            <p className="mt-5 max-w-2xl text-sm leading-7 md:text-base" style={textStyle(true)}>
               Streaming anime subtitle Indonesia, baca manga, manhwa, manhua, webtoon, dan novel. Cepat, bersih, dan nyaman di desktop maupun mobile.
             </p>
 
             {/* Search */}
-            <form onSubmit={handleSearch} className="mt-8 w-full max-w-xl">
+            <form onSubmit={handleSearch} className="mt-9 w-full max-w-xl">
               <div className="relative">
                 <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light/40 dark:text-text-dark/40" aria-hidden="true" />
                 <input
@@ -110,16 +114,16 @@ export default function Home() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Cari anime, komik, webtoon, novel\u2026"
-                  className="input-field w-full py-3.5 pl-12 pr-28 text-sm"
+                  className="input-field w-full py-3.5 pl-12 pr-28 text-sm rounded-full"
                 />
-                <button type="submit" className="btn-primary absolute right-1.5 top-1/2 -translate-y-1/2 px-4 py-2 text-xs">
+                <button type="submit" className="btn-primary absolute right-1.5 top-1/2 -translate-y-1/2 px-5 py-2 text-xs rounded-full">
                   Cari
                 </button>
               </div>
             </form>
 
             {/* Quick category links */}
-            <div className="mt-8 grid w-full max-w-2xl grid-cols-2 gap-2.5 sm:grid-cols-4">
+            <div className="mt-9 grid w-full max-w-2xl grid-cols-2 gap-2.5 sm:grid-cols-4">
               {quickLinks.map(({ href, label, Icon }) => (
                 <Link
                   key={href}

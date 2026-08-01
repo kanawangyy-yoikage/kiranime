@@ -16,8 +16,7 @@ const jakarta = Plus_Jakarta_Sans({
 export default function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const saved = localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    document.documentElement.classList.toggle('dark', saved ? saved === 'dark' : prefersDark)
+    document.documentElement.classList.toggle('dark', saved ? saved === 'dark' : true)
   }, [])
 
   useEffect(() => {

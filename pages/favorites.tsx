@@ -38,7 +38,7 @@ export default function FavoritesPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
           <p className="text-[var(--color-text-muted)]">Loading\u2026</p>
         </div>
       </div>
@@ -52,8 +52,8 @@ export default function FavoritesPage() {
       </Head>
 
       <div className="space-y-6">
-        <div className="card p-6">
-          <h1 className="section-title flex items-center gap-2"><Heart size={22} className="fill-red-400 text-red-400" aria-hidden="true" /> Anime Favorit</h1>
+        <div className="flex flex-col gap-1">
+          <h1 className="section-title flex items-center gap-2"><Heart size={22} style={{ color: 'var(--color-primary)' }} fill="currentColor" aria-hidden="true" /> Anime Favorit</h1>
           <p className="text-[var(--color-text-muted)]">
             {favorites.length} anime dalam daftar favorit
           </p>

@@ -128,8 +128,8 @@ export default function AnimeDetailPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-ocean/30 border-t-ocean rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-pearl">Loading anime\u2026</p>
+          <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
+          <p style={{ color: 'var(--color-text-muted)' }}>Loading anime\u2026</p>
         </div>
       </div>
     )
@@ -138,7 +138,7 @@ export default function AnimeDetailPage() {
   if (!anime) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-pearl mb-4">Waduh, anime-nya nggak ketemu</h2>
+        <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--color-text)' }}>Waduh, anime-nya nggak ketemu</h2>
         <button
           onClick={() => router.back()}
           className="btn-primary"
