@@ -29,6 +29,7 @@ export default function FriendsPage() {
   const [results, setResults] = useState<SocialUser[]>([])
   const [searching, setSearching] = useState(false)
   const [busyId, setBusyId] = useState('')
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
   const loadAll = useCallback(async () => {
@@ -63,7 +64,11 @@ export default function FriendsPage() {
 
   const runAction = async (id: string, fn: () => Promise<any>) => {
     setBusyId(id)
-    await fn()
+    setError('')
+    const res = await fn()
+    if (res && res.success === false && res.error) {
+      setError(res.error)
+    }
     setBusyId('')
     await loadAll()
   }
@@ -101,6 +106,12 @@ export default function FriendsPage() {
             </button>
           ))}
         </div>
+
+        {error && (
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </div>
+        )}
 
         {/* Friends */}
         {tab === 'friends' && (

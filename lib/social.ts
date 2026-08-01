@@ -231,8 +231,15 @@ export async function sendFriendRequest(toUid: string): Promise<{ success: boole
       createdAt: serverTimestamp(),
     })
     return { success: true }
-  } catch {
-    return { success: false, error: 'Gagal kirim permintaan' }
+  } catch (error) {
+    console.error('sendFriendRequest failed:', error)
+    const msg =
+      (error as any)?.code === 'permission-denied'
+        ? 'Firestore rules menolak: collection friendships belum diizinkan di rules'
+        : (error as any)?.code === 'not-found'
+          ? 'Teman tidak ditemukan di Firestore'
+          : 'Gagal kirim permintaan: ' + ((error as any)?.message || 'error tak dikenal')
+    return { success: false, error: msg }
   }
 }
 
