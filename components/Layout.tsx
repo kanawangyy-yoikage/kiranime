@@ -1,14 +1,19 @@
 import { ReactNode } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 import TopNavbar from './TopNavbar'
 import Footer from './Footer'
 import MobileNav from './MobileNav'
 import InstallPwaPrompt from './InstallPwaPrompt'
+import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 
 interface LayoutProps {
   children: ReactNode
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const router = useRouter()
+
   return (
     <div className="min-h-screen bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark transition-colors duration-300 flex flex-col">
       <a
@@ -19,8 +24,18 @@ export default function Layout({ children }: LayoutProps) {
       </a>
       <TopNavbar />
       <main id="main-content" className="flex-1 pt-20 md:pt-24 scroll-mt-20 md:scroll-mt-24">
-        <div className="mx-auto max-w-[1600px] px-4 md:px-6 lg:px-8 pb-24 lg:pb-16 animate-fade-in">
-          {children}
+        <div className="mx-auto max-w-[1600px] px-4 md:px-6 lg:px-8 pb-24 lg:pb-16">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={router.asPath}
+              initial={{ opacity: 0, y: motionTokens.distance.sm }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: motionTokens.distance.sm }}
+              transition={{ duration: adaptiveDuration(motionTokens.duration.normal), ease: motionTokens.easing.smooth }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
       <Footer />

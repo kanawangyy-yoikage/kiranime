@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ReactNode } from 'react'
 import { ArrowRight } from 'lucide-react'
+import Reveal from './Reveal'
 
 interface SectionProps {
   title: string
@@ -10,7 +11,7 @@ interface SectionProps {
 
 export default function Section({ title, viewAll, children }: SectionProps) {
   return (
-    <section className="space-y-6">
+    <Reveal as="section" className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h2 className="section-title">{title}</h2>
         {viewAll && (
@@ -24,6 +25,6 @@ export default function Section({ title, viewAll, children }: SectionProps) {
         )}
       </div>
       {children}
-    </section>
+    </Reveal>
   )
 }

@@ -3,12 +3,14 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { motion, useReducedMotion } from 'framer-motion'
 import { BookOpen, Clapperboard, ImageOff, ScrollText, Search, BookMarked } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import Section from '@/components/Section'
 import LandscapeSpotlight from '@/components/LandscapeSpotlight'
 import { fetchLatest, fetchPopular, fetchSchedule, fetchMALSeason, fetchCompleted } from '@/lib/api'
 import type { Anime, MALAnime } from '@/lib/api'
+import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 
 interface WebtoonItem {
   title: string
@@ -73,6 +75,25 @@ export default function Home() {
     }
   }
 
+  const reduce = useReducedMotion()
+  const heroStagger = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduce ? 0 : 0.09,
+        delayChildren: reduce ? 0 : 0.1,
+      },
+    },
+  }
+  const heroItem = {
+    hidden: { opacity: 0, y: reduce ? 0 : motionTokens.distance.md },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: adaptiveDuration(motionTokens.duration.normal), ease: motionTokens.easing.smooth },
+    },
+  }
+
   const quickLinks = [
     { href: '/anime', label: 'Anime', Icon: Clapperboard },
     { href: '/manga', label: 'Komik', Icon: BookOpen },
@@ -103,19 +124,27 @@ export default function Home() {
             </div>
           )}
 
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <span className="badge mb-5">Streaming Anime & Komik</span>
+          <motion.div
+            className="relative z-10 flex flex-col items-center text-center"
+            variants={heroStagger}
+            initial={reduce ? false : 'hidden'}
+            animate="visible"
+          >
+            <motion.span variants={heroItem} className="badge mb-5">Streaming Anime & Komik</motion.span>
 
-            <h1 className="text-5xl font-extrabold tracking-tighter md:text-7xl text-primary dark:text-pearl">
+            <motion.h1
+              variants={heroItem}
+              className="text-5xl font-extrabold tracking-tighter md:text-7xl text-primary dark:text-pearl"
+            >
               Kira<span className="text-ocean dark:text-accent">Stream</span>
-            </h1>
+            </motion.h1>
 
-            <p className="mt-5 max-w-2xl text-sm leading-7 md:text-base" style={textStyle(true)}>
+            <motion.p variants={heroItem} className="mt-5 max-w-2xl text-sm leading-7 md:text-base" style={textStyle(true)}>
               Streaming anime subtitle Indonesia, baca manga, manhwa, manhua, webtoon, dan novel. Cepat, bersih, dan nyaman di desktop maupun mobile.
-            </p>
+            </motion.p>
 
             {/* Search */}
-            <form onSubmit={handleSearch} className="mt-9 w-full max-w-xl">
+            <motion.form variants={heroItem} onSubmit={handleSearch} className="mt-9 w-full max-w-xl">
               <div className="relative">
                 <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light/40 dark:text-text-dark/40" aria-hidden="true" />
                 <input
@@ -132,10 +161,10 @@ export default function Home() {
                   Cari
                 </button>
               </div>
-            </form>
+            </motion.form>
 
             {/* Quick category links */}
-            <div className="mt-9 grid w-full max-w-2xl grid-cols-2 gap-2.5 sm:grid-cols-4">
+            <motion.div variants={heroItem} className="mt-9 grid w-full max-w-2xl grid-cols-2 gap-2.5 sm:grid-cols-4">
               {quickLinks.map(({ href, label, Icon }) => (
                 <Link
                   key={href}
@@ -146,8 +175,8 @@ export default function Home() {
                   {label}
                 </Link>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </section>
 
         <Section title="Terbaru" viewAll="/ongoing">

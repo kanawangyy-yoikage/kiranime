@@ -5,6 +5,7 @@ import Script from 'next/script'
 import { useEffect } from 'react'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import Layout from '@/components/Layout'
+import SmoothScroll from '@/components/SmoothScroll'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { LoadingProvider } from '@/contexts/LoadingContext'
 
@@ -40,9 +41,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             <meta name="theme-color" content="#000000" id="theme-color-meta" />
           </Head>
           <Script id="theme-init" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <SmoothScroll>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </SmoothScroll>
         </LoadingProvider>
       </AuthProvider>
     </div>
