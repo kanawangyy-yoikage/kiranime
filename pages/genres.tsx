@@ -54,7 +54,7 @@ export default function GenresPage() {
       </Head>
 
       <div className="flex items-start gap-6">
-        <div className="flex-1 min-w-0 space-y-6">
+        <div className="flex-1 min-w-0 space-y-8">
           <div>
             <h1 className="section-title flex items-center gap-2">
               <Tags size={22} className="text-ocean" /> Genre Anime

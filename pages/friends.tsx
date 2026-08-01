@@ -84,7 +84,7 @@ export default function FriendsPage() {
   return (
     <>
       <Head><title>Teman - KiraStream</title></Head>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">

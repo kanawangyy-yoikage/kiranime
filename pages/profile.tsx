@@ -140,7 +140,7 @@ export default function ProfilePage() {
         <title>Profil Saya - KiraStream</title>
       </Head>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Profile Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

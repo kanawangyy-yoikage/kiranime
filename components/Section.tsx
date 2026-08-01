@@ -10,7 +10,7 @@ interface SectionProps {
 
 export default function Section({ title, viewAll, children }: SectionProps) {
   return (
-    <section className="space-y-5">
+    <section className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h2 className="section-title">{title}</h2>
         {viewAll && (

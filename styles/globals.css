@@ -63,6 +63,14 @@ html {
   font-family: var(--font-jakarta, 'Plus Jakarta Sans'), 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+/* Keyboard focus ring — visible only for keyboard/tab navigation */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 body {

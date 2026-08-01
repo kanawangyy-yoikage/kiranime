@@ -51,7 +51,7 @@ export default function FavoritesPage() {
         <title>Favorit Saya - KiraStream</title>
       </Head>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex flex-col gap-1">
           <h1 className="section-title flex items-center gap-2"><Heart size={22} style={{ color: 'var(--color-primary)' }} fill="currentColor" aria-hidden="true" /> Anime Favorit</h1>
           <p className="text-[var(--color-text-muted)]">

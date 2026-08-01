@@ -37,7 +37,7 @@ export default function AnimeListPage() {
         <title>Anime A-Z: {letter.toUpperCase()} - KiraStream</title>
       </Head>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
           <h1 className="section-title flex items-center gap-2">
             <ListOrdered size={22} className="text-ocean" aria-hidden="true" /> Anime A-Z

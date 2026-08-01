@@ -62,7 +62,7 @@ export default function WebtoonPage() {
   return (
     <>
       <Head><title>{activeLabel} Webtoon - KiraStream</title></Head>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">

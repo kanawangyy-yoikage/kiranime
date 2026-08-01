@@ -105,7 +105,7 @@ export default function SearchPage() {
         <title>Cari {currentTab.label} - KiraStream</title>
       </Head>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Search Bar */}
         <div className="card p-6 space-y-4">
           <form onSubmit={handleSearch} className="relative">

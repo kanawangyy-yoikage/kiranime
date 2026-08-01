@@ -18,8 +18,8 @@ export default function Layout({ children }: LayoutProps) {
         Lewati ke konten utama
       </a>
       <TopNavbar />
-      <main id="main-content" className="flex-1 pt-16 scroll-mt-16">
-        <div className="mx-auto max-w-[1600px] px-4 md:px-6 lg:px-8 pb-24 lg:pb-12 animate-fade-in">
+      <main id="main-content" className="flex-1 pt-20 md:pt-24 scroll-mt-20 md:scroll-mt-24">
+        <div className="mx-auto max-w-[1600px] px-4 md:px-6 lg:px-8 pb-24 lg:pb-16 animate-fade-in">
           {children}
         </div>
       </main>

@@ -38,7 +38,7 @@ export default function NewsPage() {
   return (
     <>
       <Head><title>Berita - KiraStream</title></Head>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
           <h1 className="section-title flex items-center gap-2">
             <Newspaper size={22} className="text-ocean" /> Berita Anime

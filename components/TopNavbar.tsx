@@ -145,7 +145,11 @@ export default function TopNavbar() {
   }
 
   return (
-    <header ref={navRef} className="fixed top-0 left-0 right-0 z-50">
+    <header
+      ref={navRef}
+      className="fixed top-0 left-0 right-0 z-50"
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
+    >
       {/* Main Bar */}
       <div className="h-16 bg-surface/85 dark:bg-surface-dark/85 backdrop-blur-md border-b border-pearl/10 shadow-sm">
         <div className="mx-auto max-w-[1600px] h-full px-4 md:px-6 lg:px-8 flex items-center justify-between gap-4">
@@ -326,7 +330,7 @@ export default function TopNavbar() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={reduceMotion ? { duration: 0 } : { type: 'spring', damping: 28, stiffness: 260 }}
-              className="fixed top-16 bottom-0 left-0 w-72 bg-surface dark:bg-surface-dark z-50 lg:hidden overflow-y-auto overscroll-contain custom-scrollbar border-r border-pearl/10 shadow-xl"
+              className="fixed top-[calc(4rem+env(safe-area-inset-top))] bottom-0 left-0 w-72 bg-surface dark:bg-surface-dark z-50 lg:hidden overflow-y-auto overscroll-contain custom-scrollbar border-r border-pearl/10 shadow-xl"
             >
               <nav className="p-4 space-y-1">
                 {NAV_LINKS.map((link) => (
