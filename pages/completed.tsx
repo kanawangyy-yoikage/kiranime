@@ -6,11 +6,15 @@ import CategorySearchBar from '@/components/CategorySearchBar'
 import AnimeMenuAside from '@/components/AnimeMenuAside'
 import LandscapeSpotlight from '@/components/LandscapeSpotlight'
 import { fetchCompleted, type Anime } from '@/lib/api'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 export default function CompletedPage() {
   const [animes, setAnimes] = useState<Anime[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   useEffect(() => {
     const load = async () => {
@@ -24,15 +28,15 @@ export default function CompletedPage() {
 
   return (
     <>
-      <Head><title>Anime Selesai - KiraStream</title></Head>
+      <Head><title>{t('completed.title')} - KiraStream</title></Head>
       <div className="flex items-start gap-6">
         <div className="flex-1 min-w-0 space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="section-title flex items-center gap-2"><CheckCircle size={22} className="text-ocean" aria-hidden="true" /> Anime Selesai</h1>
-            <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>Koleksi anime yang sudah selesai tayang.</p>
+            <h1 className="section-title flex items-center gap-2"><CheckCircle size={22} className="text-ocean" aria-hidden="true" /> {t('completed.title')}</h1>
+            <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('completed.subtitle')}</p>
           </div>
-          <CategorySearchBar type="anime" placeholder="Cari anime\u2026" />
+          <CategorySearchBar type="anime" placeholder={t('search.placeholderAnime')} />
         </div>
         {loading && page === 1 ? (
           <div className="text-center py-12"><div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto" /></div>
@@ -55,7 +59,7 @@ export default function CompletedPage() {
             {animes.length > 0 && (
               <div className="text-center pt-2">
                 <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-secondary">
-                  {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
+                  {loading ? t('common.loading') : t('common.loadMore')}
                 </button>
               </div>
             )}

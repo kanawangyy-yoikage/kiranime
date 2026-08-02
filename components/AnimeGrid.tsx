@@ -4,11 +4,15 @@ import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import type { Anime } from '@/lib/api'
 import { staggerContainer, staggerItem } from './motionVariants'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 // Helper untuk proxy gambar
 const imageProxy = (url: string) => `/api/mal-image?url=${encodeURIComponent(url)}`
 
 const AnimeCard = ({ anime }: { anime: Anime }) => {
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   return (
     <motion.div variants={staggerItem}>
       <Link href={`/anime/${anime.slug}`} className="anime-card group block">
@@ -22,10 +26,9 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
           />
           {anime.episode && (
             <div className="absolute bottom-1 right-1 rounded bg-black/70 px-1.5 py-0.5 text-xs font-bold text-white">
-              Ep {anime.episode}
+              {t('grid.episode').replace('{n}', anime.episode)}
             </div>
-          )}
-        </div>
+          )}        </div>
         <div className="p-2.5">
           <h3 className="line-clamp-2 text-xs font-semibold sm:text-sm" style={{ color: 'var(--color-text)' }}>
             {anime.title}
@@ -38,8 +41,10 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
 
 export default function AnimeGrid({ animes }: { animes: Anime[] }) {
   const reduce = useReducedMotion()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   if (!animes || animes.length === 0) {
-    return <div className="card p-5 text-center text-sm" style={{ color: 'var(--color-text-muted)' }}>Belum ada anime yang cocok nih.</div>
+    return <div className="card p-5 text-center text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('grid.noAnime')}</div>
   }
 
   return (

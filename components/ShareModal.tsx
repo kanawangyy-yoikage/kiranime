@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Users, UserPlus, Search, Share2, Loader2 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import {
   getFriends,
   getMyGroups,
@@ -25,6 +27,8 @@ type Mode = 'friends' | 'groups'
 
 export default function ShareModal({ open, onClose, item }: ShareModalProps) {
   const { user } = useAuth()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   const [mode, setMode] = useState<Mode>('friends')
   const [friends, setFriends] = useState<SocialUser[]>([])
   const [groups, setGroups] = useState<Group[]>([])
@@ -74,12 +78,12 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
       }
     }
     setSendingTo('')
-    setStatus({ ok, text: ok ? 'Berhasil dibagikan! 🎉' : 'Gagal membagikan' })
+    setStatus({ ok, text: ok ? t('share.success') : t('share.fail') })
   }
 
   const handleAddFriend = async (uid: string) => {
     const res = await sendFriendRequest(uid)
-    setStatus({ ok: res.success, text: res.success ? 'Permintaan teman terkirim!' : res.error || 'Gagal' })
+    setStatus({ ok: res.success, text: res.success ? t('share.requestSent') : res.error || t('share.genericFail') })
     setSearchResults((prev) => prev.filter((u) => u.uid !== uid))
   }
 
@@ -94,12 +98,12 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[60] bg-noir/60 backdrop-blur-sm"
             onClick={onClose}
-            aria-label="Tutup"
+            aria-label={t('common.close')}
           />
           <motion.div
             role="dialog"
             aria-modal="true"
-            aria-label="Bagikan konten"
+            aria-label={t('share.aria')}
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.96 }}
@@ -108,9 +112,9 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-lg flex items-center gap-2 text-pearl">
-                <Share2 size={18} className="text-ocean" /> Bagikan
+                <Share2 size={18} className="text-ocean" /> {t('share.title')}
               </h2>
-              <button onClick={onClose} className="p-2 rounded-lg hover:bg-pearl/10" aria-label="Tutup">
+              <button onClick={onClose} className="p-2 rounded-lg hover:bg-pearl/10" aria-label={t('common.close')}>
                 <X size={18} />
               </button>
             </div>
@@ -133,9 +137,9 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
 
             {!user ? (
               <div className="text-center py-8">
-                <p className="text-pearl/70 mb-4">Login dulu untuk berbagi dengan teman~</p>
+                <p className="text-pearl/70 mb-4">{t('share.requireLogin')}</p>
                 <Link href="/login" onClick={onClose} className="btn-primary inline-flex items-center gap-2">
-                  <UserPlus size={16} /> Login
+                  <UserPlus size={16} /> {t('nav.login')}
                 </Link>
               </div>
             ) : (
@@ -150,7 +154,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                         : 'bg-surface-dark text-pearl/60 hover:text-pearl'
                     }`}
                   >
-                    Teman
+                    {t('share.friends')}
                   </button>
                   <button
                     onClick={() => setMode('groups')}
@@ -160,7 +164,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                         : 'bg-surface-dark text-pearl/60 hover:text-pearl'
                     }`}
                   >
-                    Grup
+                    {t('share.groups')}
                   </button>
                 </div>
 
@@ -175,7 +179,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                           type="search"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          placeholder="Cari teman berdasarkan nama\u2026"
+                          placeholder={t('share.searchPlaceholder')}
                           className="flex-1 bg-transparent text-sm outline-none placeholder:text-pearl/30"
                         />
                       </div>
@@ -192,7 +196,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                                 onClick={() => handleAddFriend(u.uid)}
                                 className="text-xs text-ocean hover:text-oceanAccent-secondary font-semibold shrink-0"
                               >
-                                + Teman
+                                {t('share.addFriend')}
                               </button>
                             </div>
                           ))}
@@ -201,7 +205,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
 
                       {friends.length === 0 && searchResults.length === 0 ? (
                         <p className="text-center text-sm text-pearl/50 py-8">
-                          Belum ada teman. Cari nama temanmu di atas ya~
+                          {t('share.noFriends')}
                         </p>
                       ) : (
                         friends.map((f) => (
@@ -215,7 +219,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                               disabled={!!sendingTo}
                               className="btn-primary text-xs px-3 py-1.5"
                             >
-                              {sendingTo === f.uid ? <Loader2 size={14} className="animate-spin" /> : 'Kirim'}
+                              {sendingTo === f.uid ? <Loader2 size={14} className="animate-spin" /> : t('share.send')}
                             </button>
                           </div>
                         ))
@@ -225,9 +229,9 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                     <>
                       {groups.length === 0 ? (
                         <div className="text-center py-8">
-                          <p className="text-sm text-pearl/50 mb-3">Belum ada grup.</p>
+                          <p className="text-sm text-pearl/50 mb-3">{t('share.noGroups')}</p>
                           <Link href="/groups" onClick={onClose} className="text-sm text-ocean font-semibold inline-flex items-center gap-1.5">
-                            <Users size={16} /> Buat grup dulu
+                            <Users size={16} /> {t('share.createGroup')}
                           </Link>
                         </div>
                       ) : (
@@ -238,14 +242,14 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-pearl truncate">{g.name}</p>
-                              <p className="text-xs text-pearl/50">{g.memberIds?.length || 0} anggota</p>
+                              <p className="text-xs text-pearl/50">{t('groups.members').replace('{n}', String(g.memberIds?.length || 0))}</p>
                             </div>
                             <button
                               onClick={() => doShare(g)}
                               disabled={!!sendingTo}
                               className="btn-primary text-xs px-3 py-1.5"
                             >
-                              {sendingTo === g.id ? <Loader2 size={14} className="animate-spin" /> : 'Kirim'}
+                              {sendingTo === g.id ? <Loader2 size={14} className="animate-spin" /> : t('share.send')}
                             </button>
                           </div>
                         ))

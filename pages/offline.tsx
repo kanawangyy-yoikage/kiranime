@@ -1,8 +1,12 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { WifiOff } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 export default function Offline() {
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   return (
     <>
       <Head>
@@ -14,17 +18,16 @@ export default function Offline() {
           <WifiOff className="h-10 w-10" style={{ color: 'var(--color-text-muted, #5B88B2)' }} />
         </div>
         <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
-          Kamu sedang offline
+          {t('offline.title')}
         </h1>
         <p className="max-w-sm text-sm" style={{ color: 'var(--color-text-muted)' }}>
-          Sepertinya koneksi internet kamu terputus. Halaman yang sudah pernah dibuka mungkin masih bisa
-          diakses, coba muat ulang setelah tersambung kembali.
+          {t('offline.desc')}
         </p>
         <Link
           href="/"
           className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-bg-light transition-opacity hover:opacity-90"
         >
-          Coba ke Beranda
+          {t('offline.home')}
         </Link>
       </div>
     </>

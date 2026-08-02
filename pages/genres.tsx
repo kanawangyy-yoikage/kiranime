@@ -4,8 +4,12 @@ import { Tags } from 'lucide-react'
 import { fetchGenres, fetchByGenre, type Anime } from '@/lib/api'
 import AnimeGrid from '@/components/AnimeGrid'
 import AnimeMenuAside from '@/components/AnimeMenuAside'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 export default function GenresPage() {
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   const [genres, setGenres] = useState<{ name: string; slug: string }[]>([])
   const [selectedGenre, setSelectedGenre] = useState<string>('')
   const [animes, setAnimes] = useState<Anime[]>([])
@@ -50,16 +54,16 @@ export default function GenresPage() {
   return (
     <>
       <Head>
-        <title>Genre Anime - KiraStream</title>
+        <title>{t('genres.title')}</title>
       </Head>
 
       <div className="flex items-start gap-6">
         <div className="flex-1 min-w-0 space-y-8">
           <div>
             <h1 className="section-title flex items-center gap-2">
-              <Tags size={22} className="text-ocean" /> Genre Anime
+              <Tags size={22} className="text-ocean" /> {t('genres.heading')}
             </h1>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">Jelajahi anime berdasarkan genre favorit</p>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t('genres.subtitle')}</p>
           </div>
 
           {/* Genre Pills */}
@@ -98,13 +102,13 @@ export default function GenresPage() {
             <div className="space-y-4">
               <h2 className="section-title flex items-baseline gap-2">
                 {activeGenreName}
-                <span className="text-sm font-normal text-[var(--color-text-muted)]">({animes.length} hasil)</span>
+                <span className="text-sm font-normal text-[var(--color-text-muted)]">({t('genres.results').replace('{n}', String(animes.length))})</span>
               </h2>
               <AnimeGrid animes={animes} />
             </div>
           ) : (
             <div className="card p-6 text-center text-[var(--color-text-muted)]">
-              Belum ada anime di genre ini, coba pilih genre lain
+              {t('genres.empty')}
             </div>
           )}
         </div>

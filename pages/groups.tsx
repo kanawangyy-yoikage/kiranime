@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Users, Plus, X, MessageCircle, Loader2, Trash2 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import {
   getMyGroups,
   getFriends,
@@ -16,6 +18,8 @@ import {
 export default function GroupsPage() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const [groups, setGroups] = useState<Group[]>([])
   const [friends, setFriends] = useState<SocialUser[]>([])
@@ -64,7 +68,7 @@ export default function GroupsPage() {
   }
 
   const handleDelete = async (id: string, groupName: string) => {
-    if (!confirm(`Hapus grup "${groupName}"?`)) return
+    if (!confirm(t('groups.confirmDelete').replace('{name}', groupName))) return
     setBusyId(id)
     await deleteGroup(id)
     setBusyId('')
@@ -81,25 +85,25 @@ export default function GroupsPage() {
 
   return (
     <>
-      <Head><title>Grup - KiraStream</title></Head>
+      <Head><title>{t('groups.title')}</title></Head>
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">
-              <Users size={22} className="text-ocean" /> Grup
+              <Users size={22} className="text-ocean" /> {t('groups.heading')}
             </h1>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">Nonton bareng teman, diskusi & share di grup.</p>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t('groups.subtitle')}</p>
           </div>
           <button onClick={() => setCreating(true)} className="btn-primary inline-flex items-center gap-2 justify-center">
-            <Plus size={16} /> Buat Grup
+            <Plus size={16} /> {t('groups.create')}
           </button>
         </div>
 
         {groups.length === 0 ? (
           <div className="card p-8 text-center">
-            <p className="text-pearl/60 mb-4">Belum ada grup. Buat grup pertama bareng temanmu!</p>
+            <p className="text-pearl/60 mb-4">{t('groups.empty')}</p>
             <button onClick={() => setCreating(true)} className="btn-primary inline-flex items-center gap-2">
-              <Plus size={16} /> Buat Grup
+              <Plus size={16} /> {t('groups.create')}
             </button>
           </div>
         ) : (
@@ -115,7 +119,7 @@ export default function GroupsPage() {
                       onClick={() => handleDelete(g.id, g.name)}
                       disabled={busyId === g.id}
                       className="p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors"
-                      aria-label="Hapus grup"
+                      aria-label={t('groups.deleteAria')}
                     >
                       {busyId === g.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                     </button>
@@ -124,13 +128,13 @@ export default function GroupsPage() {
                 <div>
                   <h2 className="font-bold text-pearl truncate">{g.name}</h2>
                   {g.description && <p className="text-xs text-pearl/60 line-clamp-2 mt-1">{g.description}</p>}
-                  <p className="text-xs text-pearl/40 mt-2">{g.memberIds?.length || 0} anggota</p>
+                  <p className="text-xs text-pearl/40 mt-2">{t('groups.members').replace('{n}', String(g.memberIds?.length || 0))}</p>
                 </div>
                 <Link
                   href={`/groups/${g.id}`}
                   className="btn-primary w-full inline-flex items-center justify-center gap-2 text-sm py-2"
                 >
-                  <MessageCircle size={15} /> Buka Grup
+                  <MessageCircle size={15} /> {t('groups.open')}
                 </Link>
               </div>
             ))}
@@ -145,7 +149,7 @@ export default function GroupsPage() {
             type="button"
             className="fixed inset-0 z-[60] bg-noir/60 backdrop-blur-sm"
             onClick={() => setCreating(false)}
-            aria-label="Tutup"
+            aria-label={t('common.close')}
           />
           <div
             role="dialog"
@@ -154,9 +158,9 @@ export default function GroupsPage() {
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-lg text-pearl flex items-center gap-2">
-                <Users size={18} className="text-ocean" /> Buat Grup Baru
+                <Users size={18} className="text-ocean" /> {t('groups.createTitle')}
               </h2>
-              <button onClick={() => setCreating(false)} className="p-2 rounded-lg hover:bg-pearl/10" aria-label="Tutup">
+              <button onClick={() => setCreating(false)} className="p-2 rounded-lg hover:bg-pearl/10" aria-label={t('common.close')}>
                 <X size={18} />
               </button>
             </div>
@@ -166,14 +170,14 @@ export default function GroupsPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Nama grup\u2026"
+                placeholder={t('groups.namePlaceholder')}
                 className="input-field"
                 maxLength={40}
               />
               <textarea
                 value={desc}
                 onChange={(e) => setDesc(e.target.value)}
-                placeholder="Deskripsi (opsional)\u2026"
+                placeholder={t('groups.descPlaceholder')}
                 className="input-field text-sm"
                 rows={2}
                 maxLength={160}
@@ -181,10 +185,10 @@ export default function GroupsPage() {
 
               <div>
                 <p className="text-xs font-semibold text-pearl/60 uppercase tracking-wider mb-2">
-                  Pilih teman ({selected.length})
+                  {t('groups.selectFriends').replace('{n}', String(selected.length))}
                 </p>
                 {friends.length === 0 ? (
-                  <p className="text-xs text-pearl/40">Belum ada teman untuk diajak. Tambah teman dulu di halaman Teman.</p>
+                  <p className="text-xs text-pearl/40">{t('groups.noFriends')}</p>
                 ) : (
                   <div className="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1">
                     {friends.map((f) => {
@@ -225,7 +229,7 @@ export default function GroupsPage() {
                 className="btn-primary w-full py-2.5 inline-flex items-center justify-center gap-2"
               >
                 {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
-                {saving ? 'Membuat\u2026' : 'Buat Grup'}
+                {saving ? t('groups.creating') : t('groups.create')}
               </button>
             </div>
           </div>

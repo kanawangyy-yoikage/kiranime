@@ -3,6 +3,8 @@ import { Star } from 'lucide-react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Comic } from '@/lib/api'
 import { staggerContainer, staggerItem } from './motionVariants'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 interface ComicGridProps {
   comics: Comic[]
@@ -10,6 +12,8 @@ interface ComicGridProps {
 
 export default function ComicGrid({ comics }: ComicGridProps) {
   const reduce = useReducedMotion()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   return (
     <motion.div
       className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
@@ -35,8 +39,7 @@ export default function ComicGrid({ comics }: ComicGridProps) {
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-pearl/40">
                   No Image
-                </div>
-              )}
+                </div>              )}
 
               {comic.score && (
                 <div className="absolute top-2 right-2 bg-primary/90 dark:bg-accent/90 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm">
@@ -46,7 +49,7 @@ export default function ComicGrid({ comics }: ComicGridProps) {
 
               {comic.chapter && (
                 <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full">
-                  Ch. {comic.chapter.replace(/chapter\s+/gi, '')}
+                  {t('grid.chapter').replace('{n}', comic.chapter.replace(/chapter\s+/gi, ''))}
                 </div>
               )}
 

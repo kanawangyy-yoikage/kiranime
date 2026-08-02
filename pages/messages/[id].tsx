@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { ArrowLeft, Loader2, UserPlus } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import {
   getOrCreateConversation,
   getUserById,
@@ -17,6 +19,8 @@ export default function DirectMessagePage() {
   const router = useRouter()
   const { id } = router.query
   const { user, loading: authLoading } = useAuth()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const [other, setOther] = useState<SocialUser | null>(null)
   const [convId, setConvId] = useState('')
@@ -58,9 +62,9 @@ export default function DirectMessagePage() {
   if (!other) {
     return (
       <div className="card p-10 text-center space-y-3">
-        <p className="text-pearl/60">User tidak ditemukan.</p>
+        <p className="text-pearl/60">{t('messages.userNotFound')}</p>
         <Link href="/messages" className="btn-secondary inline-flex items-center gap-2">
-          <ArrowLeft size={16} /> Kembali
+          <ArrowLeft size={16} /> {t('common.back')}
         </Link>
       </div>
     )
@@ -78,10 +82,10 @@ export default function DirectMessagePage() {
 
   return (
     <>
-      <Head><title>{other.displayName} - Pesan</title></Head>
+      <Head><title>{t('messages.dmTitle').replace('{name}', other.displayName)}</title></Head>
       <div className="space-y-5">
         <div className="flex flex-wrap items-center gap-3">
-          <Link href="/messages" className="btn-secondary p-2" aria-label="Kembali">
+          <Link href="/messages" className="btn-secondary p-2" aria-label={t('common.back')}>
             <ArrowLeft size={18} />
           </Link>
           {other.photoURL ? (
@@ -94,7 +98,7 @@ export default function DirectMessagePage() {
           <div className="flex-1 min-w-0">
             <h1 className="font-bold text-lg text-pearl truncate">{other.displayName}</h1>
             <p className="text-xs text-pearl/50">
-              {isFriend ? 'Teman' : 'Bukan temanmu'}
+              {isFriend ? t('messages.isFriend') : t('messages.notFriend')}
             </p>
           </div>
           {!isFriend && (
@@ -104,7 +108,7 @@ export default function DirectMessagePage() {
               className="btn-secondary text-xs px-3 py-1.5 inline-flex items-center gap-1.5"
             >
               {requesting ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
-              {requesting ? 'Mengirim\u2026' : 'Tambah teman'}
+              {requesting ? t('messages.sending') : t('messages.addFriend')}
             </button>
           )}
         </div>

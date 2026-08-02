@@ -4,7 +4,9 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { MessageCircle } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSettings } from '@/contexts/SettingsContext'
 import { getConversations, getUserById, formatMessageTime, type Conversation } from '@/lib/social'
+import { translate } from '@/lib/i18n'
 
 interface ConvWithUser extends Conversation {
   otherUid: string
@@ -15,6 +17,8 @@ interface ConvWithUser extends Conversation {
 export default function MessagesPage() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const [convs, setConvs] = useState<ConvWithUser[]>([])
   const [loading, setLoading] = useState(true)
@@ -57,17 +61,19 @@ export default function MessagesPage() {
 
   return (
     <>
-      <Head><title>Pesan - KiraStream</title></Head>
+      <Head><title>{t('messages.title')}</title></Head>
       <div className="space-y-5">
         <h1 className="section-title flex items-center gap-2">
-          <MessageCircle size={22} className="text-ocean" /> Pesan
+          <MessageCircle size={22} className="text-ocean" /> {t('messages.heading')}
         </h1>
 
         {convs.length === 0 ? (
           <div className="card p-10 text-center space-y-2">
-            <p className="text-pearl/60">Belum ada percakapan.</p>
+            <p className="text-pearl/60">{t('messages.empty')}</p>
             <p className="text-sm text-pearl/40">
-              Mulai dari halaman <Link href="/friends" className="text-ocean hover:underline">Teman</Link> lalu klik Chat.
+              {t('messages.emptyHint').split('{link}')[0]}
+              <Link href="/friends" className="text-ocean hover:underline">{t('friends.heading')}</Link>
+              {t('messages.emptyHint').split('{link}')[1]}
             </p>
           </div>
         ) : (
@@ -91,7 +97,7 @@ export default function MessagesPage() {
                     {c.lastMessageAt && <span className="text-[10px] text-pearl/40 flex-shrink-0">{formatMessageTime(c.lastMessageAt)}</span>}
                   </div>
                   <p className="text-sm text-pearl/50 truncate mt-0.5">
-                    {c.lastMessage || 'Belum ada pesan'}
+                    {c.lastMessage || t('messages.noMessages')}
                   </p>
                 </div>
               </Link>

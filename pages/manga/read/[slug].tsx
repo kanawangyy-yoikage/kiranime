@@ -2,12 +2,16 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { ArrowLeft, ChevronLeft, ChevronRight, Frown } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import { fetchChapterPages, fetchChapterNavigation, ChapterPages, ChapterNav } from '@/lib/api'
 import ReaderScrollControls from '@/components/ReaderScrollControls'
 
 export default function ChapterReaderPage() {
   const router = useRouter()
   const { slug } = router.query
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const [chapter, setChapter] = useState<ChapterPages | null>(null)
   const [nav, setNav] = useState<ChapterNav | null>(null)
@@ -36,7 +40,7 @@ export default function ChapterReaderPage() {
     return (
       <div className="text-center py-20">
         <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
-        <p style={{ color: 'var(--color-text-muted)' }}>Membuka lembaran chapter\u2026</p>
+        <p style={{ color: 'var(--color-text-muted)' }}>{t('reader.openingManga')}</p>
       </div>
     )
   }
@@ -45,8 +49,8 @@ export default function ChapterReaderPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} size={40} />
-        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>Halaman chapter-nya kosong atau gagal kebuka</p>
-        <button onClick={() => router.back()} className="btn-primary">Kembali</button>
+        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>{t('reader.emptyManga')}</p>
+        <button onClick={() => router.back()} className="btn-primary">{t('common.back')}</button>
       </div>
     )
   }
@@ -54,14 +58,14 @@ export default function ChapterReaderPage() {
   return (
     <>
       <Head>
-        <title>{chapter.title || 'Baca Manga'} - KiraStream</title>
+        <title>{chapter.title || t('reader.readManga')} - KiraStream</title>
       </Head>
 
       <div className="space-y-6 max-w-4xl mx-auto">
         {/* Navigation Top */}
         <div className="card p-4 flex justify-between items-center">
           <button onClick={() => router.back()} className="btn-secondary text-sm inline-flex items-center gap-1.5">
-            <ArrowLeft size={16} /> Detail Komik
+            <ArrowLeft size={16} /> {t('reader.detailManga')}
           </button>
           <h1 className="text-sm md:text-lg font-bold text-pearl text-center px-4 truncate flex-1">
             {chapter.title}
@@ -74,7 +78,7 @@ export default function ChapterReaderPage() {
             <div key={index} className="w-full max-w-3xl relative">
               <img
                 src={`/api/proxy?url=${encodeURIComponent(imgUrl)}`}
-                alt={`Halaman ${index + 1}`}
+                alt={t('reader.page').replace('{n}', String(index + 1))}
                 className="w-full h-auto select-none"
                 loading={index < 3 ? 'eager' : 'lazy'}
               />
@@ -92,18 +96,18 @@ export default function ChapterReaderPage() {
               onClick={() => router.push(`/manga/read/${nav.prevSlug}`)}
               className="btn-secondary text-sm inline-flex items-center gap-1.5"
             >
-              <ChevronLeft size={16} /> Chapter Sebelumnya
+              <ChevronLeft size={16} /> {t('reader.prevChapter')}
             </button>
           )}
           <button onClick={() => router.back()} className="btn-secondary">
-            Kembali ke Daftar Chapter
+            {t('reader.backToChapters')}
           </button>
           {nav?.nextSlug && (
             <button
               onClick={() => router.push(`/manga/read/${nav.nextSlug}`)}
               className="btn-primary text-sm inline-flex items-center gap-1.5"
             >
-              Chapter Selanjutnya <ChevronRight size={16} />
+              {t('reader.nextChapter')} <ChevronRight size={16} />
             </button>
           )}
         </div>

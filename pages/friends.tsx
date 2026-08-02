@@ -4,6 +4,8 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Users, UserPlus, Search, MessageCircle, Check, X, Loader2 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import {
   getFriends,
   getIncomingRequests,
@@ -21,6 +23,8 @@ type Tab = 'friends' | 'requests' | 'add'
 export default function FriendsPage() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const [tab, setTab] = useState<Tab>('friends')
   const [friends, setFriends] = useState<SocialUser[]>([])
@@ -54,12 +58,12 @@ export default function FriendsPage() {
       return
     }
     setSearching(true)
-    const t = setTimeout(async () => {
+    const timer = setTimeout(async () => {
       const res = await searchUsersByKeyword(query)
       setResults(res)
       setSearching(false)
     }, 300)
-    return () => clearTimeout(t)
+    return () => clearTimeout(timer)
   }, [query])
 
   const runAction = async (id: string, fn: () => Promise<any>) => {
@@ -83,26 +87,26 @@ export default function FriendsPage() {
 
   return (
     <>
-      <Head><title>Teman - KiraStream</title></Head>
+      <Head><title>{t('friends.title')}</title></Head>
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">
-              <Users size={22} className="text-ocean" /> Teman
+              <Users size={22} className="text-ocean" /> {t('friends.heading')}
             </h1>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">Kelola pertemanan & bagikan anime/manga kesukaanmu.</p>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t('friends.subtitle')}</p>
           </div>
         </div>
 
         {/* Tabs */}
         <div className="flex gap-2 border-b border-ocean/10 pb-3 overflow-x-auto">
-          {(['friends', 'requests', 'add'] as Tab[]).map((t) => (
+          {(['friends', 'requests', 'add'] as Tab[]).map((tb) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`tab flex-shrink-0 capitalize ${tab === t ? 'active' : ''}`}
+              key={tb}
+              onClick={() => setTab(tb)}
+              className={`tab flex-shrink-0 capitalize ${tab === tb ? 'active' : ''}`}
             >
-              {t === 'friends' ? 'Temanku' : t === 'requests' ? `Permintaan (${requests.length})` : 'Tambah Teman'}
+              {tb === 'friends' ? t('friends.tabFriends') : tb === 'requests' ? `${t('friends.tabRequests')} (${requests.length})` : t('friends.tabAdd')}
             </button>
           ))}
         </div>
@@ -118,7 +122,7 @@ export default function FriendsPage() {
           <div className="card p-4 space-y-2">
             {friends.length === 0 ? (
               <p className="text-center text-sm text-pearl/50 py-8">
-                Belum ada teman. Yuk cari & tambah temanmu!
+                {t('friends.noFriends')}
               </p>
             ) : (
               friends.map((f) => (
@@ -136,14 +140,14 @@ export default function FriendsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Link href={`/messages/${f.uid}`} className="btn-secondary text-xs px-3 py-1.5 inline-flex items-center gap-1.5">
-                      <MessageCircle size={14} /> Chat
+                      <MessageCircle size={14} /> {t('friends.chat')}
                     </Link>
                     <button
                       onClick={() => runAction(f.uid, () => removeFriend(f.uid))}
                       disabled={busyId === f.uid}
                       className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
                     >
-                      {busyId === f.uid ? <Loader2 size={14} className="animate-spin" /> : 'Hapus'}
+                      {busyId === f.uid ? <Loader2 size={14} className="animate-spin" /> : t('friends.remove')}
                     </button>
                   </div>
                 </div>
@@ -156,7 +160,7 @@ export default function FriendsPage() {
         {tab === 'requests' && (
           <div className="card p-4 space-y-2">
             {requests.length === 0 ? (
-              <p className="text-center text-sm text-pearl/50 py-8">Tidak ada permintaan teman masuk.</p>
+              <p className="text-center text-sm text-pearl/50 py-8">{t('friends.noRequests')}</p>
             ) : (
               requests.map((r) => (
                 <div key={r.id} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
@@ -169,7 +173,7 @@ export default function FriendsPage() {
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-pearl truncate">{r.from.displayName}</p>
-                    <p className="text-xs text-pearl/50">minta jadi teman</p>
+                    <p className="text-xs text-pearl/50">{t('friends.requestHint')}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
@@ -177,14 +181,14 @@ export default function FriendsPage() {
                       disabled={busyId === r.from.uid}
                       className="btn-primary text-xs px-3 py-1.5 inline-flex items-center gap-1"
                     >
-                      {busyId === r.from.uid ? <Loader2 size={14} className="animate-spin" /> : <><Check size={14} /> Terima</>}
+                      {busyId === r.from.uid ? <Loader2 size={14} className="animate-spin" /> : <><Check size={14} /> {t('friends.accept')}</>}
                     </button>
                     <button
                       onClick={() => runAction(r.from.uid, () => declineFriendRequest(r.from.uid))}
                       disabled={busyId === r.from.uid}
                       className="btn-secondary text-xs px-3 py-1.5 inline-flex items-center gap-1"
                     >
-                      <X size={14} /> Tolak
+                      <X size={14} /> {t('friends.decline')}
                     </button>
                   </div>
                 </div>
@@ -202,18 +206,18 @@ export default function FriendsPage() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari nama temanmu\u2026"
+                placeholder={t('friends.searchPlaceholder')}
                 className="flex-1 bg-transparent text-sm outline-none placeholder:text-pearl/30"
               />
             </div>
 
             {searching && (
-              <p className="text-center text-sm text-pearl/50">Mencari\u2026</p>
+              <p className="text-center text-sm text-pearl/50">{t('friends.searching')}</p>
             )}
 
             {!searching && query.trim() && results.length === 0 && (
               <p className="text-center text-sm text-pearl/50 py-4">
-                Nggak ketemu. Pastikan temanmu sudah pernah login ya~
+                {t('friends.searchEmpty')}
               </p>
             )}
 
@@ -240,9 +244,9 @@ export default function FriendsPage() {
                       {busyId === u.uid ? (
                         <Loader2 size={14} className="animate-spin" />
                       ) : friends.some((f) => f.uid === u.uid) ? (
-                        'Sudah teman'
+                        t('friends.alreadyFriends')
                       ) : (
-                        <><UserPlus size={14} /> Kirim permintaan</>
+                        <><UserPlus size={14} /> {t('friends.sendRequest')}</>
                       )}
                     </button>
                   </div>

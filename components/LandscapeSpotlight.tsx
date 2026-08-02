@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Star, CheckCircle2, PlayCircle, BookOpen } from 'lucide-react'
 import { adaptiveDuration, motionTokens } from '@/lib/motionTokens'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 export interface SpotlightItem {
   kind: 'anime' | 'comic'
@@ -35,7 +37,9 @@ export default function LandscapeSpotlight({
 }: LandscapeSpotlightProps) {
   const isAnime = kind === 'anime'
   const CtaIcon = isAnime ? PlayCircle : BookOpen
-  const ctaLabel = isAnime ? 'Tonton Sekarang' : 'Baca Sekarang'
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
+  const ctaLabel = isAnime ? t('spotlight.watch') : t('spotlight.read')
   const reduce = useReducedMotion()
 
   return (
@@ -81,7 +85,7 @@ export default function LandscapeSpotlight({
             >
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
                 <CheckCircle2 size={13} aria-hidden="true" />
-                Selesai
+                {t('spotlight.completed')}
               </span>
               {score && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
@@ -96,7 +100,7 @@ export default function LandscapeSpotlight({
               )}
               {isAnime && episode && (
                 <span className="rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold text-white/90 backdrop-blur-sm">
-                  {episode} Episode
+                  {t('spotlight.episodes').replace('{n}', episode)}
                 </span>
               )}
               {!isAnime && chapter && (

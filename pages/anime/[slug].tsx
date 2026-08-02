@@ -6,6 +6,8 @@ import { motion } from 'framer-motion'
 import { Download, Heart, ListPlus, ChevronDown, Share2 } from 'lucide-react'
 import { fetchDetail, fetchEpisode, type AnimeDetail, type StreamData } from '@/lib/api'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import { 
   toggleFavorite, 
   checkFavorite, 
@@ -19,6 +21,8 @@ export default function AnimeDetailPage() {
   const router = useRouter()
   const { slug } = router.query
   const { user } = useAuth()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const [anime, setAnime] = useState<AnimeDetail | null>(null)
   const [streamData, setStreamData] = useState<StreamData | null>(null)
@@ -122,7 +126,7 @@ export default function AnimeDetailPage() {
       score: Number(anime.info.score) || 0,
     })
     
-    alert(`Ditambahkan ke ${status}!`)
+    alert(t('anime.addedToWatchlist').replace('{status}', status))
   }
 
   // Video progress tracking
@@ -131,7 +135,7 @@ export default function AnimeDetailPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
-          <p style={{ color: 'var(--color-text-muted)' }}>Loading anime\u2026</p>
+          <p style={{ color: 'var(--color-text-muted)' }}>{t('anime.loading')}</p>
         </div>
       </div>
     )
@@ -140,12 +144,12 @@ export default function AnimeDetailPage() {
   if (!anime) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--color-text)' }}>Waduh, anime-nya nggak ketemu</h2>
+        <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--color-text)' }}>{t('anime.notFound')}</h2>
         <button
           onClick={() => router.back()}
           className="btn-primary"
         >
-          Kembali
+          {t('common.back')}
         </button>
       </div>
     )
@@ -184,7 +188,7 @@ export default function AnimeDetailPage() {
             {/* Server Selection */}
             {streamData.streams.length > 1 && (
               <div className="flex flex-wrap gap-2 mb-4">
-                <span className="text-sm text-pearl/60 self-center">Server:</span>
+                <span className="text-sm text-pearl/60 self-center">{t('anime.server')}</span>
                 {streamData.streams.map((stream, idx) => (
                   <button
                     key={idx}
@@ -205,7 +209,7 @@ export default function AnimeDetailPage() {
             {streamData.downloads && streamData.downloads.length > 0 && (
               <details className="mt-4">
                 <summary className="cursor-pointer text-pearl font-medium hover:text-ocean transition-colors flex items-center gap-2">
-                  <Download size={16} /> Download Links
+                  <Download size={16} /> {t('anime.downloads')}
                 </summary>
                 <div className="mt-3 space-y-2">
                   {streamData.downloads.map((dl, idx) => (
@@ -292,7 +296,7 @@ export default function AnimeDetailPage() {
                       </span>
                     )}
                     {anime.info.type && <span>• {anime.info.type}</span>}
-                    {anime.info.total_episode && <span>• {anime.info.total_episode} Episode</span>}
+                    {anime.info.total_episode && <span>• {t('spotlight.episodes').replace('{n}', String(anime.info.total_episode))}</span>}
                     {anime.info.status && <span>• {anime.info.status}</span>}
                   </div>
                 </div>
@@ -306,7 +310,7 @@ export default function AnimeDetailPage() {
               onClick={() => setShareOpen(true)}
               className="btn-secondary inline-flex items-center gap-2"
             >
-              <Share2 size={16} /> Bagikan
+              <Share2 size={16} /> {t('share.title')}
             </button>
 
             {user && (
@@ -316,7 +320,7 @@ export default function AnimeDetailPage() {
                   className={`btn-secondary inline-flex items-center gap-2 ${isFavorited ? 'bg-red-500/20 border-red-500' : ''}`}
                 >
                   <Heart size={16} className={isFavorited ? 'fill-red-400 text-red-400' : ''} />
-                  {isFavorited ? 'Favorit' : 'Tambah Favorit'}
+                  {isFavorited ? t('anime.favorited') : t('anime.addFavorite')}
                 </button>
 
                 <div ref={watchlistRef} className="relative">
@@ -326,7 +330,7 @@ export default function AnimeDetailPage() {
                     aria-haspopup="menu"
                     aria-expanded={watchlistOpen}
                   >
-                    <ListPlus size={16} /> Watchlist <ChevronDown size={14} />
+                    <ListPlus size={16} /> {t('anime.watchlist')} <ChevronDown size={14} />
                   </button>
                   {watchlistOpen && (
                     <div className="absolute top-full left-0 mt-2 dropdown min-w-[150px] z-10">
@@ -334,25 +338,25 @@ export default function AnimeDetailPage() {
                         onClick={() => { handleAddToWatchlist('planning'); setWatchlistOpen(false) }}
                         className="dropdown-item w-full text-left"
                       >
-                        Mau Nonton
+                        {t('anime.wlPlanning')}
                       </button>
                       <button
                         onClick={() => { handleAddToWatchlist('watching'); setWatchlistOpen(false) }}
                         className="dropdown-item w-full text-left"
                       >
-                        Sedang Nonton
+                        {t('anime.wlWatching')}
                       </button>
                       <button
                         onClick={() => { handleAddToWatchlist('completed'); setWatchlistOpen(false) }}
                         className="dropdown-item w-full text-left"
                       >
-                        Selesai
+                        {t('anime.wlCompleted')}
                       </button>
                       <button
                         onClick={() => { handleAddToWatchlist('dropped'); setWatchlistOpen(false) }}
                         className="dropdown-item w-full text-left"
                       >
-                        Dropped
+                        {t('anime.wlDropped')}
                       </button>
                     </div>
                   )}
@@ -381,15 +385,15 @@ export default function AnimeDetailPage() {
         <div className="grid md:grid-cols-3 gap-6">
           {/* Synopsis */}
           <div className="md:col-span-2 card p-6">
-            <h2 className="section-title">Sinopsis</h2>
+            <h2 className="section-title">{t('anime.synopsis')}</h2>
             <p className="text-pearl/80 leading-relaxed whitespace-pre-line">
-              {anime.description || 'Sinopsisnya belum ada, nih.'}
+              {anime.description || t('anime.noSynopsis')}
             </p>
           </div>
 
           {/* Info */}
           <div className="card p-6">
-            <h2 className="section-title">Informasi</h2>
+            <h2 className="section-title">{t('anime.information')}</h2>
             <dl className="space-y-3 text-sm">
               {Object.entries(anime.info).map(([key, value]) => {
                 if (!value || key === 'genre') return null
@@ -409,7 +413,7 @@ export default function AnimeDetailPage() {
         {/* Episodes */}
         {anime.episodes.length > 0 && (
           <div className="card p-6">
-            <h2 className="section-title">Daftar Episode</h2>
+            <h2 className="section-title">{t('anime.episodes')}</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
               {anime.episodes.reverse().map((episode) => (
                 <button

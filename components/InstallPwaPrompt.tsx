@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Download, X } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -12,6 +14,8 @@ const DISMISS_DAYS = 7
 export default function InstallPwaPrompt() {
   const [deferredEvent, setDeferredEvent] = useState<BeforeInstallPromptEvent | null>(null)
   const [visible, setVisible] = useState(false)
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   useEffect(() => {
     const isStandalone =
@@ -68,9 +72,9 @@ export default function InstallPwaPrompt() {
         <Download className="h-5 w-5" style={{ color: 'var(--color-pearl)' }} />
       </div>
       <div className="flex-1">
-        <p className="text-sm font-semibold">Pasang KiraStream</p>
+        <p className="text-sm font-semibold">{t('pwa.title')}</p>
         <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-          Akses lebih cepat & tetap bisa dibuka dari layar utama.
+          {t('pwa.desc')}
         </p>
       </div>
       <div className="flex items-center gap-1.5">
@@ -79,11 +83,11 @@ export default function InstallPwaPrompt() {
           className="rounded-full px-3 py-1.5 text-xs font-semibold text-bg-light"
           style={{ backgroundColor: 'var(--color-primary)' }}
         >
-          Pasang
+          {t('pwa.install')}
         </button>
         <button
           onClick={handleDismiss}
-          aria-label="Tutup"
+          aria-label={t('common.close')}
           className="rounded-full p-1.5 hover:opacity-70"
         >
           <X className="h-4 w-4" />

@@ -4,20 +4,22 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ScrollText, ImageOff, Flame, CalendarDays, CheckCircle } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import CategorySearchBar from '@/components/CategorySearchBar'
 import LandscapeSpotlight from '@/components/LandscapeSpotlight'
 
 const DAY_ORDER = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu']
 
-const QUICK_MENU: { label: string; key: string; href: string; icon: typeof Flame }[] = [
-  { label: 'Trending', key: 'trending', href: '/webtoon', icon: Flame },
+const QUICK_MENU: { labelKey: string; key: string; href: string; icon: typeof Flame }[] = [
+  { labelKey: 'manga.trending', key: 'trending', href: '/webtoon', icon: Flame },
   ...DAY_ORDER.map((day) => ({
-    label: day.charAt(0).toUpperCase() + day.slice(1),
+    labelKey: `day.${day}`,
     key: day,
     href: `/webtoon?day=${day}`,
     icon: CalendarDays,
   })),
-  { label: 'Selesai', key: 'completed', href: '/webtoon?day=completed', icon: CheckCircle },
+  { labelKey: 'webtoon.completed', key: 'completed', href: '/webtoon?day=completed', icon: CheckCircle },
 ]
 
 interface WebtoonItem {
@@ -28,6 +30,8 @@ interface WebtoonItem {
 
 export default function WebtoonPage() {
   const router = useRouter()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   const day = typeof router.query.day === 'string' ? router.query.day : 'trending'
 
   const [items, setItems] = useState<WebtoonItem[]>([])
@@ -57,20 +61,21 @@ export default function WebtoonPage() {
     }
   }, [day, router.isReady])
 
-  const activeLabel = QUICK_MENU.find((m) => m.key === day)?.label || 'Webtoon'
+  const activeMenu = QUICK_MENU.find((m) => m.key === day)
+  const activeLabel = activeMenu ? t(activeMenu.labelKey) : t('nav.webtoon')
 
   return (
     <>
-      <Head><title>{activeLabel} Webtoon - KiraStream</title></Head>
+      <Head><title>{t('webtoon.pageTitle').replace('{label}', activeLabel)}</title></Head>
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">
-              <ScrollText size={22} className="text-ocean" aria-hidden="true" /> Webtoon
+              <ScrollText size={22} className="text-ocean" aria-hidden="true" /> {t('nav.webtoon')}
             </h1>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca webtoon favorit kamu.</p>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t('webtoon.subtitle')}</p>
           </div>
-          <CategorySearchBar type="webtoon" placeholder="Cari webtoon\u2026" />
+          <CategorySearchBar type="webtoon" placeholder={t('search.placeholderWebtoon')} />
         </div>
 
         {/* Featured landscape */}
@@ -87,10 +92,10 @@ export default function WebtoonPage() {
         {/* Quick Menu */}
         <div className="card p-4">
           <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2 text-[var(--color-text)]">
-            <CalendarDays size={16} className="text-ocean" aria-hidden="true" /> Jadwal Harian
+            <CalendarDays size={16} className="text-ocean" aria-hidden="true" /> {t('webtoon.dailySchedule')}
           </h3>
           <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-9">
-            {QUICK_MENU.map(({ label, key, href, icon: Icon }) => {
+            {QUICK_MENU.map(({ labelKey, key, href, icon: Icon }) => {
               const active = key === 'trending' ? day === 'trending' : day === key
               return (
                 <Link
@@ -103,7 +108,7 @@ export default function WebtoonPage() {
                   }`}
                 >
                   <Icon size={18} className="text-ocean" aria-hidden="true" />
-                  {label}
+                  {t(labelKey)}
                 </Link>
               )
             })}
@@ -116,7 +121,7 @@ export default function WebtoonPage() {
           </div>
         ) : items.length === 0 ? (
           <div className="card p-5 text-center text-[var(--color-text-muted)] text-sm">
-            Webtoon belum bisa dimuat, coba refresh halaman ini sebentar lagi.
+            {t('webtoon.loadError')}
           </div>
         ) : (
           <div className="anime-grid">

@@ -5,9 +5,13 @@ import { ListOrdered } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import AZList from '@/components/AZList'
 import { fetchAnimeList, type Anime } from '@/lib/api'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 export default function AnimeListPage() {
   const router = useRouter()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   const letter = typeof router.query.letter === 'string' ? router.query.letter.toLowerCase() : 'a'
 
   const [animes, setAnimes] = useState<Anime[]>([])
@@ -34,16 +38,16 @@ export default function AnimeListPage() {
   return (
     <>
       <Head>
-        <title>Anime A-Z: {letter.toUpperCase()} - KiraStream</title>
+        <title>{t('animelist.title')}: {letter.toUpperCase()} - KiraStream</title>
       </Head>
 
       <div className="space-y-8">
         <div>
           <h1 className="section-title flex items-center gap-2">
-            <ListOrdered size={22} className="text-ocean" aria-hidden="true" /> Anime A-Z
+            <ListOrdered size={22} className="text-ocean" aria-hidden="true" /> {t('animelist.title')}
           </h1>
           <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-            Kumpulan anime berdasarkan huruf <span className="font-bold text-primary dark:text-accent">{letter.toUpperCase()}</span>
+            {t('animelist.subtitle')} <span className="font-bold text-primary dark:text-accent">{letter.toUpperCase()}</span>
           </p>
           <div className="mt-4">
             <AZList />
@@ -58,7 +62,7 @@ export default function AnimeListPage() {
           </div>
         ) : animes.length === 0 ? (
           <div className="card p-6 text-center text-[var(--color-text-muted)]">
-            Belum ada anime yang dimulai huruf &quot;{letter.toUpperCase()}&quot;, coba huruf lain.
+            {t('animelist.empty').replace('{letter}', letter.toUpperCase())}
           </div>
         ) : (
           <>
@@ -66,7 +70,7 @@ export default function AnimeListPage() {
             {animes.length > 0 && (
               <div className="text-center">
                 <button onClick={() => setPage((p) => p + 1)} disabled={loading} className="btn-secondary">
-                  {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
+                  {loading ? t('common.loading') : t('common.loadMore')}
                 </button>
               </div>
             )}

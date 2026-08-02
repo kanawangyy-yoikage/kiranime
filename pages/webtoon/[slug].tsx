@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { ScrollText, Frown, Share2 } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import ShareModal from '@/components/ShareModal'
 
 interface WebtoonEpisode {
@@ -21,6 +23,8 @@ interface WebtoonDetailData {
 export default function WebtoonDetailPage() {
   const router = useRouter()
   const { slug } = router.query
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   const [webtoon, setWebtoon] = useState<WebtoonDetailData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -53,7 +57,7 @@ export default function WebtoonDetailPage() {
     return (
       <div className="text-center py-20">
         <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
-        <p style={{ color: 'var(--color-text-muted)' }}>Mengambil detail webtoon\u2026</p>
+        <p style={{ color: 'var(--color-text-muted)' }}>{t('webtoon.loadingDetail')}</p>
       </div>
     )
   }
@@ -62,8 +66,8 @@ export default function WebtoonDetailPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} size={40} />
-        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>Waduh, webtoonnya nggak ketemu</p>
-        <Link href="/webtoon" className="btn-primary">Kembali ke Webtoon</Link>
+        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>{t('webtoon.notFound')}</p>
+        <Link href="/webtoon" className="btn-primary">{t('webtoon.backToWebtoon')}</Link>
       </div>
     )
   }
@@ -81,18 +85,18 @@ export default function WebtoonDetailPage() {
           <div className="flex-1 space-y-3">
             <h1 className="text-2xl md:text-3xl font-bold text-pearl">{webtoon.title}</h1>
             <button onClick={() => setShareOpen(true)} className="btn-secondary inline-flex items-center gap-2 text-sm">
-              <Share2 size={16} /> Bagikan
+              <Share2 size={16} /> {t('share.title')}
             </button>
           </div>
         </div>
 
         <div className="card p-6">
           <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2">
-            <ScrollText size={20} className="text-ocean" /> Daftar Episode ({webtoon.episodes?.length || 0})
+            <ScrollText size={20} className="text-ocean" /> {t('webtoon.episodes').replace('{n}', String(webtoon.episodes?.length || 0))}
           </h2>
 
           {!webtoon.episodes || webtoon.episodes.length === 0 ? (
-            <p className="text-pearl/60">Episodenya belum ada nih, coba cek lagi nanti.</p>
+            <p className="text-pearl/60">{t('webtoon.noEpisodes')}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
               {webtoon.episodes.map((ep, i) => (
@@ -102,7 +106,7 @@ export default function WebtoonDetailPage() {
                   className="flex items-center justify-between p-3 bg-surface-dark hover:bg-surface-hover rounded-lg transition-colors group"
                 >
                   <span className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors truncate">
-                    {ep.title || `Episode ${i + 1}`}
+                    {ep.title || t('webtoon.episodeN').replace('{n}', String(i + 1))}
                   </span>
                 </Link>
               ))}

@@ -4,12 +4,16 @@ import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
 import { Pencil, Clapperboard, Clock, Star, BookmarkPlus, PlayCircle, CheckCircle, Ban, Sparkles, LogOut } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSettings } from '@/contexts/SettingsContext'
 import { getUserFirestore, uploadAvatarBase64, updateUserFirestore } from '@/lib/firebase'
 import { getHistory, getFavorites, getWatchlistByStatus, getContinueWatching } from '@/lib/firebase'
+import { translate } from '@/lib/i18n'
 
 export default function ProfilePage() {
   const router = useRouter()
   const { user, logout, updateProfile, refreshProfile, loading: authLoading } = useAuth()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   
   const [profile, setProfile] = useState<any>(null)
   const [history, setHistory] = useState<any[]>([])
@@ -103,10 +107,10 @@ export default function ProfilePage() {
         setProfile((prev: any) => ({ ...prev, photoURL: result.url }))
         await refreshProfile()
       } else {
-        setAvatarError(typeof result.error === 'string' ? result.error : 'Gagal upload avatar, coba lagi ya~')
+        setAvatarError(typeof result.error === 'string' ? result.error : t('profile.avatarError'))
       }
     } catch {
-      setAvatarError('Gagal upload avatar, coba lagi ya~')
+      setAvatarError(t('profile.avatarError'))
     } finally {
       setAvatarUploading(false)
     }
@@ -117,7 +121,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[var(--color-text-muted)]">Loading\u2026</p>
+          <p className="text-[var(--color-text-muted)]">{t('common.loading')}</p>
         </div>
       </div>
     )
@@ -137,7 +141,7 @@ export default function ProfilePage() {
   return (
     <>
       <Head>
-        <title>Profil Saya - KiraStream</title>
+        <title>{t('profile.title')}</title>
       </Head>
 
       <div className="space-y-8">
@@ -207,13 +211,13 @@ export default function ProfilePage() {
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
                       className="input-field text-xl font-bold"
-                      placeholder="Nama"
+                      placeholder={t('profile.name')}
                     />
                     <textarea
                       value={editBio}
                       onChange={(e) => setEditBio(e.target.value)}
                       className="input-field text-sm"
-                      placeholder="Bio singkat\u2026"
+                      placeholder={t('profile.bioPlaceholder')}
                       rows={2}
                     />
                     <div className="flex gap-2">
@@ -222,13 +226,13 @@ export default function ProfilePage() {
                         disabled={saving}
                         className="btn-primary text-sm"
                       >
-                        {saving ? 'Saving\u2026' : 'Save'}
+                        {saving ? t('profile.saving') : t('profile.save')}
                       </button>
                       <button
                         onClick={() => setEditMode(false)}
                         className="btn-secondary text-sm"
                       >
-                        Cancel
+                        {t('profile.cancel')}
                       </button>
                     </div>
                   </div>
@@ -245,7 +249,7 @@ export default function ProfilePage() {
                       onClick={() => setEditMode(true)}
                       className="mt-2 text-sm text-ocean hover:text-oceanAccent-secondary transition-colors inline-flex items-center gap-1.5"
                     >
-                      <Pencil size={14} aria-hidden="true" /> Edit Profil
+                      <Pencil size={14} aria-hidden="true" /> {t('profile.edit')}
                     </button>
                     <button
                       onClick={handleLogout}
@@ -253,7 +257,7 @@ export default function ProfilePage() {
                       className="mt-2 ml-4 text-sm text-red-400 hover:text-red-300 transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
                     >
                       <LogOut size={14} aria-hidden="true" />
-                      {loggingOut ? 'Logging out\u2026' : 'Logout'}
+                      {loggingOut ? t('profile.loggingOut') : t('profile.logout')}
                     </button>
                   </>
                 )}
@@ -266,23 +270,23 @@ export default function ProfilePage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.watchedEpisodes}</div>
-            <div className="text-xs text-pearl/60">Episode Ditonton</div>
+            <div className="text-xs text-pearl/60">{t('profile.episodesWatched')}</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.totalHours}h</div>
-            <div className="text-xs text-pearl/60">Estimasi Jam</div>
+            <div className="text-xs text-pearl/60">{t('profile.hours')}</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.favorites}</div>
-            <div className="text-xs text-pearl/60">Favorit</div>
+            <div className="text-xs text-pearl/60">{t('profile.favorites')}</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.watchlist}</div>
-            <div className="text-xs text-pearl/60">Watchlist</div>
+            <div className="text-xs text-pearl/60">{t('profile.watchlist')}</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.continueWatching}</div>
-            <div className="text-xs text-pearl/60">Lanjutkan Nonton</div>
+            <div className="text-xs text-pearl/60">{t('profile.continueWatching')}</div>
           </div>
         </div>
 
@@ -297,9 +301,9 @@ export default function ProfilePage() {
                   activeTab === tab ? 'active' : ''
                 }`}
               >
-                {tab === 'overview' ? 'Ringkasan' :
-                 tab === 'history' ? 'Riwayat' :
-                 tab === 'favorites' ? 'Favorit' : 'Watchlist'}
+                {tab === 'overview' ? t('profile.tabOverview') :
+                 tab === 'history' ? t('profile.tabHistory') :
+                 tab === 'favorites' ? t('profile.favorites') : t('profile.watchlist')}
               </button>
             ))}
           </div>
@@ -313,21 +317,21 @@ export default function ProfilePage() {
                   <div className="rounded-xl p-4"
                     style={{ background: 'var(--color-surface-alt)' }}
                   >
-                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Sparkles size={18} className="text-ocean" /> Recap Tontonanmu</h3>
+                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Sparkles size={18} className="text-ocean" /> {t('profile.recap')}</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                       <div className="card p-3 text-center">
                         <div className="text-xl font-bold text-ocean">{history.length}</div>
-                        <div className="text-xs text-pearl/60">Judul Ditonton</div>
+                        <div className="text-xs text-pearl/60">{t('profile.watchedTitles')}</div>
                       </div>
                       <div className="card p-3 text-center">
                         <div className="text-xl font-bold text-ocean">{favorites.length}</div>
-                        <div className="text-xs text-pearl/60">Favorit</div>
+                        <div className="text-xs text-pearl/60">{t('profile.favorites')}</div>
                       </div>
                       <div className="card p-3 text-center">
                         <div className="text-xl font-bold text-ocean">
                           {watchlist.filter((w: any) => w.status === 'completed').length}
                         </div>
-                        <div className="text-xs text-pearl/60">Selesai Ditonton</div>
+                        <div className="text-xs text-pearl/60">{t('profile.watchedCompleted')}</div>
                       </div>
                       <div className="card p-3 text-center">
                         <div className="text-xl font-bold text-ocean">
@@ -341,13 +345,12 @@ export default function ProfilePage() {
                             return most ? (most[1] as number) : 0
                           })()}
                         </div>
-                        <div className="text-xs text-pearl/60">Sering Ditonton</div>
+                        <div className="text-xs text-pearl/60">{t('profile.mostWatched')}</div>
                       </div>
                     </div>
                     {history.length > 0 && (
                       <p className="text-xs text-pearl/50 mt-3">
-                        Lanjutkan semangat nontonmu! Anime terakhir yang kamu buka:{' '}
-                        <span className="text-pearl">{history[0]?.title}</span>
+                        {t('profile.lastWatched').replace('{title}', history[0]?.title || '')}
                       </p>
                     )}
                   </div>
@@ -356,7 +359,7 @@ export default function ProfilePage() {
                 {/* Continue Watching */}
                 {continueWatching.length > 0 && (
                   <div>
-                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Clapperboard size={18} className="text-ocean" /> Lanjutkan Nonton</h3>
+                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Clapperboard size={18} className="text-ocean" /> {t('profile.continueWatching')}</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {continueWatching.slice(0, 4).map((item) => (
                         <a
@@ -387,7 +390,7 @@ export default function ProfilePage() {
                 {/* Recent History */}
                 {history.length > 0 && (
                   <div>
-                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Clock size={18} className="text-ocean" /> Riwayat Terakhir</h3>
+                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Clock size={18} className="text-ocean" /> {t('profile.recentHistory')}</h3>
                     <div className="space-y-2">
                       {history.slice(0, 5).map((item) => (
                         <a
@@ -444,7 +447,7 @@ export default function ProfilePage() {
                   ))
                 ) : (
                   <div className="text-center py-8 text-pearl/60">
-                    Belum ada riwayat tontonan
+                    {t('profile.noHistory')}
                   </div>
                 )}
               </div>
@@ -473,7 +476,7 @@ export default function ProfilePage() {
                   ))
                 ) : (
                   <div className="text-center py-8 text-pearl/60">
-                    Belum ada favorit
+                    {t('profile.noFavorites')}
                   </div>
                 )}
               </div>
@@ -497,14 +500,14 @@ export default function ProfilePage() {
                       <div className="flex-1">
                         <p className="font-medium text-pearl">{item.title}</p>
                         <p className="text-sm text-pearl/60 capitalize inline-flex items-center gap-1.5">
-                          {item.status === 'planning' && (<><BookmarkPlus size={14} /> Mau Nonton</>)}
-                          {item.status === 'watching' && (<><PlayCircle size={14} /> Sedang Nonton</>)}
-                          {item.status === 'completed' && (<><CheckCircle size={14} /> Selesai</>)}
-                          {item.status === 'dropped' && (<><Ban size={14} /> Dropped</>)}
+                          {item.status === 'planning' && (<><BookmarkPlus size={14} /> {t('anime.wlPlanning')}</>)}
+                          {item.status === 'watching' && (<><PlayCircle size={14} /> {t('anime.wlWatching')}</>)}
+                          {item.status === 'completed' && (<><CheckCircle size={14} /> {t('anime.wlCompleted')}</>)}
+                          {item.status === 'dropped' && (<><Ban size={14} /> {t('anime.wlDropped')}</>)}
                         </p>
                         {item.totalEpisodes > 0 && (
                           <p className="text-xs text-pearl/60">
-                            {item.progress || 0}/{item.totalEpisodes} episode
+                            {t('profile.episodeProgress').replace('{progress}', String(item.progress || 0)).replace('{total}', String(item.totalEpisodes))}
                           </p>
                         )}
                       </div>
@@ -512,7 +515,7 @@ export default function ProfilePage() {
                   ))
                 ) : (
                   <div className="text-center py-8 text-pearl/60">
-                    Watchlist kosong
+                    {t('profile.watchlistEmpty')}
                   </div>
                 )}
               </div>

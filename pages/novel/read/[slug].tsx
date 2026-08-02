@@ -3,11 +3,15 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { ArrowLeft, ChevronLeft, ChevronRight, Frown, BookMarked } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import { fetchNovelChapterContent, NovelChapterContent } from '@/lib/api'
 
 export default function NovelReaderPage() {
   const router = useRouter()
   const { slug } = router.query
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const [chapter, setChapter] = useState<NovelChapterContent | null>(null)
   const [loading, setLoading] = useState(true)
@@ -34,7 +38,7 @@ export default function NovelReaderPage() {
     return (
       <div className="text-center py-20">
         <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
-        <p style={{ color: 'var(--color-text-muted)' }}>Membuka chapter\u2026</p>
+        <p style={{ color: 'var(--color-text-muted)' }}>{t('reader.openingNovel')}</p>
       </div>
     )
   }
@@ -43,8 +47,8 @@ export default function NovelReaderPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} size={40} />
-        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>Chapter ini gagal kebuka atau memang belum ada isinya</p>
-        <button onClick={() => router.back()} className="btn-primary">Kembali</button>
+        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>{t('reader.emptyNovel')}</p>
+        <button onClick={() => router.back()} className="btn-primary">{t('common.back')}</button>
       </div>
     )
   }
@@ -52,7 +56,7 @@ export default function NovelReaderPage() {
   return (
     <>
       <Head>
-        <title>{chapter.title || 'Baca Novel'} - KiraStream</title>
+        <title>{chapter.title || t('reader.readNovel')} - KiraStream</title>
       </Head>
 
       <div className="space-y-6 max-w-3xl mx-auto">
@@ -60,11 +64,11 @@ export default function NovelReaderPage() {
         <div className="card p-4 flex justify-between items-center gap-3">
           {chapter.parentSlug ? (
             <Link href={`/novel/${chapter.parentSlug}`} className="btn-secondary text-sm inline-flex items-center gap-1.5 shrink-0">
-              <BookMarked size={16} /> Daftar Chapter
+              <BookMarked size={16} /> {t('reader.chapters')}
             </Link>
           ) : (
             <button onClick={() => router.back()} className="btn-secondary text-sm inline-flex items-center gap-1.5 shrink-0">
-              <ArrowLeft size={16} /> Kembali
+              <ArrowLeft size={16} /> {t('common.back')}
             </button>
           )}
           <h1 className="text-sm md:text-lg font-bold text-pearl text-center px-2 truncate flex-1">
@@ -90,19 +94,19 @@ export default function NovelReaderPage() {
         <div className="card p-4 flex items-center justify-between gap-3">
           {chapter.prevSlug ? (
             <Link href={`/novel/read/${chapter.prevSlug}`} className="btn-secondary text-sm inline-flex items-center gap-1.5">
-              <ChevronLeft size={16} /> Sebelumnya
+              <ChevronLeft size={16} /> {t('common.previous')}
             </Link>
           ) : <span />}
 
           {chapter.parentSlug && (
             <Link href={`/novel/${chapter.parentSlug}`} className="text-xs text-pearl/50 hover:text-pearl transition-colors">
-              Daftar Chapter
+              {t('reader.chapters')}
             </Link>
           )}
 
           {chapter.nextSlug ? (
             <Link href={`/novel/read/${chapter.nextSlug}`} className="btn-secondary text-sm inline-flex items-center gap-1.5">
-              Selanjutnya <ChevronRight size={16} />
+              {t('common.next')} <ChevronRight size={16} />
             </Link>
           ) : <span />}
         </div>

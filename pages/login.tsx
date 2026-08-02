@@ -6,11 +6,15 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Phone, Mail as MailIcon } from 'lucide-react'
 import type { ConfirmationResult } from 'firebase/auth'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSettings } from '@/contexts/SettingsContext'
 import { sendPhoneOtp, confirmPhoneOtp } from '@/lib/firebase'
+import { translate } from '@/lib/i18n'
 
 export default function LoginPage() {
   const router = useRouter()
   const { loginWithGoogle, loginWithEmail, registerWithEmail } = useAuth()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   
   const [method, setMethod] = useState<'email' | 'phone'>('email')
   const [mode, setMode] = useState<'login' | 'register'>('login')
@@ -43,10 +47,10 @@ export default function LoginPage() {
       if (result.success) {
         router.push('/')
       } else {
-        setError('Login Google-nya gagal, coba sekali lagi ya.')
+        setError(t('login.googleFail'))
       }
     } catch {
-      setError('Ada gangguan pas coba login. Coba beberapa saat lagi.')
+      setError(t('login.genericError'))
     } finally {
       setLoading(false)
     }
@@ -63,11 +67,11 @@ export default function LoginPage() {
         if (result.success) {
           router.push('/')
         } else {
-          setError('Email atau password salah.')
+          setError(t('login.invalidCredentials'))
         }
       } else {
         if (!displayName.trim()) {
-          setError('Nama wajib diisi')
+          setError(t('login.nameRequired'))
           setLoading(false)
           return
         }
@@ -75,11 +79,11 @@ export default function LoginPage() {
         if (result.success) {
           router.push('/')
         } else {
-          setError('Registrasi gagal, mungkin email ini sudah dipakai.')
+          setError(t('login.registerFail'))
         }
       }
     } catch {
-      setError('Ada yang error di sistem. Coba lagi sebentar ya.')
+      setError(t('login.systemError'))
     } finally {
       setLoading(false)
     }
@@ -97,10 +101,10 @@ export default function LoginPage() {
         setConfirmationResult(result.confirmationResult)
         setOtpSent(true)
       } else {
-        setError('Kode OTP gagal dikirim, coba cek lagi nomor HP-nya.')
+        setError(t('login.otpSendFail'))
       }
     } catch {
-      setError('Lagi ada masalah di server. Coba lagi sebentar.')
+      setError(t('login.serverError'))
     } finally {
       setLoading(false)
     }
@@ -117,10 +121,10 @@ export default function LoginPage() {
       if (result.success) {
         router.push('/')
       } else {
-        setError('Kode OTP-nya salah atau sudah keburu kadaluarsa.')
+        setError(t('login.otpInvalid'))
       }
     } catch {
-      setError('Verifikasinya gagal karena ada gangguan. Coba lagi ya.')
+      setError(t('login.otpVerifyFail'))
     } finally {
       setLoading(false)
     }
@@ -136,7 +140,7 @@ export default function LoginPage() {
   return (
     <>
       <Head>
-        <title>{method === 'phone' ? 'Login No. HP' : mode === 'login' ? 'Login' : 'Register'} - KiraStream</title>
+        <title>{method === 'phone' ? t('login.phoneTitle') : mode === 'login' ? t('login.title') : t('login.register')} - KiraStream</title>
       </Head>
 
       <div className="min-h-[80vh] flex items-center justify-center py-12">
@@ -158,8 +162,8 @@ export default function LoginPage() {
               />
               <p className="text-pearl/60">
                 {method === 'phone'
-                  ? 'Login pakai nomor HP'
-                  : mode === 'login' ? 'Login ke akun kamu' : 'Buat akun baru'}
+                  ? t('login.phoneSubtitle')
+                  : mode === 'login' ? t('login.subtitle') : t('login.registerSubtitle')}
               </p>
             </div>
 
@@ -172,7 +176,7 @@ export default function LoginPage() {
                   method === 'email' ? 'bg-ocean text-white' : 'text-pearl/60 hover:text-pearl'
                 }`}
               >
-                <MailIcon size={15} /> Email
+                <MailIcon size={15} /> {t('login.email')}
               </button>
               <button
                 type="button"
@@ -181,7 +185,7 @@ export default function LoginPage() {
                   method === 'phone' ? 'bg-ocean text-white' : 'text-pearl/60 hover:text-pearl'
                 }`}
               >
-                <Phone size={15} /> No. HP
+                <Phone size={15} /> {t('login.phone')}
               </button>
             </div>
 
@@ -212,7 +216,7 @@ export default function LoginPage() {
                       <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                       <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                     </svg>
-                    Login dengan Google
+                    {t('login.google')}
                   </button>
 
                   <div className="relative mb-6">
@@ -220,7 +224,7 @@ export default function LoginPage() {
                       <div className="w-full border-t border-ocean/20" />
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-surface-card text-pearl/60">atau</span>
+                      <span className="px-2 bg-surface-card text-pearl/60">{t('login.or')}</span>
                     </div>
                   </div>
 
@@ -229,14 +233,14 @@ export default function LoginPage() {
                     {mode === 'register' && (
                       <div>
                         <label className="block text-sm font-medium text-pearl mb-2">
-                          Nama Lengkap
+                          {t('login.fullName')}
                         </label>
                         <input
                           type="text"
                           value={displayName}
                           onChange={(e) => setDisplayName(e.target.value)}
                           className="input-field"
-                          placeholder="Masukkan nama"
+                          placeholder={t('login.namePlaceholder')}
                           required
                         />
                       </div>
@@ -244,7 +248,7 @@ export default function LoginPage() {
 
                     <div>
                       <label className="block text-sm font-medium text-pearl mb-2">
-                        Email
+                        {t('login.email')}
                       </label>
                       <input
                         type="email"
@@ -258,7 +262,7 @@ export default function LoginPage() {
 
                     <div>
                       <label className="block text-sm font-medium text-pearl mb-2">
-                        Password
+                        {t('login.password')}
                       </label>
                       <input
                         type="password"
@@ -276,7 +280,7 @@ export default function LoginPage() {
                       disabled={loading}
                       className="w-full btn-primary disabled:opacity-50"
                     >
-                      {loading ? 'Loading\u2026' : mode === 'login' ? 'Login' : 'Register'}
+                      {loading ? t('common.loading') : mode === 'login' ? t('login.title') : t('login.register')}
                     </button>
                   </form>
 
@@ -286,7 +290,7 @@ export default function LoginPage() {
                       onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
                       className="text-sm text-ocean hover:text-oceanAccent-secondary transition-colors"
                     >
-                      {mode === 'login' ? 'Belum punya akun? Register' : 'Sudah punya akun? Login'}
+                      {mode === 'login' ? t('login.toRegister') : t('login.toLogin')}
                     </button>
                   </div>
                 </motion.div>
@@ -301,7 +305,7 @@ export default function LoginPage() {
                     <form onSubmit={handleSendOtp} className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-pearl mb-2">
-                          Nomor HP
+                          {t('login.phoneNumber')}
                         </label>
                         <input
                           type="tel"
@@ -312,7 +316,7 @@ export default function LoginPage() {
                           required
                         />
                         <p className="mt-1.5 text-xs text-pearl/50">
-                          Contoh: 08123456789 atau +6281234567890
+                          {t('login.phoneExample')}
                         </p>
                       </div>
 
@@ -321,14 +325,14 @@ export default function LoginPage() {
                         disabled={loading || !phoneNumber.trim()}
                         className="w-full btn-primary disabled:opacity-50"
                       >
-                        {loading ? 'Mengirim OTP\u2026' : 'Kirim Kode OTP'}
+                        {loading ? t('login.sendingOtp') : t('login.sendOtp')}
                       </button>
                     </form>
                   ) : (
                     <form onSubmit={handleVerifyOtp} className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-pearl mb-2">
-                          Kode OTP
+                          {t('login.otp')}
                         </label>
                         <input
                           type="text"
@@ -341,7 +345,7 @@ export default function LoginPage() {
                           required
                         />
                         <p className="mt-1.5 text-xs text-pearl/50">
-                          Kode OTP dikirim lewat SMS ke {normalizePhoneNumber(phoneNumber)}
+                          {t('login.otpSentTo').replace('{number}', normalizePhoneNumber(phoneNumber))}
                         </p>
                       </div>
 
@@ -350,7 +354,7 @@ export default function LoginPage() {
                         disabled={loading || otpCode.length < 6}
                         className="w-full btn-primary disabled:opacity-50"
                       >
-                        {loading ? 'Verifikasi\u2026' : 'Verifikasi & Login'}
+                        {loading ? t('login.verifying') : t('login.verifyLogin')}
                       </button>
 
                       <button
@@ -358,7 +362,7 @@ export default function LoginPage() {
                         onClick={resetPhoneFlow}
                         className="w-full text-sm text-ocean hover:text-oceanAccent-secondary transition-colors"
                       >
-                        Ganti nomor HP
+                        {t('login.changePhone')}
                       </button>
                     </form>
                   )}
@@ -375,7 +379,7 @@ export default function LoginPage() {
                 onClick={() => router.push('/')}
                 className="text-sm text-pearl/60 hover:text-pearl transition-colors inline-flex items-center gap-1.5"
               >
-                <ArrowLeft size={14} /> Kembali ke Beranda
+                <ArrowLeft size={14} /> {t('login.backHome')}
               </button>
             </div>
           </div>

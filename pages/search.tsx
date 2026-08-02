@@ -9,6 +9,8 @@ import ComicGrid from '@/components/ComicGrid'
 import NovelGrid from '@/components/NovelGrid'
 import Section from '@/components/Section'
 import { searchAnime, searchComic, searchNovel, enrichNovelCovers, searchMAL, type Anime, type Comic, type Novel, type MALAnime } from '@/lib/api'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 type SearchType = 'anime' | 'manga' | 'webtoon' | 'novel'
 
@@ -18,16 +20,18 @@ interface WebtoonResult {
   url: string
 }
 
-const TABS: { key: SearchType; label: string; icon: typeof PlayCircle; placeholder: string }[] = [
-  { key: 'anime', label: 'Anime', icon: PlayCircle, placeholder: 'Cari anime berdasarkan judul\u2026' },
-  { key: 'manga', label: 'Manga', icon: BookOpen, placeholder: 'Cari manga berdasarkan judul\u2026' },
-  { key: 'webtoon', label: 'Webtoon', icon: ScrollText, placeholder: 'Cari webtoon berdasarkan judul\u2026' },
-  { key: 'novel', label: 'Novel', icon: BookMarked, placeholder: 'Cari novel berdasarkan judul\u2026' },
+const TABS: { key: SearchType; labelKey: string; icon: typeof PlayCircle; placeholderKey: string }[] = [
+  { key: 'anime', labelKey: 'nav.anime', icon: PlayCircle, placeholderKey: 'search.placeholderAnime' },
+  { key: 'manga', labelKey: 'nav.manga', icon: BookOpen, placeholderKey: 'search.placeholderManga' },
+  { key: 'webtoon', labelKey: 'nav.webtoon', icon: ScrollText, placeholderKey: 'search.placeholderWebtoon' },
+  { key: 'novel', labelKey: 'nav.novel', icon: BookMarked, placeholderKey: 'search.placeholderNovel' },
 ]
 
 export default function SearchPage() {
   const router = useRouter()
   const { q, type } = router.query
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const activeType: SearchType = type === 'manga' || type === 'webtoon' || type === 'novel' ? type : 'anime'
 
@@ -91,7 +95,7 @@ export default function SearchPage() {
     router.push({ pathname: '/search', query: nextQuery })
   }
 
-  const currentTab = TABS.find((t) => t.key === activeType)!
+  const currentTab = TABS.find((tb) => tb.key === activeType)!
 
   const hasResults =
     activeType === 'anime' ? animeResults.length > 0 :
@@ -102,7 +106,7 @@ export default function SearchPage() {
   return (
     <>
       <Head>
-        <title>Cari {currentTab.label} - KiraStream</title>
+        <title>{t('search.pageTitle').replace('{label}', t(currentTab.labelKey))} - KiraStream</title>
       </Head>
 
       <div className="space-y-8">
@@ -113,13 +117,13 @@ export default function SearchPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={currentTab.placeholder}
+              placeholder={t(currentTab.placeholderKey)}
               className="input-field pr-12"
             />
             <button
               type="submit"
               className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary dark:bg-accent hover:opacity-90 text-white dark:text-noir rounded-lg transition-colors"
-              aria-label="Cari"
+              aria-label={t('search.submit')}
             >
               <Search size={18} aria-hidden="true" />
             </button>
@@ -127,7 +131,7 @@ export default function SearchPage() {
 
           {/* Category Tabs */}
           <div className="flex gap-2 overflow-x-auto">
-            {TABS.map(({ key, label, icon: Icon }) => (
+            {TABS.map(({ key, labelKey, icon: Icon }) => (
               <button
                 key={key}
                 onClick={() => switchTab(key)}
@@ -138,7 +142,7 @@ export default function SearchPage() {
                 }`}
               >
                 <Icon size={16} aria-hidden="true" />
-                {label}
+                {t(labelKey)}
               </button>
             ))}
           </div>
@@ -148,7 +152,7 @@ export default function SearchPage() {
         {loading && (
           <div className="text-center py-12">
             <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-[var(--color-text-muted)]">Mencari {currentTab.label.toLowerCase()}\u2026</p>
+            <p className="text-[var(--color-text-muted)]">{t('search.searching').replace('{label}', t(currentTab.labelKey).toLowerCase())}</p>
           </div>
         )}
 
@@ -158,25 +162,25 @@ export default function SearchPage() {
             {hasResults ? (
               <>
                 {activeType === 'anime' && (
-                  <Section title={`Hasil Pencarian: "${q}" (${animeResults.length})`}>
+                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(animeResults.length))}>
                     <AnimeGrid animes={animeResults} />
                   </Section>
                 )}
 
                 {activeType === 'manga' && (
-                  <Section title={`Hasil Pencarian: "${q}" (${mangaResults.length})`}>
+                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(mangaResults.length))}>
                     <ComicGrid comics={mangaResults} />
                   </Section>
                 )}
 
                 {activeType === 'novel' && (
-                  <Section title={`Hasil Pencarian: "${q}" (${novelResults.length})`}>
+                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(novelResults.length))}>
                     <NovelGrid novels={novelResults} />
                   </Section>
                 )}
 
                 {activeType === 'webtoon' && (
-                  <Section title={`Hasil Pencarian: "${q}" (${webtoonResults.length})`}>
+                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(webtoonResults.length))}>
                     <div className="anime-grid">
                       {webtoonResults.map((item, i) => (
                         <Link key={i} href={`/webtoon/${encodeURIComponent(item.url)}`} className="anime-card group">
@@ -206,14 +210,14 @@ export default function SearchPage() {
             ) : (
               <div className="text-center py-12 card p-6">
                 <Frown className="mx-auto mb-3 text-[var(--color-text-muted)]" size={36} />
-                <p className="text-[var(--color-text)]">Nggak ketemu hasil buat &quot;{q}&quot;</p>
-                <p className="text-sm text-[var(--color-text-muted)] mt-2">Coba kata kunci lain</p>
+                <p className="text-[var(--color-text)]">{t('search.notFound').replace('{q}', String(q))}</p>
+                <p className="text-sm text-[var(--color-text-muted)] mt-2">{t('search.notFoundHint')}</p>
               </div>
             )}
 
             {/* MAL Results (only for anime tab) */}
             {activeType === 'anime' && malResults.length > 0 && (
-              <Section title="Hasil dari MyAnimeList">
+              <Section title={t('search.malResults')}>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                   {malResults.slice(0, 6).map((anime) => (
                     <a
@@ -250,8 +254,8 @@ export default function SearchPage() {
         {!loading && !q && (
           <div className="text-center py-12 card p-6">
             <Search className="mx-auto mb-4" style={{ color: 'var(--color-primary)' }} size={40} />
-            <h2 className="text-xl font-bold text-[var(--color-text)] mb-2">Cari {currentTab.label} Favoritmu</h2>
-            <p className="text-[var(--color-text-muted)]">Ketik judul {currentTab.label.toLowerCase()} di atas untuk memulai pencarian</p>
+            <h2 className="text-xl font-bold text-[var(--color-text)] mb-2">{t('search.emptyTitle').replace('{label}', t(currentTab.labelKey))}</h2>
+            <p className="text-[var(--color-text-muted)]">{t('search.emptyDesc').replace('{label}', t(currentTab.labelKey).toLowerCase())}</p>
           </div>
         )}
       </div>

@@ -4,11 +4,16 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { Tags } from 'lucide-react'
 import ComicGrid from '@/components/ComicGrid'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import { fetchComicByGenre, type Comic } from '@/lib/api'
 
 export default function MangaGenrePage() {
   const router = useRouter()
   const slug = typeof router.query.slug === 'string' ? router.query.slug : ''
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
+  const genreName = slug.replace(/-/g, ' ')
 
   const [comics, setComics] = useState<Comic[]>([])
   const [loading, setLoading] = useState(true)
@@ -33,16 +38,16 @@ export default function MangaGenrePage() {
 
   return (
     <>
-      <Head><title>{slug.replace(/-/g, ' ')} - Manga - KiraStream</title></Head>
+      <Head><title>{t('genre.title').replace('{name}', genreName)} - Manga - KiraStream</title></Head>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="section-title flex items-center gap-2">
-              <Tags size={22} style={{ color: 'var(--color-primary)' }} aria-hidden="true" /> Genre: {slug.replace(/-/g, ' ')}
+              <Tags size={22} style={{ color: 'var(--color-primary)' }} aria-hidden="true" /> {t('genre.title').replace('{name}', genreName)}
             </h1>
-            <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>Kumpulan komik dengan genre ini.</p>
+            <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('genre.comicSubtitle')}</p>
           </div>
-          <Link href="/manga" className="btn-secondary text-sm">Kembali ke Komik</Link>
+          <Link href="/manga" className="btn-secondary text-sm">{t('genre.backToComics')}</Link>
         </div>
 
         {loading && page === 1 ? (
@@ -50,13 +55,13 @@ export default function MangaGenrePage() {
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
         ) : comics.length === 0 ? (
-          <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>Belum ada komik di genre ini.</div>
+          <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>{t('genre.noComics')}</div>
         ) : (
           <>
             <ComicGrid comics={comics} />
             <div className="text-center">
               <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-secondary">
-                {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
+                {loading ? t('common.loading') : t('common.loadMore')}
               </button>
             </div>
           </>

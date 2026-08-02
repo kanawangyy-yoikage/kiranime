@@ -3,12 +3,16 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { BookOpen, Frown, Share2 } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import { fetchComicDetail, ComicDetail } from '@/lib/api'
 import ShareModal from '@/components/ShareModal'
 
 export default function ComicDetailPage() {
   const router = useRouter()
   const { slug } = router.query
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const [comic, setComic] = useState<ComicDetail | null>(null)
   const [loading, setLoading] = useState(true)
@@ -33,7 +37,7 @@ export default function ComicDetailPage() {
     return (
       <div className="text-center py-20">
         <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
-        <p style={{ color: 'var(--color-text-muted)' }}>Mengambil detail komik\u2026</p>
+        <p style={{ color: 'var(--color-text-muted)' }}>{t('manga.loadingDetail')}</p>
       </div>
     )
   }
@@ -42,8 +46,8 @@ export default function ComicDetailPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} size={40} />
-        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>Waduh, komiknya nggak ketemu</p>
-        <Link href="/manga" className="btn-primary">Kembali ke Manga</Link>
+        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>{t('manga.notFound')}</p>
+        <Link href="/manga" className="btn-primary">{t('manga.backToManga')}</Link>
       </div>
     )
   }
@@ -69,11 +73,11 @@ export default function ComicDetailPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-pearl text-center md:text-left">{comic.title}</h1>
             
             <div className="grid grid-cols-2 gap-2 text-sm text-pearl/80">
-              {comic.author && <p><span className="text-pearl/50">Author:</span> {comic.author}</p>}
-              {comic.artist && <p><span className="text-pearl/50">Artist:</span> {comic.artist}</p>}
-              {comic.status && <p><span className="text-pearl/50">Status:</span> {comic.status}</p>}
-              {comic.released && <p><span className="text-pearl/50">Released:</span> {comic.released}</p>}
-              {comic.type && <p><span className="text-pearl/50">Type:</span> {comic.type}</p>}
+              {comic.author && <p><span className="text-pearl/50">{t('manga.author')}</span> {comic.author}</p>}
+              {comic.artist && <p><span className="text-pearl/50">{t('manga.artist')}</span> {comic.artist}</p>}
+              {comic.status && <p><span className="text-pearl/50">{t('manga.status')}</span> {comic.status}</p>}
+              {comic.released && <p><span className="text-pearl/50">{t('manga.released')}</span> {comic.released}</p>}
+              {comic.type && <p><span className="text-pearl/50">{t('manga.type')}</span> {comic.type}</p>}
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -86,7 +90,7 @@ export default function ComicDetailPage() {
 
             <div className="flex flex-wrap gap-2 pt-1">
               <button onClick={() => setShareOpen(true)} className="btn-secondary inline-flex items-center gap-2 text-sm">
-                <Share2 size={16} /> Bagikan
+                <Share2 size={16} /> {t('share.title')}
               </button>
             </div>
 
@@ -100,10 +104,10 @@ export default function ComicDetailPage() {
 
         {/* Chapter list */}
         <div className="card p-6">
-          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2"><BookOpen size={20} className="text-ocean" /> Daftar Chapter ({comic.chapters.length})</h2>
+          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2"><BookOpen size={20} className="text-ocean" /> {t('manga.chapters').replace('{n}', String(comic.chapters.length))}</h2>
           
           {comic.chapters.length === 0 ? (
-            <p className="text-pearl/60">Chapternya belum ada nih, coba cek lagi nanti.</p>
+            <p className="text-pearl/60">{t('manga.noChapters')}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
               {comic.chapters.map((ch) => (

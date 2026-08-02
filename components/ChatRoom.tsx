@@ -2,6 +2,8 @@ import { useState, useRef, useEffect, FormEvent } from 'react'
 import Link from 'next/link'
 import { Send, ImagePlus, X, Trash2 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import {
   sendMessage,
   subscribeMessages,
@@ -19,6 +21,8 @@ interface ChatRoomProps {
 
 export default function ChatRoom({ path, targetId }: ChatRoomProps) {
   const { user } = useAuth()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [text, setText] = useState('')
   const [stickers, setStickers] = useState<{ id: string; data: string }[]>([])
@@ -78,10 +82,10 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
       <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 p-4">
         {messages.length === 0 ? (
           <p className="text-center text-sm text-pearl/50 py-10">
-            Belum ada pesan. Mulai ngobrol ya~
+            {t('chat.noMessages')}
           </p>
         ) : (
-          messages.map((msg) => <MessageRow key={msg.id} msg={msg} isMine={msg.senderId === user?.uid} />)
+          messages.map((msg) => <MessageRow key={msg.id} msg={msg} isMine={msg.senderId === user?.uid} t={t} />)
         )}
         <div ref={bottomRef} />
       </div>
@@ -90,8 +94,8 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
       {stickerOpen && (
         <div className="border-t border-ocean/10 p-3 bg-surface-dark/60">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-semibold text-pearl/70 uppercase tracking-wider">Stikerku</p>
-            <button onClick={() => setStickerOpen(false)} className="p-1 rounded hover:bg-pearl/10" aria-label="Tutup">
+            <p className="text-xs font-semibold text-pearl/70 uppercase tracking-wider">{t('chat.myStickers')}</p>
+            <button onClick={() => setStickerOpen(false)} className="p-1 rounded hover:bg-pearl/10" aria-label={t('common.close')}>
               <X size={16} />
             </button>
           </div>
@@ -101,15 +105,15 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
                 <button
                   onClick={() => sendSticker(s)}
                   className="w-full aspect-square rounded-lg bg-white/5 hover:bg-white/10 transition-colors overflow-hidden"
-                  title="Kirim stiker"
+                  title={t('chat.sendSticker')}
                 >
                   <img src={s.data} alt="Stiker" className="w-full h-full object-contain" />
                 </button>
                 <button
                   onClick={() => handleDeleteSticker(s.id)}
                   className="absolute -top-1.5 -right-1.5 p-1.5 bg-red-500/90 text-white rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                  aria-label="Hapus stiker"
-                  title="Hapus stiker"
+                  aria-label={t('chat.deleteSticker')}
+                  title={t('chat.deleteSticker')}
                 >
                   <Trash2 size={11} />
                 </button>
@@ -120,7 +124,7 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
               className="w-full aspect-square rounded-lg border-2 border-dashed border-ocean/40 text-ocean hover:bg-ocean/10 transition-colors flex flex-col items-center justify-center gap-1"
             >
               <ImagePlus size={20} />
-              <span className="text-[10px] font-semibold">Tambah</span>
+              <span className="text-[10px] font-semibold">{t('chat.add')}</span>
             </button>
             <input
               ref={fileRef}
@@ -139,8 +143,8 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
           type="button"
           onClick={() => setStickerOpen((v) => !v)}
           className="p-2.5 rounded-lg bg-surface-dark hover:bg-surface-hover text-pearl/70 transition-colors"
-          aria-label="Stiker"
-          title="Stiker"
+          aria-label={t('chat.stickers')}
+          title={t('chat.stickers')}
         >
           <ImagePlus size={18} />
         </button>
@@ -148,14 +152,14 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Tulis pesan\u2026"
+          placeholder={t('chat.placeholder')}
           className="flex-1 input-field py-2.5 text-sm"
         />
         <button
           type="submit"
           disabled={!text.trim() || sending}
           className="btn-primary p-2.5"
-          aria-label="Kirim"
+          aria-label={t('chat.send')}
         >
           <Send size={18} />
         </button>
@@ -164,7 +168,7 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
   )
 }
 
-function MessageRow({ msg, isMine }: { msg: ChatMessage; isMine: boolean }) {
+function MessageRow({ msg, isMine, t }: { msg: ChatMessage; isMine: boolean; t: (key: string) => string }) {
   if (msg.type === 'sticker') {
     return (
       <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
@@ -174,7 +178,7 @@ function MessageRow({ msg, isMine }: { msg: ChatMessage; isMine: boolean }) {
             {msg.sticker ? (
               <img src={msg.sticker} alt="Stiker" className="w-24 h-24 object-contain" />
             ) : (
-              <p className="text-sm text-pearl/60">Stiker rusak~</p>
+              <p className="text-sm text-pearl/60">{t('chat.stickerBroken')}</p>
             )}
           </div>
           <Time msg={msg} />
@@ -190,7 +194,7 @@ function MessageRow({ msg, isMine }: { msg: ChatMessage; isMine: boolean }) {
           {!isMine && <SenderName msg={msg} />}
           <div className={`p-3 rounded-2xl ${isMine ? 'bg-primary/15' : 'bg-surface-dark'}`}>
             <p className="text-[10px] uppercase tracking-wider text-pearl/50 mb-2 flex items-center gap-1">
-              📺 Bagikan {msg.share?.kind}
+              {t('chat.share').replace('{kind}', msg.share?.kind || '')}
             </p>
             {msg.share?.href ? (
               <Link href={msg.share.href} className="flex items-center gap-3 group">

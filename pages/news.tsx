@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { Newspaper, TrendingUp, CalendarDays, ExternalLink, Loader2 } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 interface SeasonItem {
   mal_id: number
@@ -20,6 +22,8 @@ export default function NewsPage() {
   const [items, setItems] = useState<SeasonItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   useEffect(() => {
     setLoading(true)
@@ -31,29 +35,29 @@ export default function NewsPage() {
         return res.json()
       })
       .then((data) => setItems((data.data || []).slice(0, 20)))
-      .catch(() => setError('Gagal memuat berita. Coba lagi nanti ya~'))
+      .catch(() => setError(t('news.loadError')))
       .finally(() => setLoading(false))
   }, [tab])
 
   return (
     <>
-      <Head><title>Berita - KiraStream</title></Head>
+      <Head><title>{t('news.title')}</title></Head>
       <div className="space-y-8">
         <div>
           <h1 className="section-title flex items-center gap-2">
-            <Newspaper size={22} className="text-ocean" /> Berita Anime
+            <Newspaper size={22} className="text-ocean" /> {t('news.heading')}
           </h1>
           <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-            Jadwal tayang & anime baru dari MyAnimeList.
+            {t('news.subtitle')}
           </p>
         </div>
 
         <div className="flex gap-2 border-b border-ocean/10 pb-3">
           <button onClick={() => setTab('now')} className={`tab flex items-center gap-1.5 ${tab === 'now' ? 'active' : ''}`}>
-            <TrendingUp size={15} /> Sedang Tayang
+            <TrendingUp size={15} /> {t('news.now')}
           </button>
           <button onClick={() => setTab('upcoming')} className={`tab flex items-center gap-1.5 ${tab === 'upcoming' ? 'active' : ''}`}>
-            <CalendarDays size={15} /> Akan Datang
+            <CalendarDays size={15} /> {t('news.upcoming')}
           </button>
         </div>
 
@@ -66,7 +70,7 @@ export default function NewsPage() {
         {error && <div className="card p-8 text-center text-sm text-pearl/60">{error}</div>}
 
         {!loading && !error && items.length === 0 && (
-          <div className="card p-8 text-center text-sm text-pearl/60">Belum ada data untuk kategori ini.</div>
+          <div className="card p-8 text-center text-sm text-pearl/60">{t('news.empty')}</div>
         )}
 
         {!loading && !error && items.length > 0 && (
@@ -108,11 +112,11 @@ export default function NewsPage() {
 
         <div className="card p-4 text-xs text-pearl/50 flex items-center gap-2">
           <ExternalLink size={13} />
-          Data diambil dari{' '}
+          {t('news.dataFrom')}{' '}
           <a href="https://myanimelist.net" target="_blank" rel="noopener noreferrer" className="text-ocean hover:underline">
             MyAnimeList
           </a>{' '}
-          via Jikan API.
+          {t('news.viaJikan')}
         </div>
       </div>
     </>

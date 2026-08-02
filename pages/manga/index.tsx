@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { BookOpen, Flame, Sparkles, TrendingUp, LayoutGrid } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import ComicGrid from '@/components/ComicGrid'
 import CategorySearchBar from '@/components/CategorySearchBar'
 import LandscapeSpotlight from '@/components/LandscapeSpotlight'
@@ -20,31 +22,33 @@ import {
 type Tab = 'all' | 'popular' | 'latest' | 'trending'
 type TypeFilter = 'manga' | 'manhwa' | 'manhua' | ''
 
-const TAB_META: Record<Tab, { label: string; icon: typeof Flame }> = {
-  all: { label: 'Semua Komik', icon: BookOpen },
-  popular: { label: 'Populer', icon: Flame },
-  latest: { label: 'Terbaru', icon: Sparkles },
-  trending: { label: 'Trending', icon: TrendingUp },
+const TAB_META: Record<Tab, { labelKey: string; icon: typeof Flame }> = {
+  all: { labelKey: 'manga.all', icon: BookOpen },
+  popular: { labelKey: 'section.popular', icon: Flame },
+  latest: { labelKey: 'manga.latest', icon: Sparkles },
+  trending: { labelKey: 'manga.trending', icon: TrendingUp },
 }
 
-const TYPE_LABEL: Record<string, string> = {
-  manga: 'Manga',
-  manhwa: 'Manhwa',
-  manhua: 'Manhua',
+const TYPE_LABEL_KEY: Record<string, string> = {
+  manga: 'nav.manga',
+  manhwa: 'nav.manhwa',
+  manhua: 'nav.manhua',
 }
 
-const QUICK_MENU: { label: string; href: string; icon: typeof Flame }[] = [
-  { label: 'Semua Komik', href: '/manga', icon: BookOpen },
-  { label: 'Populer', href: '/manga?tab=popular', icon: Flame },
-  { label: 'Terbaru', href: '/manga?tab=latest', icon: Sparkles },
-  { label: 'Trending', href: '/manga?tab=trending', icon: TrendingUp },
-  { label: 'Manga', href: '/manga?type=manga', icon: BookOpen },
-  { label: 'Manhwa', href: '/manga?type=manhwa', icon: BookOpen },
-  { label: 'Manhua', href: '/manga?type=manhua', icon: BookOpen },
+const QUICK_MENU: { labelKey: string; href: string; icon: typeof Flame }[] = [
+  { labelKey: 'manga.all', href: '/manga', icon: BookOpen },
+  { labelKey: 'section.popular', href: '/manga?tab=popular', icon: Flame },
+  { labelKey: 'manga.latest', href: '/manga?tab=latest', icon: Sparkles },
+  { labelKey: 'manga.trending', href: '/manga?tab=trending', icon: TrendingUp },
+  { labelKey: 'nav.manga', href: '/manga?type=manga', icon: BookOpen },
+  { labelKey: 'nav.manhwa', href: '/manga?type=manhwa', icon: BookOpen },
+  { labelKey: 'nav.manhua', href: '/manga?type=manhua', icon: BookOpen },
 ]
 
 export default function MangaListPage() {
   const router = useRouter()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const tab: Tab =
     router.query.tab === 'popular' || router.query.tab === 'latest' || router.query.tab === 'trending'
@@ -114,7 +118,7 @@ export default function MangaListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, tab, typeFilter, router.isReady])
 
-  const activeLabel = typeFilter ? TYPE_LABEL[typeFilter] : TAB_META[tab].label
+  const activeLabel = typeFilter ? t(TYPE_LABEL_KEY[typeFilter] || 'nav.manga') : t(TAB_META[tab].labelKey)
   const ActiveIcon = typeFilter ? BookOpen : TAB_META[tab].icon
 
   return (
@@ -127,9 +131,9 @@ export default function MangaListPage() {
             <h1 className="section-title flex items-center gap-2">
               <ActiveIcon size={22} className="text-ocean" aria-hidden="true" /> {activeLabel}
             </h1>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">Baca manga, manhwa, & manhua favorit kamu.</p>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t('manga.subtitle')}</p>
           </div>
-          <CategorySearchBar type="manga" placeholder="Cari manga\u2026" />
+          <CategorySearchBar type="manga" placeholder={t('search.placeholderManga')} />
         </div>
 
         {/* Featured landscape */}
@@ -151,10 +155,10 @@ export default function MangaListPage() {
         {/* Quick Menu */}
         <div className="card p-4">
           <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-            <LayoutGrid size={16} className="text-ocean" aria-hidden="true" /> Quick Menu
+            <LayoutGrid size={16} className="text-ocean" aria-hidden="true" /> {t('common.quickMenu')}
           </h3>
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-7">
-            {QUICK_MENU.map(({ label, href, icon: Icon }) => {
+            {QUICK_MENU.map(({ labelKey, href, icon: Icon }) => {
               const active = href === '/manga'
                 ? !typeFilter && tab === 'all'
                 : router.asPath === href
@@ -169,7 +173,7 @@ export default function MangaListPage() {
                   }`}
                 >
                   <Icon size={18} className="text-ocean" aria-hidden="true" />
-                  {label}
+                  {t(labelKey)}
                 </Link>
               )
             })}
@@ -180,7 +184,7 @@ export default function MangaListPage() {
         {genres.length > 0 && (
           <div className="card p-4">
             <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-              <Sparkles size={16} className="text-ocean" aria-hidden="true" /> Genre
+              <Sparkles size={16} className="text-ocean" aria-hidden="true" /> {t('manga.genre')}
             </h3>
             <div className="flex flex-wrap gap-2">
               {genres.slice(0, 18).map((g) => (
@@ -201,7 +205,7 @@ export default function MangaListPage() {
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
         ) : comics.length === 0 ? (
-          <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>Manga belum bisa dimuat, coba refresh halaman ini sebentar lagi.</div>
+          <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>{t('manga.loadError')}</div>
         ) : (
           <>
             <ComicGrid comics={comics.slice(0, visibleCount)} />
@@ -212,7 +216,7 @@ export default function MangaListPage() {
             )}
             <div className="text-center">
               <button onClick={() => setPage(p => p + 1)} disabled={loading} className="btn-secondary">
-                {loading ? 'Loading\u2026' : 'Muat Lebih Banyak'}
+                {loading ? t('common.loading') : t('common.loadMore')}
               </button>
             </div>
           </>

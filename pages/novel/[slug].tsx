@@ -3,12 +3,16 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { BookMarked, Frown, Share2 } from 'lucide-react'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 import { fetchNovelDetail, fetchNovelCoverByTitle, NovelDetail } from '@/lib/api'
 import ShareModal from '@/components/ShareModal'
 
 export default function NovelDetailPage() {
   const router = useRouter()
   const { slug } = router.query
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   const [novel, setNovel] = useState<NovelDetail | null>(null)
   const [loading, setLoading] = useState(true)
@@ -36,7 +40,7 @@ export default function NovelDetailPage() {
     return (
       <div className="text-center py-20">
         <div className="w-10 h-10 border-[3px] border-[var(--color-border)] border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
-        <p style={{ color: 'var(--color-text-muted)' }}>Mengambil detail novel\u2026</p>
+        <p style={{ color: 'var(--color-text-muted)' }}>{t('novel.loadingDetail')}</p>
       </div>
     )
   }
@@ -45,8 +49,8 @@ export default function NovelDetailPage() {
     return (
       <div className="text-center py-20 card p-6">
         <Frown className="mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} size={40} />
-        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>Waduh, novelnya nggak ketemu</p>
-        <Link href="/novel" className="btn-primary">Kembali ke Novel</Link>
+        <p className="text-xl mb-4" style={{ color: 'var(--color-text)' }}>{t('novel.notFound')}</p>
+        <Link href="/novel" className="btn-primary">{t('novel.backToNovel')}</Link>
       </div>
     )
   }
@@ -92,10 +96,10 @@ export default function NovelDetailPage() {
             <div className="grid grid-cols-2 gap-2 text-sm text-pearl/80">
               {novel.author && <p><span className="text-pearl/50">Author:</span> {novel.author}</p>}
               {novel.status && <p><span className="text-pearl/50">Status:</span> {novel.status}</p>}
-              {novel.type && <p><span className="text-pearl/50">Tipe:</span> {novel.type}</p>}
-              {novel.rating && <p><span className="text-pearl/50">Rating:</span> {novel.rating}</p>}
-              {novel.country && <p><span className="text-pearl/50">Negara:</span> {novel.country}</p>}
-              {novel.published && <p><span className="text-pearl/50">Terbit:</span> {novel.published}</p>}
+              {novel.type && <p><span className="text-pearl/50">{t('novel.type')}</span> {novel.type}</p>}
+              {novel.rating && <p><span className="text-pearl/50">{t('novel.rating')}</span> {novel.rating}</p>}
+              {novel.country && <p><span className="text-pearl/50">{t('novel.country')}</span> {novel.country}</p>}
+              {novel.published && <p><span className="text-pearl/50">{t('novel.published')}</span> {novel.published}</p>}
             </div>
 
             {novel.genres.length > 0 && (
@@ -114,7 +118,7 @@ export default function NovelDetailPage() {
 
             <div className="flex flex-wrap gap-2 pt-1">
               <button onClick={() => setShareOpen(true)} className="btn-secondary inline-flex items-center gap-2 text-sm">
-                <Share2 size={16} /> Bagikan
+                <Share2 size={16} /> {t('share.title')}
               </button>
             </div>
 
@@ -128,10 +132,10 @@ export default function NovelDetailPage() {
 
         {/* Chapter list */}
         <div className="card p-6">
-          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2"><BookMarked size={20} className="text-ocean" /> Daftar Chapter ({novel.chapters.length})</h2>
+          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2"><BookMarked size={20} className="text-ocean" /> {t('manga.chapters').replace('{n}', String(novel.chapters.length))}</h2>
 
           {novel.chapters.length === 0 ? (
-            <p className="text-pearl/60">Chapternya belum ada nih, coba cek lagi nanti.</p>
+            <p className="text-pearl/60">{t('manga.noChapters')}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
               {novel.chapters.map((ch) => (

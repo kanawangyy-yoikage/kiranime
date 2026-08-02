@@ -258,7 +258,7 @@ export async function fetchDetail(slug: string): Promise<AnimeDetail | null> {
       typeof g === 'object' ? g.name || '' : g
     ).filter(Boolean)
     
-    return {
+    const result: AnimeDetail = {
       title: d.title || '',
       image: d.poster || d.image || '',
       description: d.synopsis || d.description || '',
@@ -279,6 +279,28 @@ export async function fetchDetail(slug: string): Promise<AnimeDetail | null> {
       episodes,
       batchSlug: d.batch?.slug || cleanSlug(d.batch?.href || ''),
     }
+
+    // Deskripsi selalu disinkronkan dari MAL (bahasa Inggris) biar konsisten.
+    try {
+      const malId = d.mal_id || d.malId || d.malID
+      let malSynopsis = ''
+      if (malId) {
+        const mal = await fetchMALDetail(Number(malId))
+        malSynopsis = mal?.synopsis || ''
+      } else if (result.title) {
+        const hits = await searchMAL(result.title)
+        const best = hits[0]
+        if (best?.mal_id) {
+          const mal = await fetchMALDetail(best.mal_id)
+          malSynopsis = mal?.synopsis || best.synopsis || ''
+        }
+      }
+      if (malSynopsis) result.description = malSynopsis
+    } catch {
+      // tetap pakai sinopsis bawaan kalau MAL gagal
+    }
+
+    return result
   } catch {
     return null
   }

@@ -5,10 +5,14 @@ import Image from 'next/image'
 import { Calendar } from 'lucide-react'
 import { fetchSchedule, type Anime } from '@/lib/api'
 import AnimeMenuAside from '@/components/AnimeMenuAside'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 export default function SchedulePage() {
   const [schedule, setSchedule] = useState<Record<string, Anime[]>>({})
   const [loading, setLoading] = useState(true)
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   useEffect(() => {
     const loadSchedule = async () => {
@@ -31,14 +35,14 @@ export default function SchedulePage() {
   return (
     <>
       <Head>
-        <title>Jadwal Rilis - KiraStream</title>
+        <title>{t('schedule.title')}</title>
       </Head>
 
       <div className="flex items-start gap-6">
         <div className="flex-1 min-w-0 space-y-8">
         <div>
-          <h1 className="section-title flex items-center gap-2"><Calendar size={22} className="text-ocean" /> Jadwal Rilis Anime</h1>
-          <p className="mt-1 text-sm text-[var(--color-text-muted)]">Jadwal anime yang tayang setiap hari</p>
+          <h1 className="section-title flex items-center gap-2"><Calendar size={22} className="text-ocean" /> {t('schedule.heading')}</h1>
+          <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t('schedule.subtitle')}</p>
         </div>
 
         {loading ? (
@@ -63,9 +67,9 @@ export default function SchedulePage() {
                 <div key={day} className="card p-6">
                   <h2 className="text-lg font-bold mb-4 capitalize flex items-center gap-2 text-[var(--color-text)]">
                     <span className="w-2 h-8 bg-[var(--color-accent)] rounded-full" />
-                    {day}
+                    {t('day.' + day)}
                     <span className="text-sm text-[var(--color-text-muted)] font-normal ml-2">
-                      ({dayAnimes.length} anime)
+                      ({t('schedule.count').replace('{n}', String(dayAnimes.length))})
                     </span>
                   </h2>
                   <div className="anime-grid">
@@ -73,7 +77,7 @@ export default function SchedulePage() {
                       <Link key={anime.slug} href={`/anime/${anime.slug}`} className="anime-card group">
                         <div className="relative aspect-[3/4] bg-[var(--color-surface-alt)]">
                           <Image src={imageProxy(anime.image)} alt={anime.title} fill className="object-cover group-hover:scale-105 transition-transform" />
-                          {anime.episode && <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-[10px] text-center py-1">Episode {anime.episode}</div>}
+                          {anime.episode && <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-[10px] text-center py-1">{t('schedule.episode').replace('{n}', anime.episode)}</div>}
                         </div>
                         <div className="p-2.5 min-h-[3.5rem] flex items-start">
                           <h3 className="text-xs font-semibold line-clamp-2 leading-tight text-[var(--color-text)]">{anime.title}</h3>
