@@ -339,7 +339,7 @@ export default function TopNavbar() {
               ref={drawerRef}
               role="dialog"
               aria-modal="true"
-              aria-label="Menu navigasi"
+              aria-label={t('a11y.drawerMenu')}
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}

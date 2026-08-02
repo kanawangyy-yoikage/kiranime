@@ -27,7 +27,7 @@ export default function AnimeMenuAside() {
   const t = (key: string) => translate(language, key)
 
   return (
-    <aside className="hidden xl:block w-64 shrink-0 space-y-4 sticky top-24 self-start">
+    <aside className="hidden xl:block w-64 shrink-0 space-y-4 sticky top-[calc(6rem+env(safe-area-inset-top))] self-start">
       {/* Menu Anime */}
       <div className="card p-4">
         <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">

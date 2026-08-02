@@ -6,6 +6,8 @@ import Footer from './Footer'
 import MobileNav from './MobileNav'
 import InstallPwaPrompt from './InstallPwaPrompt'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
+import { useSettings } from '@/contexts/SettingsContext'
+import { translate } from '@/lib/i18n'
 
 interface LayoutProps {
   children: ReactNode
@@ -13,6 +15,8 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const router = useRouter()
+  const { language } = useSettings()
+  const t = (key: string) => translate(language, key)
 
   return (
     <div className="min-h-screen bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark transition-colors duration-300 flex flex-col">
@@ -20,7 +24,7 @@ export default function Layout({ children }: LayoutProps) {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
       >
-        Lewati ke konten utama
+        {t('a11y.skipToContent')}
       </a>
       <TopNavbar />
       <main id="main-content" className="flex-1 pt-[calc(5rem+env(safe-area-inset-top))] md:pt-[calc(6rem+env(safe-area-inset-top))] scroll-mt-[calc(5rem+env(safe-area-inset-top))] md:scroll-mt-[calc(6rem+env(safe-area-inset-top))]">

@@ -71,6 +71,9 @@ const id: Dict = {
   'nav.search': 'Cari',
   'nav.toggleTheme': 'Ganti tema',
   'nav.settings': 'Pengaturan',
+  'a11y.skipToContent': 'Lewati ke konten utama',
+  'a11y.bottomNav': 'Navigasi bawah',
+  'a11y.drawerMenu': 'Menu navigasi',
   'hero.badge': 'Streaming Anime & Komik',
   'hero.searchPlaceholder': 'Cari anime, komik, webtoon, novel…',
   'hero.tagline':
@@ -502,6 +505,9 @@ const en: Dict = {
   'nav.search': 'Search',
   'nav.toggleTheme': 'Toggle theme',
   'nav.settings': 'Settings',
+  'a11y.skipToContent': 'Skip to main content',
+  'a11y.bottomNav': 'Bottom navigation',
+  'a11y.drawerMenu': 'Navigation menu',
   'hero.badge': 'Streaming Anime & Manga',
   'hero.searchPlaceholder': 'Search anime, manga, webtoon, novel…',
   'hero.tagline':
