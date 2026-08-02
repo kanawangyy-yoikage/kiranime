@@ -6,6 +6,7 @@ import Section from '@/components/Section'
 import LandscapeSlider from '@/components/LandscapeSlider'
 import LandscapeSpotlight from '@/components/LandscapeSpotlight'
 import CategorySearchBar from '@/components/CategorySearchBar'
+import AnimeMenuAside from '@/components/AnimeMenuAside'
 import { fetchLatest, fetchPopular, fetchCompleted, type Anime } from '@/lib/api'
 import type { SpotlightItem } from '@/components/LandscapeSpotlight'
 import { useSettings } from '@/contexts/SettingsContext'
@@ -51,48 +52,52 @@ export default function AnimeHomePage() {
   return (
     <>
       <Head><title>Anime - KiraStream</title></Head>
-      <div className="space-y-12 md:space-y-16">
-        {/* Header + Search */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="page-title flex items-center gap-2">
-              <PlayCircle size={24} className="text-ocean" aria-hidden="true" /> Anime
-            </h1>
-            <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              {t('page.anime.subtitle')}
-            </p>
+      <div className="flex items-start gap-6">
+        <div className="flex-1 min-w-0 space-y-12 md:space-y-16">
+          {/* Header + Search */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="page-title flex items-center gap-2">
+                <PlayCircle size={24} className="text-ocean" aria-hidden="true" /> Anime
+              </h1>
+              <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                {t('page.anime.subtitle')}
+              </p>
+            </div>
+            <CategorySearchBar type="anime" placeholder={t('hero.searchPlaceholder')} />
           </div>
-          <CategorySearchBar type="anime" placeholder={t('hero.searchPlaceholder')} />
+
+          {/* Slider geser */}
+          {loading ? (
+            <div className="skeleton min-h-[220px] rounded-3xl" />
+          ) : slides.length > 0 ? (
+            <LandscapeSlider kind="anime" items={slides} imageProxy={imageProxy} />
+          ) : null}
+
+          <Section title={t('section.ongoing')} viewAll="/ongoing">
+            {loading
+              ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
+              : <AnimeGrid animes={latest.slice(0, 8)} />}
+          </Section>
+
+          <Section title={t('section.popular')} viewAll="/popular">
+            {loading
+              ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
+              : <AnimeGrid animes={popular.slice(0, 8)} />}
+          </Section>
+
+          {!loading && completed.length > 0 && (
+            <Section title={t('section.completedAiring')} viewAll="/completed">
+              <div className="grid gap-4 md:grid-cols-2">
+                {completed.slice(0, 2).map((a) => (
+                  <LandscapeSpotlight key={a.slug} {...toSpotlight(a)} imageProxy={imageProxy} />
+                ))}
+              </div>
+            </Section>
+          )}
         </div>
 
-        {/* Slider geser */}
-        {loading ? (
-          <div className="skeleton min-h-[220px] rounded-3xl" />
-        ) : slides.length > 0 ? (
-          <LandscapeSlider kind="anime" items={slides} imageProxy={imageProxy} />
-        ) : null}
-
-        <Section title={t('section.ongoing')} viewAll="/ongoing">
-          {loading
-            ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
-            : <AnimeGrid animes={latest.slice(0, 8)} />}
-        </Section>
-
-        <Section title={t('section.popular')} viewAll="/popular">
-          {loading
-            ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
-            : <AnimeGrid animes={popular.slice(0, 8)} />}
-        </Section>
-
-        {!loading && completed.length > 0 && (
-          <Section title={t('section.completedAiring')} viewAll="/completed">
-            <div className="grid gap-4 md:grid-cols-2">
-              {completed.slice(0, 2).map((a) => (
-                <LandscapeSpotlight key={a.slug} {...toSpotlight(a)} imageProxy={imageProxy} />
-              ))}
-            </div>
-          </Section>
-        )}
+        <AnimeMenuAside />
       </div>
     </>
   )
