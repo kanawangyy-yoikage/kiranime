@@ -32,7 +32,7 @@ export default function PopularPage() {
         <div className="flex-1 min-w-0 space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="section-title flex items-center gap-2"><Flame size={22} className="text-ocean" aria-hidden="true" /> {t('page.popular.title')}</h1>
+            <h1 className="page-title flex items-center gap-2"><Flame size={22} className="text-ocean" aria-hidden="true" /> {t('page.popular.title')}</h1>
             <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('page.popular.subtitle')}</p>
           </div>
           <CategorySearchBar type="anime" placeholder={t('hero.searchPlaceholder')} />

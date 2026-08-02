@@ -55,7 +55,7 @@ export default function AnimeHomePage() {
         {/* Header + Search */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="section-title flex items-center gap-2">
+            <h1 className="page-title flex items-center gap-2">
               <PlayCircle size={24} className="text-ocean" aria-hidden="true" /> Anime
             </h1>
             <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>

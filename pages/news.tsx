@@ -44,7 +44,7 @@ export default function NewsPage() {
       <Head><title>{t('news.title')}</title></Head>
       <div className="space-y-8">
         <div>
-          <h1 className="section-title flex items-center gap-2">
+          <h1 className="page-title flex items-center gap-2">
             <Newspaper size={22} className="text-ocean" /> {t('news.heading')}
           </h1>
           <p className="mt-1 text-sm text-[var(--color-text-muted)]">

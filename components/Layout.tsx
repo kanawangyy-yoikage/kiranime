@@ -23,7 +23,7 @@ export default function Layout({ children }: LayoutProps) {
         Lewati ke konten utama
       </a>
       <TopNavbar />
-      <main id="main-content" className="flex-1 pt-20 md:pt-24 scroll-mt-20 md:scroll-mt-24">
+      <main id="main-content" className="flex-1 pt-[calc(5rem+env(safe-area-inset-top))] md:pt-[calc(6rem+env(safe-area-inset-top))] scroll-mt-[calc(5rem+env(safe-area-inset-top))] md:scroll-mt-[calc(6rem+env(safe-area-inset-top))]">
         <div className="mx-auto max-w-[1600px] px-4 md:px-6 lg:px-8 pb-24 lg:pb-16">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div

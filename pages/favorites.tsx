@@ -57,7 +57,7 @@ export default function FavoritesPage() {
 
       <div className="space-y-8">
         <div className="flex flex-col gap-1">
-          <h1 className="section-title flex items-center gap-2"><Heart size={22} style={{ color: 'var(--color-primary)' }} fill="currentColor" aria-hidden="true" /> {t('favorites.heading')}</h1>
+          <h1 className="page-title flex items-center gap-2"><Heart size={22} style={{ color: 'var(--color-primary)' }} fill="currentColor" aria-hidden="true" /> {t('favorites.heading')}</h1>
           <p className="text-[var(--color-text-muted)]">
             {t('favorites.count').replace('{n}', String(favorites.length))}
           </p>

@@ -58,7 +58,7 @@ export default function ComicDetailPage() {
         <title>{comic.title} - KiraStream</title>
       </Head>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Info Card */}
         <div className="card p-6 flex flex-col md:flex-row gap-6">
           <div className="w-48 h-72 flex-shrink-0 mx-auto md:mx-0 overflow-hidden rounded-lg bg-surface-dark">

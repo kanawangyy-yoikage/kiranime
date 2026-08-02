@@ -47,13 +47,13 @@ export default function NovelGenrePage() {
   return (
     <>
       <Head><title>{t('genre.title').replace('{name}', genreName)} - Novel - KiraStream</title></Head>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex items-center justify-between gap-3">
           <div>
             <Link href="/novel" className="inline-flex items-center gap-1.5 text-sm hover:underline mb-1" style={{ color: 'var(--color-text-muted)' }}>
               <ArrowLeft size={14} /> {t('novel.backToNovel')}
             </Link>
-            <h1 className="section-title flex items-center gap-2"><Tag size={20} style={{ color: 'var(--color-primary)' }} /> {t('genre.title').replace('{name}', genreName)}</h1>
+            <h1 className="page-title flex items-center gap-2"><Tag size={20} style={{ color: 'var(--color-primary)' }} /> {t('genre.title').replace('{name}', genreName)}</h1>
           </div>
         </div>
 

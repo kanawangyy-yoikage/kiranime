@@ -41,7 +41,7 @@ export default function SchedulePage() {
       <div className="flex items-start gap-6">
         <div className="flex-1 min-w-0 space-y-8">
         <div>
-          <h1 className="section-title flex items-center gap-2"><Calendar size={22} className="text-ocean" /> {t('schedule.heading')}</h1>
+          <h1 className="page-title flex items-center gap-2"><Calendar size={22} className="text-ocean" /> {t('schedule.heading')}</h1>
           <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t('schedule.subtitle')}</p>
         </div>
 

@@ -162,7 +162,7 @@ export default function AnimeDetailPage() {
         <meta name="description" content={anime.description} />
       </Head>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Video Player */}
         {streamData && (
           <motion.div
@@ -242,9 +242,9 @@ export default function AnimeDetailPage() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="card overflow-hidden"
+          className="card overflow-visible"
         >
-          <div className="relative min-h-[300px] sm:min-h-[260px] md:min-h-80 bg-[var(--color-surface-alt)]">
+          <div className="relative min-h-[300px] sm:min-h-[260px] md:min-h-80 rounded-t-2xl overflow-hidden bg-[var(--color-surface-alt)]">
             <Image
               src={`/api/mal-image?url=${encodeURIComponent(anime.image)}`}
               alt={anime.title}

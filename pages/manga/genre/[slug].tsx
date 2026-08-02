@@ -39,10 +39,10 @@ export default function MangaGenrePage() {
   return (
     <>
       <Head><title>{t('genre.title').replace('{name}', genreName)} - Manga - KiraStream</title></Head>
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="section-title flex items-center gap-2">
+            <h1 className="page-title flex items-center gap-2">
               <Tags size={22} style={{ color: 'var(--color-primary)' }} aria-hidden="true" /> {t('genre.title').replace('{name}', genreName)}
             </h1>
             <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('genre.comicSubtitle')}</p>

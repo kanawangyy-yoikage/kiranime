@@ -33,7 +33,7 @@ export default function CompletedPage() {
         <div className="flex-1 min-w-0 space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="section-title flex items-center gap-2"><CheckCircle size={22} className="text-ocean" aria-hidden="true" /> {t('completed.title')}</h1>
+            <h1 className="page-title flex items-center gap-2"><CheckCircle size={22} className="text-ocean" aria-hidden="true" /> {t('completed.title')}</h1>
             <p className="mt-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('completed.subtitle')}</p>
           </div>
           <CategorySearchBar type="anime" placeholder={t('search.placeholderAnime')} />

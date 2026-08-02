@@ -45,7 +45,7 @@ export default function SettingsPage() {
       </Head>
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <h1 className="section-title flex items-center gap-2">
+          <h1 className="page-title flex items-center gap-2">
             <SettingsIcon size={22} className="text-ocean" aria-hidden="true" /> {t('settings.title')}
           </h1>
         </div>

@@ -63,7 +63,7 @@ export default function MessagesPage() {
     <>
       <Head><title>{t('messages.title')}</title></Head>
       <div className="space-y-5">
-        <h1 className="section-title flex items-center gap-2">
+        <h1 className="page-title flex items-center gap-2">
           <MessageCircle size={22} className="text-ocean" /> {t('messages.heading')}
         </h1>
 

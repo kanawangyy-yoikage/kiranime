@@ -70,7 +70,7 @@ export default function WebtoonPage() {
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="section-title flex items-center gap-2">
+            <h1 className="page-title flex items-center gap-2">
               <ScrollText size={22} className="text-ocean" aria-hidden="true" /> {t('nav.webtoon')}
             </h1>
             <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t('webtoon.subtitle')}</p>

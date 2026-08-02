@@ -91,7 +91,7 @@ export default function FriendsPage() {
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="section-title flex items-center gap-2">
+            <h1 className="page-title flex items-center gap-2">
               <Users size={22} className="text-ocean" /> {t('friends.heading')}
             </h1>
             <p className="mt-1 text-sm text-[var(--color-text-muted)]">{t('friends.subtitle')}</p>
