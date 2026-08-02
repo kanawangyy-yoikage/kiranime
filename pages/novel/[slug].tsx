@@ -5,36 +5,64 @@ import Link from 'next/link'
 import { BookMarked, Frown, Share2 } from 'lucide-react'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
-import { fetchNovelDetail, fetchNovelCoverByTitle, NovelDetail } from '@/lib/api'
+import {
+  fetchNovelByTitle,
+  fetchNovelChapters,
+  fetchNovelGenresMap,
+  type Novel,
+  type NovelChapterItem,
+} from '@/lib/api'
 import ShareModal from '@/components/ShareModal'
 
 export default function NovelDetailPage() {
   const router = useRouter()
-  const { slug } = router.query
+  const { slug, title } = router.query
   const { language } = useSettings()
   const t = (key: string) => translate(language, key)
 
-  const [novel, setNovel] = useState<NovelDetail | null>(null)
+  const novelId = typeof slug === 'string' ? slug : ''
+  const titleFromQuery = typeof title === 'string' ? title : ''
+
+  const [novel, setNovel] = useState<Novel | null>(null)
+  const [chapters, setChapters] = useState<NovelChapterItem[]>([])
   const [loading, setLoading] = useState(true)
   const [shareOpen, setShareOpen] = useState(false)
+  const [genreMap, setGenreMap] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    if (!slug || typeof slug !== 'string') return
+    if (!novelId) return
     let cancelled = false
     setLoading(true)
-    fetchNovelDetail(slug)
-      .then(async (data) => {
-        if (cancelled || !data) return
-        setNovel(data)
-        setLoading(false)
-        // cari covernya belakangan (biar detail utama gak nunggu), update begitu ketemu
-        const cover = await fetchNovelCoverByTitle(data.title)
-        if (!cancelled && cover) setNovel((prev) => (prev ? { ...prev, image: cover } : prev))
-      })
-      .catch((err) => console.error(err))
-      .finally(() => { if (!cancelled) setLoading(false) })
+    setNovel(null)
+    setChapters([])
+
+    const load = async () => {
+      // Genre list lengkap (id ↔ nama) buat ngubah chip genre jadi link yang valid.
+      const genres = await fetchNovelGenresMap()
+      const map: Record<string, string> = {}
+      for (const g of genres) if (g.name && g.id) map[g.name.toLowerCase()] = g.id
+      if (!cancelled) setGenreMap(map)
+
+      // Detail novel di-resolve dari pencarian berdasarkan judul (endpoint REST yang
+      // tersedia), supaya halaman tetap lengkap walau /novel/chapters lagi mati.
+      const [byTitle, chaptersData] = await Promise.all([
+        titleFromQuery ? fetchNovelByTitle(titleFromQuery) : Promise.resolve(null),
+        fetchNovelChapters(novelId),
+      ])
+      if (cancelled) return
+
+      if (chaptersData?.novel?.title) {
+        setNovel(chaptersData.novel)
+        setChapters(chaptersData.chapters || [])
+      } else if (byTitle) {
+        setNovel(byTitle)
+      }
+      setLoading(false)
+    }
+
+    load()
     return () => { cancelled = true }
-  }, [slug])
+  }, [novelId, titleFromQuery])
 
   if (loading) {
     return (
@@ -54,6 +82,15 @@ export default function NovelDetailPage() {
       </div>
     )
   }
+
+  const metaItems: Array<[string, string]> = []
+  if (novel.rating) metaItems.push([t('novel.rating'), novel.rating])
+  if (novel.status) metaItems.push([t('novel.status'), novel.status])
+  if (novel.type) metaItems.push([t('novel.type'), novel.type])
+  if (novel.latestChapter) metaItems.push([t('novel.chapters').replace('{n}', ''), novel.latestChapter])
+  if (novel.totalViews) metaItems.push([t('novel.views'), novel.totalViews])
+  if (novel.totalWords) metaItems.push([t('novel.words'), novel.totalWords])
+  if (novel.language) metaItems.push([t('novel.language'), novel.language])
 
   return (
     <>
@@ -89,29 +126,41 @@ export default function NovelDetailPage() {
 
           <div className="flex-1 space-y-4">
             <h1 className="text-2xl md:text-3xl font-bold text-pearl text-center md:text-left">{novel.title}</h1>
-            {novel.altTitle && novel.altTitle !== novel.title && (
-              <p className="text-sm text-pearl/50 text-center md:text-left -mt-3">{novel.altTitle}</p>
+
+            {metaItems.length > 0 && (
+              <div className="grid grid-cols-2 gap-2 text-sm text-pearl/80">
+                {metaItems.map(([label, value]) => (
+                  <p key={label}><span className="text-pearl/50">{label}</span> {value}</p>
+                ))}
+              </div>
             )}
 
-            <div className="grid grid-cols-2 gap-2 text-sm text-pearl/80">
-              {novel.author && <p><span className="text-pearl/50">Author:</span> {novel.author}</p>}
-              {novel.status && <p><span className="text-pearl/50">Status:</span> {novel.status}</p>}
-              {novel.type && <p><span className="text-pearl/50">{t('novel.type')}</span> {novel.type}</p>}
-              {novel.rating && <p><span className="text-pearl/50">{t('novel.rating')}</span> {novel.rating}</p>}
-              {novel.country && <p><span className="text-pearl/50">{t('novel.country')}</span> {novel.country}</p>}
-              {novel.published && <p><span className="text-pearl/50">{t('novel.published')}</span> {novel.published}</p>}
-            </div>
-
-            {novel.genres.length > 0 && (
+            {(novel.genres?.length || 0) > 0 && (
               <div className="flex flex-wrap gap-2">
-                {novel.genres.map((genre) => (
-                  <Link
-                    key={genre.slug || genre.name}
-                    href={`/novel/genre/${genre.slug}`}
-                    className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 text-pearl text-xs font-medium rounded-full transition-colors"
-                  >
-                    {genre.name}
-                  </Link>
+                {novel.genres!.map((genreName) => {
+                  const genreId = genreMap[genreName.toLowerCase()]
+                  const inner = (
+                    <span className="px-3 py-1 bg-ocean/20 text-pearl text-xs font-medium rounded-full transition-colors">
+                      {genreName}
+                    </span>
+                  )
+                  return genreId ? (
+                    <Link key={genreName} href={`/novel/genre/${genreId}`} className="hover:bg-ocean/30 rounded-full transition-colors">
+                      {inner}
+                    </Link>
+                  ) : (
+                    <span key={genreName}>{inner}</span>
+                  )
+                })}
+              </div>
+            )}
+
+            {(novel.tags?.length || 0) > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {novel.tags!.map((tag) => (
+                  <span key={tag} className="px-2.5 py-1 bg-pearl/[0.06] border border-pearl/10 text-pearl/60 text-xs rounded-full">
+                    #{tag}
+                  </span>
                 ))}
               </div>
             )}
@@ -122,9 +171,9 @@ export default function NovelDetailPage() {
               </button>
             </div>
 
-            {novel.synopsis && (
+            {novel.summary && (
               <div className="pt-4 border-t border-ocean/20">
-                <p className="text-sm leading-relaxed text-pearl/80 whitespace-pre-line">{novel.synopsis}</p>
+                <p className="text-sm leading-relaxed text-pearl/80 whitespace-pre-line">{novel.summary}</p>
               </div>
             )}
           </div>
@@ -132,16 +181,18 @@ export default function NovelDetailPage() {
 
         {/* Chapter list */}
         <div className="card p-6">
-          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2"><BookMarked size={20} className="text-ocean" /> {t('manga.chapters').replace('{n}', String(novel.chapters.length))}</h2>
+          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2">
+            <BookMarked size={20} className="text-ocean" /> {t('novel.chapters').replace('{n}', String(chapters.length))}
+          </h2>
 
-          {novel.chapters.length === 0 ? (
-            <p className="text-pearl/60">{t('manga.noChapters')}</p>
+          {chapters.length === 0 ? (
+            <p className="text-pearl/60">{t('novel.chaptersUnavailable')}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
-              {novel.chapters.map((ch) => (
+              {chapters.map((ch) => (
                 <Link
                   key={ch.slug}
-                  href={`/novel/read/${ch.slug}`}
+                  href={`/novel/read/${ch.slug}?novel=${novelId}`}
                   className="flex items-center justify-between p-3 bg-surface-dark hover:bg-surface-hover rounded-lg transition-colors group"
                 >
                   <span className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors truncate">
@@ -157,19 +208,17 @@ export default function NovelDetailPage() {
         </div>
 
         {/* Share Modal */}
-        {novel && (
-          <ShareModal
-            open={shareOpen}
-            onClose={() => setShareOpen(false)}
-            item={{
-              kind: 'novel',
-              slug: slug as string,
-              title: novel.title,
-              image: novel.image,
-              href: `/novel/${slug}`,
-            }}
-          />
-        )}
+        <ShareModal
+          open={shareOpen}
+          onClose={() => setShareOpen(false)}
+          item={{
+            kind: 'novel',
+            slug: novelId,
+            title: novel.title,
+            image: novel.image,
+            href: `/novel/${novelId}`,
+          }}
+        />
       </div>
     </>
   )

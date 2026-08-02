@@ -27,8 +27,6 @@ export default function NovelGrid({ novels }: NovelGridProps) {
             <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-surface dark:bg-surface-dark">
               {novel.image ? (
                 <img
-                  // Gambar ini datang dari nacdn.novelhubapp.com (dicari berdasarkan judul lewat
-                  // enrichNovelCovers), bukan dari poster asli SakuraNovel yang keblokir.
                   src={novel.image}
                   alt={novel.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"

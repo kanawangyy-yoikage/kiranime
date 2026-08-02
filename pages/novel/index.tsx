@@ -1,45 +1,37 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { BookMarked, ChevronLeft, ChevronRight, LayoutGrid, BookOpen } from 'lucide-react'
+import { BookMarked, LayoutGrid, BookOpen, Flame } from 'lucide-react'
 import NovelGrid from '@/components/NovelGrid'
 import CategorySearchBar from '@/components/CategorySearchBar'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
-import { fetchNovelHome, fetchNovelGenres, enrichNovelCovers, type Novel, type NovelGenreTag } from '@/lib/api'
+import { fetchNovelHome, fetchNovelHotSearch, type Novel, type NovelGenreTag, type NovelSection } from '@/lib/api'
 
 export default function NovelListPage() {
   const { language } = useSettings()
   const t = (key: string) => translate(language, key)
-  const [novels, setNovels] = useState<Novel[]>([])
+  const [sections, setSections] = useState<NovelSection[]>([])
   const [genres, setGenres] = useState<NovelGenreTag[]>([])
+  const [hotSearch, setHotSearch] = useState<Novel[]>([])
   const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState(1)
-
-  useEffect(() => {
-    fetchNovelGenres().then(setGenres)
-  }, [])
 
   useEffect(() => {
     let cancelled = false
     const load = async () => {
       setLoading(true)
-      const data = await fetchNovelHome(page)
+      const [home, hot] = await Promise.all([fetchNovelHome(), fetchNovelHotSearch()])
       if (cancelled) return
-      setNovels(data)
+      setSections(home.sections)
+      setGenres(home.genres)
+      setHotSearch(hot)
       setLoading(false)
-      window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
-
-      const enriched = await enrichNovelCovers(data)
-      if (!cancelled) setNovels(enriched)
     }
     load()
     return () => { cancelled = true }
-  }, [page])
+  }, [])
 
-  const quickMenu = [
-    ...genres.slice(0, 7).map((g) => ({ label: g.name, href: `/novel/genre/${g.slug}` })),
-  ]
+  const quickMenu = genres.slice(0, 7).map((g) => ({ label: g.name, href: `/novel/genre/${g.slug || g.id}` }))
 
   return (
     <>
@@ -87,8 +79,8 @@ export default function NovelListPage() {
             <div className="flex flex-wrap gap-2">
               {genres.map((g) => (
                 <Link
-                  key={g.slug}
-                  href={`/novel/genre/${g.slug}`}
+                  key={g.id}
+                  href={`/novel/genre/${g.slug || g.id}`}
                   className="px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-pearl/[0.04] border border-pearl/10 text-text-light/70 dark:text-text-dark/70 hover:bg-ocean hover:text-white"
                 >
                   {g.name}
@@ -102,28 +94,26 @@ export default function NovelListPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
           </div>
-        ) : novels.length === 0 ? (
+        ) : sections.length === 0 && hotSearch.length === 0 ? (
           <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>{t('novel.loadError')}</div>
         ) : (
-          <>
-            <NovelGrid novels={novels} />
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="btn-secondary inline-flex items-center gap-1 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft size={16} aria-hidden="true" /> {t('common.previous')}
-              </button>
-              <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('novel.page').replace('{page}', String(page))}</span>
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                className="btn-secondary inline-flex items-center gap-1 text-sm"
-              >
-                {t('common.next')} <ChevronRight size={16} aria-hidden="true" />
-              </button>
-            </div>
-          </>
+          <div className="space-y-10">
+            {hotSearch.length > 0 && (
+              <section>
+                <h2 className="flex items-center gap-2 text-lg font-bold mb-4">
+                  <Flame size={18} className="text-ocean" aria-hidden="true" /> {t('novel.hotSearch')}
+                </h2>
+                <NovelGrid novels={hotSearch} />
+              </section>
+            )}
+
+            {sections.map((section) => (
+              <section key={section.title}>
+                <h2 className="text-lg font-bold mb-4">{section.title}</h2>
+                <NovelGrid novels={section.novels} />
+              </section>
+            ))}
+          </div>
         )}
       </div>
     </>

@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
-import { ArrowLeft, ChevronLeft, ChevronRight, Tag } from 'lucide-react'
+import { ArrowLeft, Tag } from 'lucide-react'
 import NovelGrid from '@/components/NovelGrid'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
-import { fetchNovelByGenre, enrichNovelCovers, type Novel } from '@/lib/api'
+import { fetchNovelByGenre, type Novel, type NovelGenreTag } from '@/lib/api'
 
 export default function NovelGenrePage() {
   const router = useRouter()
@@ -15,34 +15,30 @@ export default function NovelGenrePage() {
   const t = (key: string) => translate(language, key)
 
   const [novels, setNovels] = useState<Novel[]>([])
+  const [genres, setGenres] = useState<NovelGenreTag[]>([])
   const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState(1)
+
+  const genreId = typeof slug === 'string' ? slug : ''
 
   useEffect(() => {
-    setPage(1)
-  }, [slug])
-
-  useEffect(() => {
-    if (!slug || typeof slug !== 'string') return
+    if (!genreId) return
     let cancelled = false
     const load = async () => {
       setLoading(true)
-      const data = await fetchNovelByGenre(slug, page)
+      const { genres: gs, novels: ns } = await fetchNovelByGenre(genreId)
       if (cancelled) return
-      setNovels(data)
+      setGenres(gs)
+      setNovels(ns)
       setLoading(false)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-
-      const enriched = await enrichNovelCovers(data)
-      if (!cancelled) setNovels(enriched)
+      window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
     }
     load()
     return () => { cancelled = true }
-  }, [slug, page])
+  }, [genreId])
 
-  const genreName = typeof slug === 'string'
-    ? slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-    : ''
+  const genreName = genres.find((g) => g.id === genreId)?.name
+    || genres.find((g) => g.slug === genreId)?.name
+    || genreId
 
   return (
     <>
@@ -57,6 +53,28 @@ export default function NovelGenrePage() {
           </div>
         </div>
 
+        {genres.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {genres.map((g) => {
+              const active = g.id === genreId || g.slug === genreId
+              return (
+                <Link
+                  key={g.id}
+                  href={`/novel/genre/${g.slug || g.id}`}
+                  aria-current={active ? 'page' : undefined}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                    active
+                      ? 'bg-ocean text-white'
+                      : 'bg-pearl/[0.04] border border-pearl/10 text-text-light/70 dark:text-text-dark/70 hover:bg-ocean/20'
+                  }`}
+                >
+                  {g.name}
+                </Link>
+              )
+            })}
+          </div>
+        )}
+
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[...Array(12)].map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}
@@ -64,25 +82,7 @@ export default function NovelGenrePage() {
         ) : novels.length === 0 ? (
           <div className="card p-6 text-center" style={{ color: 'var(--color-text-muted)' }}>{t('genre.noNovels')}</div>
         ) : (
-          <>
-            <NovelGrid novels={novels} />
-            <div className="flex items-center justify-center gap-3 pt-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="btn-secondary inline-flex items-center gap-1 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft size={16} /> {t('common.previous')}
-              </button>
-              <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{t('novel.page').replace('{page}', String(page))}</span>
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                className="btn-secondary inline-flex items-center gap-1 text-sm"
-              >
-                {t('common.next')} <ChevronRight size={16} />
-              </button>
-            </div>
-          </>
+          <NovelGrid novels={novels} />
         )}
       </div>
     </>
