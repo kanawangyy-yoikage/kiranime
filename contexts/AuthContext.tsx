@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const refreshProfile = useCallback(async () => {
-    if (!auth.currentUser) {
+    if (!auth?.currentUser) {
       setProfile(null)
       return
     }

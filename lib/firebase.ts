@@ -11,6 +11,7 @@ import {
   signOut,
   onAuthStateChanged,
   User,
+  Auth,
   sendPasswordResetEmail,
   updateProfile,
   RecaptchaVerifier,
@@ -31,6 +32,7 @@ import {
   limit,
   getDocs,
   serverTimestamp,
+  Firestore,
 } from 'firebase/firestore'
 
 // ─── CONFIG ──────────────────────────────────────────────────
@@ -46,16 +48,32 @@ const firebaseConfig = {
 }
 
 // ─── INITIALIZATION ──────────────────────────────────────────
+// Jangan crash saat env Firebase belum dikonfigurasi (local dev / CI / preview).
+// Tanpa config, auth & db bernilai null dan semua operasi Firebase no-op.
 
-const app = initializeApp(firebaseConfig)
-const authInstance = typeof window !== 'undefined' ? getAuth(app) : undefined
-export const auth = authInstance!
-export const db = getFirestore(app)
+const isFirebaseConfigured = Boolean(
+  firebaseConfig.apiKey && firebaseConfig.projectId
+)
+
+const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null
+
+function createAuth() {
+  if (!app || typeof window === 'undefined') return null
+  try {
+    return getAuth(app)
+  } catch {
+    return null
+  }
+}
+
+export const auth = createAuth() as unknown as Auth
+export const db = (app ? getFirestore(app) : null) as unknown as Firestore
 export const googleProvider = new GoogleAuthProvider()
 
 // ─── AUTH FUNCTIONS ──────────────────────────────────────────
 
 export async function loginWithGoogle() {
+  if (!auth) return { success: false, error: 'Firebase belum dikonfigurasi' }
   try {
     const result = await signInWithPopup(auth, googleProvider)
     await syncUserToFirestore(result.user)
@@ -67,6 +85,7 @@ export async function loginWithGoogle() {
 }
 
 export async function loginWithEmail(email: string, password: string) {
+  if (!auth) return { success: false, error: 'Firebase belum dikonfigurasi' }
   try {
     const result = await signInWithEmailAndPassword(auth, email, password)
     await syncUserToFirestore(result.user)
@@ -78,6 +97,7 @@ export async function loginWithEmail(email: string, password: string) {
 }
 
 export async function registerWithEmail(email: string, password: string, displayName: string) {
+  if (!auth) return { success: false, error: 'Firebase belum dikonfigurasi' }
   try {
     const result = await createUserWithEmailAndPassword(auth, email, password)
     await updateProfile(result.user, { displayName })
@@ -90,6 +110,7 @@ export async function registerWithEmail(email: string, password: string, display
 }
 
 export async function logout() {
+  if (!auth) return { success: false, error: 'Firebase belum dikonfigurasi' }
   try {
     await signOut(auth)
     return { success: true }
@@ -100,10 +121,12 @@ export async function logout() {
 }
 
 export function onAuthChange(callback: (user: User | null) => void) {
+  if (!auth) return () => {}
   return onAuthStateChanged(auth, callback)
 }
 
 export async function resetPassword(email: string) {
+  if (!auth) return { success: false, error: 'Firebase belum dikonfigurasi' }
   try {
     await sendPasswordResetEmail(auth, email)
     return { success: true }
@@ -122,7 +145,7 @@ let recaptchaVerifier: RecaptchaVerifier | null = null
 // Dipanggil sekali dari halaman login untuk menyiapkan invisible reCAPTCHA.
 // containerId harus mengarah ke <div> kosong yang ada di DOM.
 export function initRecaptcha(containerId: string) {
-  if (typeof window === 'undefined') return null
+  if (!auth || typeof window === 'undefined') return null
   if (!recaptchaVerifier) {
     recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
       size: 'invisible',
@@ -138,6 +161,7 @@ export function resetRecaptcha() {
 
 // phoneNumber harus format E.164, contoh: +6281234567890
 export async function sendPhoneOtp(phoneNumber: string, containerId: string) {
+  if (!auth) return { success: false, error: 'Firebase belum dikonfigurasi' }
   try {
     const verifier = initRecaptcha(containerId)
     if (!verifier) throw new Error('Recaptcha tidak tersedia')
@@ -317,7 +341,7 @@ export function clearLocal(key: string) {
 // ─── USER COLLECTIONS ────────────────────────────────────────
 
 export async function saveHistory(animeData: any) {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return null
   
   const historyRef = doc(db, 'users', user.uid, 'history', encodeURIComponent(animeData.slug))
@@ -341,7 +365,7 @@ export async function saveHistory(animeData: any) {
 }
 
 export async function getHistory(limitCount = 20) {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return []
   
   try {
@@ -357,7 +381,7 @@ export async function getHistory(limitCount = 20) {
 }
 
 export async function toggleFavorite(animeData: any) {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return { success: false, isFavorited: false }
   
   const favRef = doc(db, 'users', user.uid, 'favorites', encodeURIComponent(animeData.slug))
@@ -377,7 +401,7 @@ export async function toggleFavorite(animeData: any) {
 }
 
 export async function getFavorites() {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return []
   
   try {
@@ -393,7 +417,7 @@ export async function getFavorites() {
 }
 
 export async function checkFavorite(slug: string) {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return false
   
   const favRef = doc(db, 'users', user.uid, 'favorites', encodeURIComponent(slug))
@@ -419,7 +443,7 @@ export interface WatchlistItem {
 }
 
 export async function addToWatchlist(item: Omit<WatchlistItem, 'addedAt' | 'updatedAt'>) {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return false
   
   const watchlistRef = doc(db, 'users', user.uid, 'watchlist', encodeURIComponent(item.slug))
@@ -452,7 +476,7 @@ export async function addToWatchlist(item: Omit<WatchlistItem, 'addedAt' | 'upda
 }
 
 export async function updateWatchlistStatus(slug: string, status: WatchlistStatus) {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return false
   
   const watchlistRef = doc(db, 'users', user.uid, 'watchlist', encodeURIComponent(slug))
@@ -464,7 +488,7 @@ export async function updateWatchlistStatus(slug: string, status: WatchlistStatu
 }
 
 export async function getWatchlistByStatus(status?: WatchlistStatus) {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return []
   
   try {
@@ -490,7 +514,7 @@ export async function getWatchlistByStatus(status?: WatchlistStatus) {
 // ─── CONTINUE WATCHING ───────────────────────────────────────
 
 export async function saveContinueWatching(slug: string, episodeSlug: string, progress: number) {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return false
   
   const continueRef = doc(db, 'users', user.uid, 'continue', encodeURIComponent(slug))
@@ -517,7 +541,7 @@ export async function saveContinueWatching(slug: string, episodeSlug: string, pr
 }
 
 export async function getContinueWatching() {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return []
   
   try {
@@ -644,7 +668,7 @@ export async function updateStats(updates: {
   averageScore?: number
   watchlistCount?: number
 }) {
-  const user = auth.currentUser
+  const user = auth?.currentUser
   if (!user) return false
   
   const userRef = doc(db, 'users', user.uid)

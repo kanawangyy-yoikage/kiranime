@@ -118,7 +118,7 @@ export async function compressStickerImage(file: File): Promise<string | null> {
 // ─── HELPER: current user info ───────────────────────────────
 
 export function getCurrentUser() {
-  return auth.currentUser
+  return auth?.currentUser ?? null
 }
 
 export function getSocialProfile(user: any): SocialUser {

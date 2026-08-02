@@ -95,6 +95,7 @@ export default function SettingsPage() {
             type="button"
             role="switch"
             aria-checked={animations}
+            aria-label={t('settings.animation')}
             onClick={() => setAnimations(!animations)}
             className={`relative h-8 w-14 rounded-full transition-colors ${
               animations ? 'bg-ocean' : 'bg-pearl/20'
