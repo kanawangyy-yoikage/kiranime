@@ -25,7 +25,7 @@ export default function MobileNav() {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-md border-t border-pearl/10"
+      className="site-mobile-nav lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-md border-t border-pearl/10"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       aria-label={t('a11y.bottomNav')}
     >

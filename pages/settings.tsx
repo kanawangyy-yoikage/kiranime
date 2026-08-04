@@ -1,9 +1,10 @@
 import Head from 'next/head'
-import { Palette, Sparkles, Languages, Settings as SettingsIcon, Check } from 'lucide-react'
+import { Palette, Sparkles, Languages, MoveVertical, Settings as SettingsIcon, Check } from 'lucide-react'
 import { ACCENT_COLORS, AccentKey, useSettings } from '@/contexts/SettingsContext'
 import { LANGUAGES, translate } from '@/lib/i18n'
 
 const ACCENTS: AccentKey[] = ['blue', 'violet', 'emerald', 'rose', 'amber', 'cyan']
+const SCROLL_DISTANCES = [25, 50, 75, 90, 100]
 
 function SectionCard({
   icon,
@@ -35,7 +36,16 @@ function SectionCard({
 }
 
 export default function SettingsPage() {
-  const { accent, animations, language, setAccent, setAnimations, setLanguage } = useSettings()
+  const {
+    accent,
+    animations,
+    language,
+    readerScrollDistance,
+    setAccent,
+    setAnimations,
+    setLanguage,
+    setReaderScrollDistance,
+  } = useSettings()
   const t = (key: string) => translate(language, key)
 
   return (
@@ -136,6 +146,33 @@ export default function SettingsPage() {
                   <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
                     {lang.englishName}
                   </span>
+                </button>
+              )
+            })}
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          icon={<MoveVertical size={20} aria-hidden="true" />}
+          title={t('settings.readerScroll')}
+          desc={t('settings.readerScrollDesc')}
+        >
+          <div className="grid grid-cols-5 gap-2 max-w-md">
+            {SCROLL_DISTANCES.map((value) => {
+              const selected = readerScrollDistance === value
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setReaderScrollDistance(value)}
+                  aria-pressed={selected}
+                  className={`flex flex-col items-center gap-1 rounded-xl border px-2 py-2.5 transition-colors ${
+                    selected
+                      ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
+                      : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40'
+                  }`}
+                >
+                  <span className="text-sm font-semibold">{t('settings.percent').replace('{n}', String(value))}</span>
                 </button>
               )
             })}

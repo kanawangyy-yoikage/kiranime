@@ -7,12 +7,14 @@ export interface Settings {
   accent: AccentKey
   animations: boolean
   language: LanguageCode
+  readerScrollDistance: number
 }
 
 interface SettingsContextType extends Settings {
   setAccent: (accent: AccentKey) => void
   setAnimations: (animations: boolean) => void
   setLanguage: (language: LanguageCode) => void
+  setReaderScrollDistance: (distance: number) => void
 }
 
 export const ACCENT_COLORS: Record<AccentKey, string> = {
@@ -30,6 +32,13 @@ export const DEFAULT_SETTINGS: Settings = {
   accent: 'blue',
   animations: true,
   language: 'id',
+  readerScrollDistance: 90,
+}
+
+export function clampScrollDistance(value: unknown): number {
+  const n = typeof value === 'number' ? value : Number(value)
+  if (!Number.isFinite(n)) return DEFAULT_SETTINGS.readerScrollDistance
+  return Math.min(100, Math.max(10, Math.round(n)))
 }
 
 function readStoredSettings(): Settings {
@@ -43,6 +52,7 @@ function readStoredSettings(): Settings {
       animations:
         typeof parsed.animations === 'boolean' ? parsed.animations : DEFAULT_SETTINGS.animations,
       language: (parsed.language as LanguageCode) ?? DEFAULT_SETTINGS.language,
+      readerScrollDistance: clampScrollDistance(parsed.readerScrollDistance),
     }
   } catch {
     return DEFAULT_SETTINGS
@@ -79,10 +89,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setAccent = (accent: AccentKey) => setSettings((s) => ({ ...s, accent }))
   const setAnimations = (animations: boolean) => setSettings((s) => ({ ...s, animations }))
   const setLanguage = (language: LanguageCode) => setSettings((s) => ({ ...s, language }))
+  const setReaderScrollDistance = (readerScrollDistance: number) =>
+    setSettings((s) => ({ ...s, readerScrollDistance: clampScrollDistance(readerScrollDistance) }))
 
   return (
     <SettingsContext.Provider
-      value={{ ...settings, setAccent, setAnimations, setLanguage }}
+      value={{ ...settings, setAccent, setAnimations, setLanguage, setReaderScrollDistance }}
     >
       {children}
     </SettingsContext.Provider>

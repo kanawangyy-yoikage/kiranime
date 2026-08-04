@@ -386,3 +386,20 @@ html.dark .glass {
   background: rgba(29, 29, 31, 0.55);
   border-color: rgba(255, 255, 255, 0.08);
 }
+
+/* ─── READER FULLSCREEN / IMMERSIVE ────────────────────────── */
+/* Saat halaman baca komik/webtoon masuk layar penuh (Fullscreen API)
+   atau mode immersive (fallback iOS), sembunyikan chrome situs
+   (navbar atas, footer, bottom nav) supaya fokus cuma ke isi bacaan. */
+html:fullscreen .site-header,
+html:fullscreen .site-footer,
+html:fullscreen .site-mobile-nav,
+html.reader-immersive .site-header,
+html.reader-immersive .site-footer,
+html.reader-immersive .site-mobile-nav {
+  display: none;
+}
+html:fullscreen main,
+html.reader-immersive main {
+  padding-top: 1rem;
+}
