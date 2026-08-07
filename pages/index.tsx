@@ -115,18 +115,10 @@ export default function Home() {
       <div className="space-y-12 md:space-y-16">
         {/* Hero / Landing */}
         <section className="hero-panel relative overflow-hidden rounded-3xl border px-6 py-16 md:px-10 md:py-24">
-          {data.popular[0]?.image && (
-            <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
-              <Image
-                src={`/api/mal-image?url=${encodeURIComponent(data.popular[0].image)}`}
-                alt=""
-                fill
-                sizes="100vw"
-                className="object-cover object-top opacity-20 dark:opacity-25"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-surface/80 via-surface/60 to-surface dark:from-noir/70 dark:via-noir/50 dark:to-noir" />
-            </div>
-          )}
+          <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+            <div className="absolute inset-0 bg-gradient-to-br from-ocean/10 via-transparent to-accent/10 dark:from-ocean/15 dark:via-transparent dark:to-accent/15" />
+            <div className="absolute inset-0 bg-gradient-to-b from-surface/80 via-surface/60 to-surface dark:from-noir/70 dark:via-noir/50 dark:to-noir" />
+          </div>
 
           <motion.div
             className="relative z-10 flex flex-col items-center text-center"
@@ -149,7 +141,7 @@ export default function Home() {
 
             {/* Search */}
             <motion.form variants={heroItem} onSubmit={handleSearch} className="mt-9 w-full max-w-xl">
-              <div className="relative">
+              <div className="relative z-10">
                 <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light/40 dark:text-text-dark/40" aria-hidden="true" />
                 <input
                   type="search"
@@ -159,7 +151,7 @@ export default function Home() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('hero.searchPlaceholder')}
-                  className="input-field w-full py-3.5 pl-12 pr-28 text-sm rounded-full"
+                  className="input-field w-full appearance-none py-3.5 pl-12 pr-28 text-sm rounded-full [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
                 />
                 <button type="submit" className="btn-primary absolute right-1.5 top-1/2 -translate-y-1/2 px-5 py-2 text-xs rounded-full">
                   {t('nav.search')}

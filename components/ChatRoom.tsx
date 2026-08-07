@@ -79,13 +79,15 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
   return (
     <div className="flex flex-col h-[65vh] md:h-[70vh]">
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 p-4">
+      <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 p-4">
         {messages.length === 0 ? (
           <p className="text-center text-sm text-pearl/50 py-10">
             {t('chat.noMessages')}
           </p>
         ) : (
-          messages.map((msg) => <MessageRow key={msg.id} msg={msg} isMine={msg.senderId === user?.uid} t={t} />)
+          messages.map((msg) => (
+            <MessageRow key={msg.id} msg={msg} isMine={msg.senderId === user?.uid} isGroup={path === 'group'} t={t} />
+          ))
         )}
         <div ref={bottomRef} />
       </div>
@@ -168,13 +170,16 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
   )
 }
 
-function MessageRow({ msg, isMine, t }: { msg: ChatMessage; isMine: boolean; t: (key: string) => string }) {
+function MessageRow({ msg, isMine, isGroup, t }: { msg: ChatMessage; isMine: boolean; isGroup: boolean; t: (key: string) => string }) {
+  const showIdentity = isGroup && !isMine
+
   if (msg.type === 'sticker') {
     return (
-      <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+      <div className={`flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'}`}>
+        {showIdentity && <Avatar msg={msg} />}
         <div className={`max-w-[60%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
-          {!isMine && <SenderName msg={msg} />}
-          <div className="p-2 rounded-2xl bg-surface-dark">
+          {showIdentity && <SenderName msg={msg} />}
+          <div className="p-2 rounded-2xl border border-ocean/10 bg-surface-dark">
             {msg.sticker ? (
               <img src={msg.sticker} alt="Stiker" className="w-24 h-24 object-contain" />
             ) : (
@@ -189,10 +194,11 @@ function MessageRow({ msg, isMine, t }: { msg: ChatMessage; isMine: boolean; t: 
 
   if (msg.type === 'share') {
     return (
-      <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+      <div className={`flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'}`}>
+        {showIdentity && <Avatar msg={msg} />}
         <div className={`max-w-[85%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
-          {!isMine && <SenderName msg={msg} />}
-          <div className={`p-3 rounded-2xl ${isMine ? 'bg-primary/15' : 'bg-surface-dark'}`}>
+          {showIdentity && <SenderName msg={msg} />}
+          <div className={`p-3 rounded-2xl border ${isMine ? 'border-primary/20 bg-primary/10' : 'border-ocean/10 bg-surface-dark'}`}>
             <p className="text-[10px] uppercase tracking-wider text-pearl/50 mb-2 flex items-center gap-1">
               {t('chat.share').replace('{kind}', msg.share?.kind || '')}
             </p>
@@ -221,18 +227,31 @@ function MessageRow({ msg, isMine, t }: { msg: ChatMessage; isMine: boolean; t: 
   }
 
   return (
-    <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'}`}>
+      {showIdentity && <Avatar msg={msg} />}
       <div className={`max-w-[85%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
-        {!isMine && <SenderName msg={msg} />}
+        {showIdentity && <SenderName msg={msg} />}
         <div
-          className={`px-3.5 py-2 rounded-2xl text-sm ${
-            isMine ? 'bg-primary text-white dark:text-noir' : 'bg-surface-dark text-pearl'
+          className={`px-4 py-2 rounded-full text-sm border ${
+            isMine
+              ? 'bg-primary text-white dark:text-noir border-primary'
+              : 'bg-surface-dark text-pearl border-ocean/15'
           }`}
         >
           {msg.text}
         </div>
         <Time msg={msg} />
       </div>
+    </div>
+  )
+}
+
+function Avatar({ msg }: { msg: ChatMessage }) {
+  return msg.senderPhoto ? (
+    <img src={msg.senderPhoto} alt={msg.senderName || 'KiraFan'} className="w-7 h-7 rounded-full object-cover shrink-0 mb-1" />
+  ) : (
+    <div className="w-7 h-7 rounded-full bg-ocean/30 text-pearl flex items-center justify-center text-[11px] font-bold shrink-0 mb-1">
+      {(msg.senderName || '?')[0]?.toUpperCase() || '?'}
     </div>
   )
 }

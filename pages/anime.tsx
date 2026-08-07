@@ -47,7 +47,10 @@ export default function AnimeHomePage() {
     return () => { cancelled = true }
   }, [])
 
-  const slides = popular.slice(0, 5).map(toSpotlight)
+  const spotlightPool = [...popular, ...latest].filter(
+    (a, i, arr) => arr.findIndex((x) => x.slug === a.slug) === i
+  )
+  const slides = spotlightPool.slice(0, 6).map(toSpotlight)
 
   return (
     <>

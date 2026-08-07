@@ -118,7 +118,7 @@ html.dark {
 }
 
 /* ─── ANIMATIONS OFF (settings) ──────────────────────────────── */
-html[data-animations='off'] *,
+html[data-animations='off'] *:not([role='switch']):not([role='switch'] *),
 html[data-animations='off'] *::before,
 html[data-animations='off'] *::after {
   animation-duration: 0.001ms !important;
