@@ -12,7 +12,7 @@ interface LandscapeSliderProps {
   interval?: number
 }
 
-export default function LandscapeSlider({ items, imageProxy, interval = 5000 }: LandscapeSliderProps) {
+export default function LandscapeSlider({ items, imageProxy, interval = 2000 }: LandscapeSliderProps) {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const reduceMotion = useReducedMotion()
