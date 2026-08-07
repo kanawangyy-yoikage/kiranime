@@ -495,9 +495,9 @@ const id: Dict = {
   'profile.watchedCompleted': 'Selesai Ditonton',
   'profile.mostWatched': 'Sering Ditonton',
   'profile.lastWatched':
-    'Lanjutkan semangat nontonmu! Anime terakhir yang kamu buka: {title}',
+    'Terakhir dibuka: {title}',
   'profile.recentHistory': 'Riwayat Terakhir',
-  'profile.noHistory': 'Belum ada riwayat tontonan',
+  'profile.noHistory': 'Belum ada riwayat',
   'profile.noFavorites': 'Belum ada favorit',
   'profile.episodeProgress': '{progress}/{total} episode',
   'profile.watchlistEmpty': 'Watchlist kosong',
@@ -946,9 +946,9 @@ const en: Dict = {
   'profile.watchedCompleted': 'Completed',
   'profile.mostWatched': 'Most Watched',
   'profile.lastWatched':
-    'Keep the momentum going! Last anime you opened: {title}',
+    'Last opened: {title}',
   'profile.recentHistory': 'Recent History',
-  'profile.noHistory': 'No watch history yet',
+  'profile.noHistory': 'No history yet',
   'profile.noFavorites': 'No favorites yet',
   'profile.episodeProgress': '{progress}/{total} episodes',
   'profile.watchlistEmpty': 'Watchlist is empty',

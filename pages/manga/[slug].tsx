@@ -4,14 +4,17 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { BookOpen, Frown, Share2 } from 'lucide-react'
 import { useSettings } from '@/contexts/SettingsContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { translate } from '@/lib/i18n'
 import { fetchComicDetail, ComicDetail } from '@/lib/api'
+import { saveHistory } from '@/lib/firebase'
 import ShareModal from '@/components/ShareModal'
 
 export default function ComicDetailPage() {
   const router = useRouter()
   const { slug } = router.query
   const { language } = useSettings()
+  const { user } = useAuth()
   const t = (key: string) => translate(language, key)
 
   const [comic, setComic] = useState<ComicDetail | null>(null)
@@ -24,6 +27,14 @@ export default function ComicDetailPage() {
       try {
         const data = await fetchComicDetail(slug)
         setComic(data)
+        if (data && user) {
+          await saveHistory({
+            slug,
+            title: data.title,
+            image: data.image,
+            timestamp: Date.now(),
+          }, 'manga')
+        }
       } catch (err) {
         console.error(err)
       } finally {
@@ -31,7 +42,7 @@ export default function ComicDetailPage() {
       }
     }
     load()
-  }, [slug])
+  }, [slug, user])
 
   if (loading) {
     return (

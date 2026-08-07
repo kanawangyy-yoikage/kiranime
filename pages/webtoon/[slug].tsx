@@ -4,7 +4,9 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { ScrollText, Frown, Share2 } from 'lucide-react'
 import { useSettings } from '@/contexts/SettingsContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { translate } from '@/lib/i18n'
+import { saveHistory } from '@/lib/firebase'
 import ShareModal from '@/components/ShareModal'
 
 interface WebtoonEpisode {
@@ -24,6 +26,7 @@ export default function WebtoonDetailPage() {
   const router = useRouter()
   const { slug } = router.query
   const { language } = useSettings()
+  const { user } = useAuth()
   const t = (key: string) => translate(language, key)
   const [webtoon, setWebtoon] = useState<WebtoonDetailData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -43,6 +46,14 @@ export default function WebtoonDetailPage() {
           setError(true)
         } else {
           setWebtoon(data)
+          if (data && user) {
+            saveHistory({
+              slug,                    // route param IS the encoded webtoon url
+              title: data.title,
+              image: data.thumbnail,
+              timestamp: Date.now(),
+            }, 'webtoon')
+          }
         }
         setLoading(false)
       })
@@ -51,7 +62,7 @@ export default function WebtoonDetailPage() {
         setError(true)
         setLoading(false)
       })
-  }, [slug])
+  }, [slug, user])
 
   if (loading) {
     return (

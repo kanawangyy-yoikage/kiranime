@@ -340,24 +340,39 @@ export function clearLocal(key: string) {
 
 // ─── USER COLLECTIONS ────────────────────────────────────────
 
-export async function saveHistory(animeData: any) {
+export type ContentType = 'anime' | 'manga' | 'webtoon' | 'novel'
+
+export async function saveHistory(data: any, type: ContentType = 'anime') {
   const user = auth?.currentUser
   if (!user) return null
-  
-  const historyRef = doc(db, 'users', user.uid, 'history', encodeURIComponent(animeData.slug))
+
+  // Backward compatible doc ID: anime keeps legacy ID (encodeURIComponent(slug));
+  // other types are namespaced to avoid slug collisions across content types.
+  const docId = type === 'anime'
+    ? encodeURIComponent(data.slug)
+    : encodeURIComponent(`${type}:${data.slug}`)
+
+  const historyRef = doc(db, 'users', user.uid, 'history', docId)
   await setDoc(historyRef, {
-    ...animeData,
+    ...data,
+    type,
     timestamp: serverTimestamp(),
     lastWatchedAt: Date.now(),
-    progress: animeData.progress || 0,
+    progress: data.progress || 0,
   })
   
-  // Simpan juga di localStorage sebagai backup
+  // Simpan juga di localStorage sebagai backup (dedupe by type:slug, cap 50)
   const localHistory = loadFromLocal(LOCAL_STORAGE_KEYS.HISTORY) || []
+  const key = `${type}:${data.slug}`
+  const existingIndex = localHistory.findIndex(
+    (h: any) => `${h.type || 'anime'}:${h.slug}` === key
+  )
+  if (existingIndex >= 0) localHistory.splice(existingIndex, 1)
   localHistory.unshift({
-    ...animeData,
+    ...data,
+    type,
     timestamp: Date.now(),
-    progress: animeData.progress || 0,
+    progress: data.progress || 0,
   })
   saveToLocal(LOCAL_STORAGE_KEYS.HISTORY, localHistory.slice(0, 50))
   

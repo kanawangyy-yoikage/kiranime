@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { BookMarked, Frown, Share2 } from 'lucide-react'
 import { useSettings } from '@/contexts/SettingsContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { translate } from '@/lib/i18n'
 import {
   fetchNovelByTitle,
@@ -12,12 +13,14 @@ import {
   type Novel,
   type NovelChapterItem,
 } from '@/lib/api'
+import { saveHistory } from '@/lib/firebase'
 import ShareModal from '@/components/ShareModal'
 
 export default function NovelDetailPage() {
   const router = useRouter()
   const { slug, title } = router.query
   const { language } = useSettings()
+  const { user } = useAuth()
   const t = (key: string) => translate(language, key)
 
   const novelId = typeof slug === 'string' ? slug : ''
@@ -54,15 +57,31 @@ export default function NovelDetailPage() {
       if (chaptersData?.novel?.title) {
         setNovel(chaptersData.novel)
         setChapters(chaptersData.chapters || [])
+        if (user) {
+          await saveHistory({
+            slug: novelId,            // route param IS the novelId; /novel/{novelId} resolves
+            title: chaptersData.novel.title,
+            image: chaptersData.novel.image,
+            timestamp: Date.now(),
+          }, 'novel')
+        }
       } else if (byTitle) {
         setNovel(byTitle)
+        if (user) {
+          await saveHistory({
+            slug: novelId,
+            title: byTitle.title,
+            image: byTitle.image,
+            timestamp: Date.now(),
+          }, 'novel')
+        }
       }
       setLoading(false)
     }
 
     load()
     return () => { cancelled = true }
-  }, [novelId, titleFromQuery])
+  }, [novelId, titleFromQuery, user])
 
   if (loading) {
     return (

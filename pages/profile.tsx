@@ -14,6 +14,33 @@ export default function ProfilePage() {
   const { user, logout, updateProfile, refreshProfile, loading: authLoading } = useAuth()
   const { language } = useSettings()
   const t = (key: string) => translate(language, key)
+
+  // Helpers untuk history multi-tipe (anime/manga/webtoon/novel)
+  const getDetailHref = (item: any) => {
+    switch (item.type) {
+      case 'manga': return `/manga/${item.slug}`
+      case 'webtoon': return `/webtoon/${item.slug}`
+      case 'novel': return `/novel/${item.slug}`
+      default: return `/anime/${item.slug}`
+    }
+  }
+
+  const getHistoryImage = (item: any) => {
+    if (!item.image) return '/default.jpg'
+    if (item.type === 'manga' || item.type === 'webtoon') {
+      return `/api/proxy?url=${encodeURIComponent(item.image)}`
+    }
+    return item.image
+  }
+
+  const getTypeLabel = (item: any) => {
+    switch (item.type) {
+      case 'manga': return t('nav.manga')
+      case 'webtoon': return t('nav.webtoon')
+      case 'novel': return t('nav.novel')
+      default: return t('nav.anime')
+    }
+  }
   
   const [profile, setProfile] = useState<any>(null)
   const [history, setHistory] = useState<any[]>([])
@@ -364,12 +391,12 @@ export default function ProfilePage() {
                       {continueWatching.slice(0, 4).map((item) => (
                         <a
                           key={item.slug}
-                          href={`/anime/${item.slug}`}
+                          href={getDetailHref(item)}
                           className="group"
                         >
                           <div className="relative aspect-video rounded-lg overflow-hidden mb-2">
                             <img
-                              src={item.image || '/default.jpg'}
+                              src={getHistoryImage(item)}
                               alt={item.title}
                               className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                             />
@@ -395,11 +422,11 @@ export default function ProfilePage() {
                       {history.slice(0, 5).map((item) => (
                         <a
                           key={item.slug || item.timestamp}
-                          href={`/anime/${item.slug}`}
+                          href={getDetailHref(item)}
                           className="flex items-center gap-3 p-2 hover:bg-surface-hover rounded-lg transition-colors"
                         >
                           <img
-                            src={item.image || '/default.jpg'}
+                            src={getHistoryImage(item)}
                             alt={item.title}
                             className="w-12 h-16 object-cover rounded"
                           />
@@ -424,16 +451,22 @@ export default function ProfilePage() {
                   history.map((item) => (
                     <a
                       key={item.slug || item.timestamp}
-                      href={`/anime/${item.slug}`}
+                      href={getDetailHref(item)}
                       className="flex items-center gap-4 p-3 hover:bg-surface-hover rounded-lg transition-colors"
                     >
                       <img
-                        src={item.image || '/default.jpg'}
+                        src={getHistoryImage(item)}
                         alt={item.title}
+                        referrerPolicy={item.type === 'novel' ? 'no-referrer' : undefined}
                         className="w-16 h-20 object-cover rounded"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-pearl">{item.title}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-pearl">{item.title}</p>
+                          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-ocean/20 text-pearl/80 capitalize shrink-0">
+                            {getTypeLabel(item)}
+                          </span>
+                        </div>
                         <p className="text-sm text-pearl/60">
                           {new Date(item.timestamp || item.lastWatchedAt).toLocaleString('id-ID')}
                         </p>
