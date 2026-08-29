@@ -24,9 +24,6 @@ export default function Footer() {
       title: t('nav.manga'),
       links: [
         { label: t('footer.allComics'), href: '/manga' },
-        { label: t('footer.manga'), href: '/manga?type=manga' },
-        { label: t('footer.manhwa'), href: '/manga?type=manhwa' },
-        { label: t('footer.manhua'), href: '/manga?type=manhua' },
       ],
     },
     {

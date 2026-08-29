@@ -3,24 +3,11 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ScrollText, ImageOff, Flame, CalendarDays, CheckCircle } from 'lucide-react'
+import { ScrollText, ImageOff } from 'lucide-react'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import CategorySearchBar from '@/components/CategorySearchBar'
 import LandscapeSpotlight from '@/components/LandscapeSpotlight'
-
-const DAY_ORDER = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu']
-
-const QUICK_MENU: { labelKey: string; key: string; href: string; icon: typeof Flame }[] = [
-  { labelKey: 'manga.trending', key: 'trending', href: '/webtoon', icon: Flame },
-  ...DAY_ORDER.map((day) => ({
-    labelKey: `day.${day}`,
-    key: day,
-    href: `/webtoon?day=${day}`,
-    icon: CalendarDays,
-  })),
-  { labelKey: 'webtoon.completed', key: 'completed', href: '/webtoon?day=completed', icon: CheckCircle },
-]
 
 interface WebtoonItem {
   title: string
@@ -61,12 +48,9 @@ export default function WebtoonPage() {
     }
   }, [day, router.isReady])
 
-  const activeMenu = QUICK_MENU.find((m) => m.key === day)
-  const activeLabel = activeMenu ? t(activeMenu.labelKey) : t('nav.webtoon')
-
   return (
     <>
-      <Head><title>{t('webtoon.pageTitle').replace('{label}', activeLabel)}</title></Head>
+      <Head><title>{t('webtoon.pageTitle').replace('{label}', t('nav.webtoon'))}</title></Head>
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
@@ -88,32 +72,6 @@ export default function WebtoonPage() {
             imageProxy={(url) => `/api/proxy?url=${encodeURIComponent(url)}`}
           />
         )}
-
-        {/* Quick Menu */}
-        <div className="card p-4">
-          <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2 text-[var(--color-text)]">
-            <CalendarDays size={16} className="text-ocean" aria-hidden="true" /> {t('webtoon.dailySchedule')}
-          </h3>
-          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5 lg:grid-cols-9">
-            {QUICK_MENU.map(({ labelKey, key, href, icon: Icon }) => {
-              const active = key === 'trending' ? day === 'trending' : day === key
-              return (
-                <Link
-                  key={key}
-                  href={href}
-                  className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-center text-xs font-semibold transition-colors ${
-                    active
-                      ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
-                      : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
-                  }`}
-                >
-                  <Icon size={18} className="text-ocean" aria-hidden="true" />
-                  {t(labelKey)}
-                </Link>
-              )
-            })}
-          </div>
-        </div>
 
         {loading ? (
           <div className="anime-grid">

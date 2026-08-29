@@ -40,9 +40,6 @@ const QUICK_MENU: { labelKey: string; href: string; icon: typeof Flame }[] = [
   { labelKey: 'section.popular', href: '/manga?tab=popular', icon: Flame },
   { labelKey: 'manga.latest', href: '/manga?tab=latest', icon: Sparkles },
   { labelKey: 'manga.trending', href: '/manga?tab=trending', icon: TrendingUp },
-  { labelKey: 'nav.manga', href: '/manga?type=manga', icon: BookOpen },
-  { labelKey: 'nav.manhwa', href: '/manga?type=manhwa', icon: BookOpen },
-  { labelKey: 'nav.manhua', href: '/manga?type=manhua', icon: BookOpen },
 ]
 
 export default function MangaListPage() {
@@ -157,7 +154,7 @@ export default function MangaListPage() {
           <h3 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
             <LayoutGrid size={16} className="text-ocean" aria-hidden="true" /> {t('common.quickMenu')}
           </h3>
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-7">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
             {QUICK_MENU.map(({ labelKey, href, icon: Icon }) => {
               const active = href === '/manga'
                 ? !typeFilter && tab === 'all'
