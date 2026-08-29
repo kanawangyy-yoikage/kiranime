@@ -81,7 +81,7 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 p-4">
         {messages.length === 0 ? (
-          <p className="text-center text-sm text-pearl/50 py-10">
+          <p className="text-center text-sm text-[var(--color-text-muted)] py-10">
             {t('chat.noMessages')}
           </p>
         ) : (
@@ -96,7 +96,7 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
       {stickerOpen && (
         <div className="border-t border-ocean/10 p-3 bg-surface-dark/60">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-semibold text-pearl/70 uppercase tracking-wider">{t('chat.myStickers')}</p>
+            <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">{t('chat.myStickers')}</p>
             <button onClick={() => setStickerOpen(false)} className="p-1 rounded hover:bg-pearl/10" aria-label={t('common.close')}>
               <X size={16} />
             </button>
@@ -144,7 +144,7 @@ export default function ChatRoom({ path, targetId }: ChatRoomProps) {
         <button
           type="button"
           onClick={() => setStickerOpen((v) => !v)}
-          className="p-2.5 rounded-lg bg-surface-dark hover:bg-surface-hover text-pearl/70 transition-colors"
+          className="p-2.5 rounded-lg bg-surface-dark hover:bg-surface-hover text-[var(--color-text-muted)] transition-colors"
           aria-label={t('chat.stickers')}
           title={t('chat.stickers')}
         >
@@ -183,7 +183,7 @@ function MessageRow({ msg, isMine, isGroup, t }: { msg: ChatMessage; isMine: boo
             {msg.sticker ? (
               <img src={msg.sticker} alt="Stiker" className="w-24 h-24 object-contain" />
             ) : (
-              <p className="text-sm text-pearl/60">{t('chat.stickerBroken')}</p>
+              <p className="text-sm text-[var(--color-text-muted)]">{t('chat.stickerBroken')}</p>
             )}
           </div>
           <Time msg={msg} />
@@ -199,7 +199,7 @@ function MessageRow({ msg, isMine, isGroup, t }: { msg: ChatMessage; isMine: boo
         <div className={`max-w-[85%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
           {showIdentity && <SenderName msg={msg} />}
           <div className={`p-3 rounded-2xl border ${isMine ? 'border-primary/20 bg-primary/10' : 'border-ocean/10 bg-surface-dark'}`}>
-            <p className="text-[10px] uppercase tracking-wider text-pearl/50 mb-2 flex items-center gap-1">
+            <p className="text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] mb-2 flex items-center gap-1">
               {t('chat.share').replace('{kind}', msg.share?.kind || '')}
             </p>
             {msg.share?.href ? (
@@ -212,12 +212,12 @@ function MessageRow({ msg, isMine, isGroup, t }: { msg: ChatMessage; isMine: boo
                     onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
                   />
                 ) : null}
-                <p className="text-sm font-semibold text-pearl group-hover:text-ocean transition-colors">
+                <p className="text-sm font-semibold text-[var(--color-text)] group-hover:text-ocean transition-colors">
                   {msg.share.title}
                 </p>
               </Link>
             ) : (
-              <p className="text-sm font-semibold text-pearl">{msg.share?.title}</p>
+              <p className="text-sm font-semibold text-[var(--color-text)]">{msg.share?.title}</p>
             )}
           </div>
           <Time msg={msg} />
@@ -235,7 +235,7 @@ function MessageRow({ msg, isMine, isGroup, t }: { msg: ChatMessage; isMine: boo
           className={`px-4 py-2 rounded-full text-sm border ${
             isMine
               ? 'bg-primary text-white dark:text-noir border-primary'
-              : 'bg-surface-dark text-pearl border-ocean/15'
+              : 'bg-surface-dark text-[var(--color-text)] border-ocean/15'
           }`}
         >
           {msg.text}
@@ -250,7 +250,7 @@ function Avatar({ msg }: { msg: ChatMessage }) {
   return msg.senderPhoto ? (
     <img src={msg.senderPhoto} alt={msg.senderName || 'KiraFan'} className="w-7 h-7 rounded-full object-cover shrink-0 mb-1" />
   ) : (
-    <div className="w-7 h-7 rounded-full bg-ocean/30 text-pearl flex items-center justify-center text-[11px] font-bold shrink-0 mb-1">
+    <div className="w-7 h-7 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center text-[11px] font-bold shrink-0 mb-1">
       {(msg.senderName || '?')[0]?.toUpperCase() || '?'}
     </div>
   )
@@ -258,12 +258,12 @@ function Avatar({ msg }: { msg: ChatMessage }) {
 
 function SenderName({ msg }: { msg: ChatMessage }) {
   return (
-    <p className="text-[11px] text-pearl/50 mb-1 ml-1">
+    <p className="text-[11px] text-[var(--color-text-muted)] mb-1 ml-1">
       {msg.senderName || 'KiraFan'}
     </p>
   )
 }
 
 function Time({ msg }: { msg: ChatMessage }) {
-  return <p className="text-[10px] text-pearl/40 mt-1 mx-1">{formatMessageTime(msg.createdAt)}</p>
+  return <p className="text-[10px] text-[var(--color-text-muted)] mt-1 mx-1">{formatMessageTime(msg.createdAt)}</p>
 }

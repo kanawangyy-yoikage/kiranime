@@ -29,7 +29,7 @@ export default function NovelGrid({ novels }: NovelGridProps) {
                 <img
                   src={novel.image}
                   alt={novel.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   loading="lazy"
                   referrerPolicy="no-referrer"
                   onError={(e) => {
@@ -41,7 +41,7 @@ export default function NovelGrid({ novels }: NovelGridProps) {
                 />
               ) : null}
               <div
-                className="w-full h-full items-center justify-center text-pearl/40 text-xs"
+                className="w-full h-full items-center justify-center text-[var(--color-text-muted)] text-xs"
                 style={{ display: novel.image ? 'none' : 'flex' }}
               >
                 No Image
@@ -61,13 +61,13 @@ export default function NovelGrid({ novels }: NovelGridProps) {
             </div>
 
             <div className="p-3">
-              <h3 className="font-semibold text-pearl text-sm line-clamp-2 group-hover:text-ocean transition-colors duration-200">
+              <h3 className="font-semibold text-[var(--color-text)] text-sm line-clamp-2 group-hover:text-ocean transition-colors duration-200">
                 {novel.title}
               </h3>
               {novel.latestChapter ? (
-                <p className="text-xs text-pearl/60 mt-1 line-clamp-1">{novel.latestChapter}</p>
+                <p className="text-xs text-[var(--color-text-muted)] mt-1 line-clamp-1">{novel.latestChapter}</p>
               ) : novel.status ? (
-                <p className="text-xs text-pearl/60 mt-1 capitalize">{novel.status}</p>
+                <p className="text-xs text-[var(--color-text-muted)] mt-1 capitalize">{novel.status}</p>
               ) : null}
             </div>
           </Link>

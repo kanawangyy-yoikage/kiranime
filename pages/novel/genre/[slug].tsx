@@ -65,7 +65,7 @@ export default function NovelGenrePage() {
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                     active
                       ? 'bg-ocean text-white'
-                      : 'bg-pearl/[0.04] border border-pearl/10 text-text-light/70 dark:text-text-dark/70 hover:bg-ocean/20'
+                      : 'bg-pearl/[0.04] border border-pearl/10 text-[var(--color-text-muted)] hover:bg-ocean/20'
                   }`}
                 >
                   {g.name}

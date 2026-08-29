@@ -69,8 +69,8 @@ export default function MessagesPage() {
 
         {convs.length === 0 ? (
           <div className="card p-10 text-center space-y-2">
-            <p className="text-pearl/60">{t('messages.empty')}</p>
-            <p className="text-sm text-pearl/40">
+            <p className="text-[var(--color-text-muted)]">{t('messages.empty')}</p>
+            <p className="text-sm text-[var(--color-text-muted)]">
               {t('messages.emptyHint').split('{link}')[0]}
               <Link href="/friends" className="text-ocean hover:underline">{t('friends.heading')}</Link>
               {t('messages.emptyHint').split('{link}')[1]}
@@ -87,16 +87,16 @@ export default function MessagesPage() {
                 {c.otherPhoto ? (
                   <img src={c.otherPhoto} alt={c.otherName} className="w-12 h-12 rounded-full object-cover shrink-0" />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-ocean/30 text-pearl flex items-center justify-center font-bold shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center font-bold shrink-0">
                     {c.otherName[0]?.toUpperCase() || '?'}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-medium text-pearl truncate">{c.otherName}</p>
-                    {c.lastMessageAt && <span className="text-[10px] text-pearl/40 flex-shrink-0">{formatMessageTime(c.lastMessageAt)}</span>}
+                    <p className="font-medium text-[var(--color-text)] truncate">{c.otherName}</p>
+                    {c.lastMessageAt && <span className="text-[10px] text-[var(--color-text-muted)] flex-shrink-0">{formatMessageTime(c.lastMessageAt)}</span>}
                   </div>
-                  <p className="text-sm text-pearl/50 truncate mt-0.5">
+                  <p className="text-sm text-[var(--color-text-muted)] truncate mt-0.5">
                     {c.lastMessage || t('messages.noMessages')}
                   </p>
                 </div>

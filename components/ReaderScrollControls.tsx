@@ -150,7 +150,7 @@ export default function ReaderScrollControls() {
       <div className="card p-1.5 flex flex-col gap-1 shadow-xl">
         <button
           onClick={() => scrollByStep(-1)}
-          className="p-2 rounded-lg hover:bg-pearl/10 text-pearl/80 transition-colors"
+          className="p-2 rounded-lg hover:bg-pearl/10 text-[var(--color-text)] transition-colors"
           aria-label={t('reader.scrollUpAria')}
           title={t('reader.scrollUp')}
         >
@@ -158,7 +158,7 @@ export default function ReaderScrollControls() {
         </button>
         <button
           onClick={() => scrollByStep(1)}
-          className="p-2 rounded-lg hover:bg-pearl/10 text-pearl/80 transition-colors"
+          className="p-2 rounded-lg hover:bg-pearl/10 text-[var(--color-text)] transition-colors"
           aria-label={t('reader.scrollDownAria')}
           title={t('reader.scrollDown')}
         >
@@ -168,7 +168,7 @@ export default function ReaderScrollControls() {
       <div className="card p-1.5 flex flex-col gap-1 shadow-xl">
         <button
           onClick={() => jump(true)}
-          className="p-2 rounded-lg hover:bg-pearl/10 text-pearl/80 transition-colors"
+          className="p-2 rounded-lg hover:bg-pearl/10 text-[var(--color-text)] transition-colors"
           aria-label={t('reader.jumpTop')}
           title={t('reader.top')}
         >
@@ -189,7 +189,7 @@ export default function ReaderScrollControls() {
           className={`p-2 rounded-lg transition-colors ${
             autoScrolling
               ? 'bg-ocean/20 text-ocean'
-              : 'hover:bg-pearl/10 text-pearl/80'
+              : 'hover:bg-pearl/10 text-[var(--color-text)]'
           }`}
           aria-label={autoScrolling ? t('reader.autoScrollStop') : t('reader.autoScrollStart')}
           title={t('reader.autoScroll')}
@@ -198,7 +198,7 @@ export default function ReaderScrollControls() {
         </button>
         <button
           onClick={toggleFullscreen}
-          className="p-2 rounded-lg hover:bg-pearl/10 text-pearl/80 transition-colors"
+          className="p-2 rounded-lg hover:bg-pearl/10 text-[var(--color-text)] transition-colors"
           aria-label={isFullscreen ? t('reader.exitFullscreen') : t('reader.fullscreen')}
           title={isFullscreen ? t('reader.exitFullscreen') : t('reader.fullscreen')}
         >

@@ -130,7 +130,7 @@ export default function Home() {
 
             <motion.h1
               variants={heroItem}
-              className="text-5xl font-extrabold tracking-tighter md:text-7xl text-primary dark:text-pearl"
+              className="text-5xl font-extrabold tracking-tighter md:text-7xl text-primary dark:text-[var(--color-text)]"
             >
               Kira<span className="text-ocean dark:text-accent">Stream</span>
             </motion.h1>
@@ -142,7 +142,7 @@ export default function Home() {
             {/* Search */}
             <motion.form variants={heroItem} onSubmit={handleSearch} className="mt-9 w-full max-w-xl">
               <div className="relative z-10">
-                <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light/40 dark:text-text-dark/40" aria-hidden="true" />
+                <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" aria-hidden="true" />
                 <input
                   type="search"
                   name="q"
@@ -165,7 +165,7 @@ export default function Home() {
                 <Link
                   key={href}
                   href={href}
-                  className="flex items-center justify-center gap-2 rounded-full border border-[var(--color-border)] bg-surface px-4 py-2.5 text-sm font-semibold text-text-light dark:bg-surface-dark dark:text-text-dark transition-colors hover:border-ocean hover:text-ocean dark:hover:border-accent dark:hover:text-accent"
+                  className="flex items-center justify-center gap-2 rounded-full border border-[var(--color-border)] bg-surface px-4 py-2.5 text-sm font-semibold text-[var(--color-text)] dark:bg-surface-dark transition-colors hover:border-ocean hover:text-ocean dark:hover:border-accent dark:hover:text-accent"
                 >
                   <Icon size={16} className="text-ocean dark:text-accent" aria-hidden="true" />
                   {label}
@@ -261,9 +261,9 @@ export default function Home() {
                       <Link key={anime.slug} href={`/anime/${anime.slug}`} className="group">
                         <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-[var(--color-surface-alt)]">
                           <Image src={`/api/mal-image?url=${encodeURIComponent(anime.image || '')}`} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
-                          {anime.episode && <div className="absolute inset-x-0 bottom-0 bg-black/65 px-1 py-1 text-center text-[10px] font-bold text-white">Ep {anime.episode}</div>}
+                          {anime.episode && <div className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-sm px-1 py-1 text-center text-xs font-bold text-white">Ep {anime.episode}</div>}
                         </div>
-                        <p className="mt-1 line-clamp-2 text-center text-[11px] font-medium" style={textStyle()}>{anime.title}</p>
+                        <p className="mt-1 line-clamp-2 text-center text-xs font-medium" style={textStyle()}>{anime.title}</p>
                       </Link>
                     ))}
                   </div>
@@ -280,7 +280,7 @@ export default function Home() {
                 <Link key={anime.mal_id} href={`/mal/${anime.mal_id}`} className="anime-card group">
                   <div className="relative aspect-[3/4] bg-[var(--color-surface-alt)]">
                     <Image src={`/api/mal-image?url=${encodeURIComponent(anime.images.jpg.large_image_url || anime.images.jpg.image_url || '')}`} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
-                    <div className="absolute right-2 top-2 rounded-full bg-black/70 px-2 py-1 text-xs font-bold text-white">{anime.score?.toFixed(1) || 'N/A'}</div>
+                    <div className="absolute right-2 top-2 rounded-full bg-primary/90 dark:bg-accent/90 px-2 py-1 text-xs font-bold text-white backdrop-blur-sm">{anime.score?.toFixed(1) || 'N/A'}</div>
                   </div>
                   <div className="p-2.5">
                     <h3 className="truncate text-sm font-semibold" style={textStyle()}>{anime.title}</h3>

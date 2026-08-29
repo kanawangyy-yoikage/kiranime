@@ -137,7 +137,7 @@ export default function SearchPage() {
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors border shrink-0 ${
                   activeType === key
                     ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
-                    : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
+                    : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
                 }`}
               >
                 <Icon size={16} aria-hidden="true" />
@@ -232,7 +232,7 @@ export default function SearchPage() {
                           alt={anime.title}
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute top-2 right-2 bg-primary/90 dark:bg-accent/90 text-white dark:text-noir text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
+                        <div className="absolute top-2 right-2 bg-primary/90 dark:bg-accent/90 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm">
                           <Star size={12} className="fill-current" aria-hidden="true" /> {anime.score?.toFixed(1) || 'N/A'}
                         </div>
                       </div>

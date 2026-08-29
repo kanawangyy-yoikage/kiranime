@@ -169,7 +169,7 @@ export default function MangaListPage() {
                   className={`flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-center text-xs font-semibold transition-colors ${
                     active
                       ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
-                      : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
+                      : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
                   }`}
                 >
                   <Icon size={18} className="text-ocean" aria-hidden="true" />
@@ -191,7 +191,7 @@ export default function MangaListPage() {
                 <Link
                   key={g.slug}
                   href={`/manga/genre/${g.slug}`}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-pearl/[0.04] border border-pearl/10 text-text-light/70 dark:text-text-dark/70 hover:bg-ocean hover:text-white"
+                  className="px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-pearl/[0.04] border border-pearl/10 text-[var(--color-text-muted)] hover:bg-ocean hover:text-white"
                 >
                   {g.name}
                 </Link>

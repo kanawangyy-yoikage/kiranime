@@ -171,7 +171,7 @@ export default function AnimeDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             className="card p-4"
           >
-            <h3 className="font-bold text-pearl mb-4 text-lg">
+            <h3 className="font-bold text-[var(--color-text)] mb-4 text-lg">
               {streamData.title}
             </h3>
 
@@ -188,7 +188,7 @@ export default function AnimeDetailPage() {
             {/* Server Selection */}
             {streamData.streams.length > 1 && (
               <div className="flex flex-wrap gap-2 mb-4">
-                <span className="text-sm text-pearl/60 self-center">{t('anime.server')}</span>
+                <span className="text-sm text-[var(--color-text-muted)] self-center">{t('anime.server')}</span>
                 {streamData.streams.map((stream, idx) => (
                   <button
                     key={idx}
@@ -196,7 +196,7 @@ export default function AnimeDetailPage() {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       selectedServer === idx
                         ? 'bg-ocean text-white'
-                        : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
+                        : 'bg-surface-dark text-[var(--color-text-muted)] hover:bg-surface-hover'
                     }`}
                   >
                     {stream.server}
@@ -208,13 +208,13 @@ export default function AnimeDetailPage() {
             {/* Download Links */}
             {streamData.downloads && streamData.downloads.length > 0 && (
               <details className="mt-4">
-                <summary className="cursor-pointer text-pearl font-medium hover:text-ocean transition-colors flex items-center gap-2">
+                <summary className="cursor-pointer text-[var(--color-text)] font-medium hover:text-ocean transition-colors flex items-center gap-2">
                   <Download size={16} /> {t('anime.downloads')}
                 </summary>
                 <div className="mt-3 space-y-2">
                   {streamData.downloads.map((dl, idx) => (
                     <div key={idx} className="bg-surface-dark rounded-lg p-3">
-                      <p className="text-sm font-medium text-pearl mb-2">
+                      <p className="text-sm font-medium text-[var(--color-text)] mb-2">
                         {dl.resolution} - {dl.format}
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -224,7 +224,7 @@ export default function AnimeDetailPage() {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 rounded text-xs text-pearl transition-colors"
+                            className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 rounded text-xs text-[var(--color-text)] transition-colors"
                           >
                             {link.host}
                           </a>
@@ -272,21 +272,21 @@ export default function AnimeDetailPage() {
                   </h1>
                   
                   {anime.info.japanese && (
-                    <p className="text-sm text-pearl/60 mb-3">{anime.info.japanese}</p>
+                    <p className="text-sm text-[var(--color-text-muted)] mb-3">{anime.info.japanese}</p>
                   )}
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {anime.genres.slice(0, 4).map((genre) => (
                       <span
                         key={genre}
-                        className="px-3 py-1 bg-ocean/20 rounded-full text-xs font-medium text-pearl"
+                        className="px-3 py-1 bg-ocean/20 rounded-full text-xs font-medium text-[var(--color-text)]"
                       >
                         {genre}
                       </span>
                     ))}
                   </div>
 
-                  <div className="flex flex-wrap gap-3 text-sm text-pearl/80">
+                  <div className="flex flex-wrap gap-3 text-sm text-[var(--color-text)]">
                     {anime.info.score && (
                       <span className="flex items-center gap-1">
                         <svg className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
@@ -333,28 +333,28 @@ export default function AnimeDetailPage() {
                     <ListPlus size={16} /> {t('anime.watchlist')} <ChevronDown size={14} />
                   </button>
                   {watchlistOpen && (
-                    <div className="absolute top-full left-0 mt-2 dropdown min-w-[150px] z-10">
+                    <div className="absolute top-full left-0 mt-2 min-w-[150px] z-50 card p-1.5 shadow-xl">
                       <button
                         onClick={() => { handleAddToWatchlist('planning'); setWatchlistOpen(false) }}
-                        className="dropdown-item w-full text-left"
+                        className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
                       >
                         {t('anime.wlPlanning')}
                       </button>
                       <button
                         onClick={() => { handleAddToWatchlist('watching'); setWatchlistOpen(false) }}
-                        className="dropdown-item w-full text-left"
+                        className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
                       >
                         {t('anime.wlWatching')}
                       </button>
                       <button
                         onClick={() => { handleAddToWatchlist('completed'); setWatchlistOpen(false) }}
-                        className="dropdown-item w-full text-left"
+                        className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
                       >
                         {t('anime.wlCompleted')}
                       </button>
                       <button
                         onClick={() => { handleAddToWatchlist('dropped'); setWatchlistOpen(false) }}
-                        className="dropdown-item w-full text-left"
+                        className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
                       >
                         {t('anime.wlDropped')}
                       </button>
@@ -386,7 +386,7 @@ export default function AnimeDetailPage() {
           {/* Synopsis */}
           <div className="md:col-span-2 card p-6">
             <h2 className="section-title">{t('anime.synopsis')}</h2>
-            <p className="text-pearl/80 leading-relaxed whitespace-pre-line">
+            <p className="text-[var(--color-text)] leading-relaxed whitespace-pre-line">
               {anime.description || t('anime.noSynopsis')}
             </p>
           </div>
@@ -399,10 +399,10 @@ export default function AnimeDetailPage() {
                 if (!value || key === 'genre') return null
                 return (
                   <div key={key}>
-                    <dt className="text-pearl/60 capitalize mb-1">
+                    <dt className="text-[var(--color-text-muted)] capitalize mb-1">
                       {key.replace(/_/g, ' ')}
                     </dt>
-                    <dd className="text-pearl font-medium">{value}</dd>
+                    <dd className="text-[var(--color-text)] font-medium">{value}</dd>
                   </div>
                 )
               })}
@@ -422,7 +422,7 @@ export default function AnimeDetailPage() {
                   className={`p-3 rounded-lg font-medium transition ${
                     playingEpisode === episode.slug
                       ? 'bg-ocean text-white'
-                      : 'bg-surface-dark text-pearl/70 hover:bg-surface-hover'
+                      : 'bg-surface-dark text-[var(--color-text-muted)] hover:bg-surface-hover'
                   }`}
                 >
                   {episode.title}

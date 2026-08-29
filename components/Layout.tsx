@@ -19,7 +19,7 @@ export default function Layout({ children }: LayoutProps) {
   const t = (key: string) => translate(language, key)
 
   return (
-    <div className="min-h-screen bg-bg-light dark:bg-bg-dark text-text-light dark:text-text-dark transition-colors duration-300 flex flex-col">
+    <div className="min-h-screen bg-bg-light dark:bg-bg-dark text-[var(--color-text)] transition-colors duration-300 flex flex-col">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"

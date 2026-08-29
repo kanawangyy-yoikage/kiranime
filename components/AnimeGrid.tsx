@@ -25,7 +25,7 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
           {anime.episode && (
-            <div className="absolute bottom-1 right-1 rounded bg-black/70 px-1.5 py-0.5 text-xs font-bold text-white">
+            <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full">
               {t('grid.episode').replace('{n}', anime.episode)}
             </div>
           )}        </div>

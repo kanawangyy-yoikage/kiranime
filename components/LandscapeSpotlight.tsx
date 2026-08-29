@@ -83,33 +83,33 @@ export default function LandscapeSpotlight({
               viewport={{ once: true }}
               transition={{ delay: 0.1, duration: adaptiveDuration(motionTokens.duration.normal), ease: motionTokens.easing.smooth }}
             >
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-sm">
                 <CheckCircle2 size={13} aria-hidden="true" />
                 {t('spotlight.completed')}
               </span>
               {score && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
+                <span className="inline-flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-sm">
                   <Star size={12} className="fill-yellow-400 text-yellow-400" aria-hidden="true" />
                   {score}
                 </span>
               )}
               {type && (
-                <span className="rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold text-white/90 capitalize backdrop-blur-sm">
+                <span className="rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white/90 capitalize backdrop-blur-sm">
                   {type}
                 </span>
               )}
               {isAnime && episode && (
-                <span className="rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold text-white/90 backdrop-blur-sm">
+                <span className="rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white/90 backdrop-blur-sm">
                   {t('spotlight.episodes').replace('{n}', episode)}
                 </span>
               )}
               {!isAnime && chapter && (
-                <span className="rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold text-white/90 backdrop-blur-sm">
+                <span className="rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white/90 backdrop-blur-sm">
                   {chapter}
                 </span>
               )}
               {status && (
-                <span className="rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-semibold text-white/90 capitalize backdrop-blur-sm">
+                <span className="rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white/90 capitalize backdrop-blur-sm">
                   {status}
                 </span>
               )}

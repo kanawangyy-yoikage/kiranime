@@ -121,7 +121,7 @@ export default function FriendsPage() {
         {tab === 'friends' && (
           <div className="card p-4 space-y-2">
             {friends.length === 0 ? (
-              <p className="text-center text-sm text-pearl/50 py-8">
+              <p className="text-center text-sm text-[var(--color-text-muted)] py-8">
                 {t('friends.noFriends')}
               </p>
             ) : (
@@ -130,13 +130,13 @@ export default function FriendsPage() {
                   {f.photoURL ? (
                     <img src={f.photoURL} alt={f.displayName} className="w-11 h-11 rounded-full object-cover shrink-0" />
                   ) : (
-                    <div className="w-11 h-11 rounded-full bg-ocean/30 text-pearl flex items-center justify-center font-bold shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center font-bold shrink-0">
                       {f.displayName?.[0]?.toUpperCase() || '?'}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-pearl truncate">{f.displayName}</p>
-                    <p className="text-xs text-pearl/50 truncate">{f.email || ''}</p>
+                    <p className="font-medium text-[var(--color-text)] truncate">{f.displayName}</p>
+                    <p className="text-xs text-[var(--color-text-muted)] truncate">{f.email || ''}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Link href={`/messages/${f.uid}`} className="btn-secondary text-xs px-3 py-1.5 inline-flex items-center gap-1.5">
@@ -160,20 +160,20 @@ export default function FriendsPage() {
         {tab === 'requests' && (
           <div className="card p-4 space-y-2">
             {requests.length === 0 ? (
-              <p className="text-center text-sm text-pearl/50 py-8">{t('friends.noRequests')}</p>
+              <p className="text-center text-sm text-[var(--color-text-muted)] py-8">{t('friends.noRequests')}</p>
             ) : (
               requests.map((r) => (
                 <div key={r.id} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
                   {r.from.photoURL ? (
                     <img src={r.from.photoURL} alt={r.from.displayName} className="w-11 h-11 rounded-full object-cover shrink-0" />
                   ) : (
-                    <div className="w-11 h-11 rounded-full bg-ocean/30 text-pearl flex items-center justify-center font-bold shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center font-bold shrink-0">
                       {r.from.displayName?.[0]?.toUpperCase() || '?'}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-pearl truncate">{r.from.displayName}</p>
-                    <p className="text-xs text-pearl/50">{t('friends.requestHint')}</p>
+                    <p className="font-medium text-[var(--color-text)] truncate">{r.from.displayName}</p>
+                    <p className="text-xs text-[var(--color-text-muted)]">{t('friends.requestHint')}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
@@ -201,22 +201,22 @@ export default function FriendsPage() {
         {tab === 'add' && (
           <div className="card p-4 space-y-4">
             <div className="flex items-center gap-2 p-3 rounded-xl bg-surface-dark">
-              <Search size={16} className="text-pearl/40 shrink-0" />
+              <Search size={16} className="text-[var(--color-text-muted)] shrink-0" />
               <input
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t('friends.searchPlaceholder')}
-                className="flex-1 bg-transparent text-sm outline-none placeholder:text-pearl/30"
+                className="flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--color-text-muted)]"
               />
             </div>
 
             {searching && (
-              <p className="text-center text-sm text-pearl/50">{t('friends.searching')}</p>
+              <p className="text-center text-sm text-[var(--color-text-muted)]">{t('friends.searching')}</p>
             )}
 
             {!searching && query.trim() && results.length === 0 && (
-              <p className="text-center text-sm text-pearl/50 py-4">
+              <p className="text-center text-sm text-[var(--color-text-muted)] py-4">
                 {t('friends.searchEmpty')}
               </p>
             )}
@@ -228,13 +228,13 @@ export default function FriendsPage() {
                     {u.photoURL ? (
                       <img src={u.photoURL} alt={u.displayName} className="w-11 h-11 rounded-full object-cover shrink-0" />
                     ) : (
-                      <div className="w-11 h-11 rounded-full bg-ocean/30 text-pearl flex items-center justify-center font-bold shrink-0">
+                      <div className="w-11 h-11 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center font-bold shrink-0">
                         {u.displayName?.[0]?.toUpperCase() || '?'}
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-pearl truncate">{u.displayName}</p>
-                      <p className="text-xs text-pearl/50 truncate">{u.email || ''}</p>
+                      <p className="font-medium text-[var(--color-text)] truncate">{u.displayName}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] truncate">{u.email || ''}</p>
                     </div>
                     <button
                       onClick={() => runAction(u.uid, () => sendFriendRequest(u.uid))}

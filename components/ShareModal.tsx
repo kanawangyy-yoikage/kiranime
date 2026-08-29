@@ -111,7 +111,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-lg flex items-center gap-2 text-pearl">
+              <h2 className="font-bold text-lg flex items-center gap-2 text-[var(--color-text)]">
                 <Share2 size={18} className="text-ocean" /> {t('share.title')}
               </h2>
               <button onClick={onClose} className="p-2 rounded-lg hover:bg-pearl/10" aria-label={t('common.close')}>
@@ -130,14 +130,14 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                 />
               ) : null}
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-pearl truncate">{item.title}</p>
-                <p className="text-xs text-pearl/50 capitalize">{item.kind}</p>
+                <p className="text-sm font-semibold text-[var(--color-text)] truncate">{item.title}</p>
+                <p className="text-xs text-[var(--color-text-muted)] capitalize">{item.kind}</p>
               </div>
             </div>
 
             {!user ? (
               <div className="text-center py-8">
-                <p className="text-pearl/70 mb-4">{t('share.requireLogin')}</p>
+                <p className="text-[var(--color-text-muted)] mb-4">{t('share.requireLogin')}</p>
                 <Link href="/login" onClick={onClose} className="btn-primary inline-flex items-center gap-2">
                   <UserPlus size={16} /> {t('nav.login')}
                 </Link>
@@ -151,7 +151,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                     className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
                       mode === 'friends'
                         ? 'bg-primary/15 text-primary dark:text-accent border border-primary/30'
-                        : 'bg-surface-dark text-pearl/60 hover:text-pearl'
+                        : 'bg-surface-dark text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                     }`}
                   >
                     {t('share.friends')}
@@ -161,7 +161,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                     className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
                       mode === 'groups'
                         ? 'bg-primary/15 text-primary dark:text-accent border border-primary/30'
-                        : 'bg-surface-dark text-pearl/60 hover:text-pearl'
+                        : 'bg-surface-dark text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                     }`}
                   >
                     {t('share.groups')}
@@ -174,13 +174,13 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                     <>
                       {/* Search new friends */}
                       <div className="flex items-center gap-2 p-2.5 rounded-xl bg-surface-dark mb-2">
-                        <Search size={16} className="text-pearl/40 shrink-0" />
+                        <Search size={16} className="text-[var(--color-text-muted)] shrink-0" />
                         <input
                           type="search"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           placeholder={t('share.searchPlaceholder')}
-                          className="flex-1 bg-transparent text-sm outline-none placeholder:text-pearl/30"
+                          className="flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--color-text-muted)]"
                         />
                       </div>
 
@@ -190,7 +190,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                             <div key={u.uid} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl bg-surface-dark">
                               <Avatar user={u} />
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-pearl truncate">{u.displayName}</p>
+                                <p className="text-sm font-medium text-[var(--color-text)] truncate">{u.displayName}</p>
                               </div>
                               <button
                                 onClick={() => handleAddFriend(u.uid)}
@@ -204,7 +204,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                       )}
 
                       {friends.length === 0 && searchResults.length === 0 ? (
-                        <p className="text-center text-sm text-pearl/50 py-8">
+                        <p className="text-center text-sm text-[var(--color-text-muted)] py-8">
                           {t('share.noFriends')}
                         </p>
                       ) : (
@@ -212,7 +212,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                           <div key={f.uid} className="flex flex-wrap items-center gap-3 p-2.5 rounded-xl hover:bg-surface-dark transition-colors">
                             <Avatar user={f} />
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-pearl truncate">{f.displayName}</p>
+                              <p className="text-sm font-medium text-[var(--color-text)] truncate">{f.displayName}</p>
                             </div>
                             <button
                               onClick={() => doShare(f)}
@@ -229,7 +229,7 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                     <>
                       {groups.length === 0 ? (
                         <div className="text-center py-8">
-                          <p className="text-sm text-pearl/50 mb-3">{t('share.noGroups')}</p>
+                          <p className="text-sm text-[var(--color-text-muted)] mb-3">{t('share.noGroups')}</p>
                           <Link href="/groups" onClick={onClose} className="text-sm text-ocean font-semibold inline-flex items-center gap-1.5">
                             <Users size={16} /> {t('share.createGroup')}
                           </Link>
@@ -241,8 +241,8 @@ export default function ShareModal({ open, onClose, item }: ShareModalProps) {
                               <Users size={18} />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-pearl truncate">{g.name}</p>
-                              <p className="text-xs text-pearl/50">{t('groups.members').replace('{n}', String(g.memberIds?.length || 0))}</p>
+                              <p className="text-sm font-medium text-[var(--color-text)] truncate">{g.name}</p>
+                              <p className="text-xs text-[var(--color-text-muted)]">{t('groups.members').replace('{n}', String(g.memberIds?.length || 0))}</p>
                             </div>
                             <button
                               onClick={() => doShare(g)}
@@ -281,7 +281,7 @@ function Avatar({ user }: { user: SocialUser }) {
   return user.photoURL ? (
     <img src={user.photoURL} alt={user.displayName} className="w-10 h-10 rounded-full object-cover shrink-0" />
   ) : (
-    <div className="w-10 h-10 rounded-full bg-ocean/30 text-pearl flex items-center justify-center font-bold shrink-0">
+    <div className="w-10 h-10 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center font-bold shrink-0">
       {user.displayName?.[0]?.toUpperCase() || '?'}
     </div>
   )

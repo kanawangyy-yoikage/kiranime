@@ -65,7 +65,7 @@ export default function GroupDetailPage() {
   if (!group) {
     return (
       <div className="card p-10 text-center space-y-3">
-        <p className="text-pearl/60">{t('groups.notFound')}</p>
+        <p className="text-[var(--color-text-muted)]">{t('groups.notFound')}</p>
         <Link href="/groups" className="btn-secondary inline-flex items-center gap-2">
           <ArrowLeft size={16} /> {t('groups.backToGroups')}
         </Link>
@@ -79,7 +79,7 @@ export default function GroupDetailPage() {
   if (!isMember) {
     return (
       <div className="card p-10 text-center space-y-3">
-        <p className="text-pearl/60">{t('groups.notMember')}</p>
+        <p className="text-[var(--color-text-muted)]">{t('groups.notMember')}</p>
         <Link href="/groups" className="btn-secondary inline-flex items-center gap-2">
           <ArrowLeft size={16} /> {t('common.back')}
         </Link>
@@ -131,16 +131,16 @@ export default function GroupDetailPage() {
             <ArrowLeft size={18} />
           </Link>
           <div className="flex-1 min-w-0">
-            <h1 className="font-bold text-lg text-pearl truncate flex items-center gap-2">
+            <h1 className="font-bold text-lg text-[var(--color-text)] truncate flex items-center gap-2">
               <Users size={18} className="text-ocean shrink-0" /> {group.name}
             </h1>
-            {group.description && <p className="text-xs text-pearl/50 truncate">{group.description}</p>}
+            {group.description && <p className="text-xs text-[var(--color-text-muted)] truncate">{group.description}</p>}
           </div>
         </div>
 
         <div className="card p-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-pearl/80 flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[var(--color-text)] flex items-center gap-2">
               <Users size={16} className="text-ocean" /> {t('groups.memberCount').replace('{n}', String(members.length))}
             </h2>
             <button onClick={() => setInviteOpen(true)} className="btn-secondary text-xs px-3 py-1.5">
@@ -154,12 +154,12 @@ export default function GroupDetailPage() {
                 {m.photoURL ? (
                   <img src={m.photoURL} alt={m.displayName} className="w-8 h-8 rounded-full object-cover shrink-0" />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-ocean/30 text-pearl flex items-center justify-center font-bold text-xs shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center font-bold text-xs shrink-0">
                     {m.displayName?.[0]?.toUpperCase() || '?'}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-pearl truncate">{m.displayName}</p>
+                  <p className="text-xs font-medium text-[var(--color-text)] truncate">{m.displayName}</p>
                   {m.uid === group.ownerId && <p className="text-[10px] text-ocean">{t('groups.owner')}</p>}
                 </div>
                 {isOwner && m.uid !== user?.uid && (
@@ -202,7 +202,7 @@ export default function GroupDetailPage() {
             className="fixed z-[61] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-md card p-5 max-h-[85vh] overflow-y-auto custom-scrollbar"
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-lg text-pearl flex items-center gap-2">
+              <h2 className="font-bold text-lg text-[var(--color-text)] flex items-center gap-2">
                 <Users size={18} className="text-ocean" /> {t('groups.inviteTitle')}
               </h2>
               <button onClick={() => setInviteOpen(false)} className="p-2 rounded-lg hover:bg-pearl/10" aria-label={t('common.close')}>
@@ -211,7 +211,7 @@ export default function GroupDetailPage() {
             </div>
 
             {friends.length === 0 ? (
-              <p className="text-sm text-pearl/50 text-center py-6">
+              <p className="text-sm text-[var(--color-text-muted)] text-center py-6">
                 {t('groups.inviteEmpty')}
               </p>
             ) : (
@@ -229,11 +229,11 @@ export default function GroupDetailPage() {
                       {f.photoURL ? (
                         <img src={f.photoURL} alt={f.displayName} className="w-9 h-9 rounded-full object-cover shrink-0" />
                       ) : (
-                        <div className="w-9 h-9 rounded-full bg-ocean/30 text-pearl flex items-center justify-center font-bold shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center font-bold shrink-0">
                           {f.displayName?.[0]?.toUpperCase() || '?'}
                         </div>
                       )}
-                      <span className="flex-1 text-sm text-pearl truncate text-left">{f.displayName}</span>
+                      <span className="flex-1 text-sm text-[var(--color-text)] truncate text-left">{f.displayName}</span>
                       <span
                         className={`w-5 h-5 rounded-md border flex items-center justify-center text-xs shrink-0 ${
                           active ? 'bg-ocean border-ocean text-white' : 'border-pearl/30'

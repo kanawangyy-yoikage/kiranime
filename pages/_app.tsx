@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import Script from 'next/script'
 import { ReactNode, useEffect } from 'react'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Noto_Sans_JP, Plus_Jakarta_Sans } from 'next/font/google'
 import { MotionConfig } from 'framer-motion'
 import Layout from '@/components/Layout'
 import SmoothScroll from '@/components/SmoothScroll'
@@ -15,6 +15,13 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-jakarta',
+})
+
+const notoJP = Noto_Sans_JP({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  display: 'swap',
+  variable: '--font-noto-jp',
 })
 
 const APP_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('theme');var dark=t?t==='dark':true;if(dark)document.documentElement.classList.add('dark');var m=document.getElementById('theme-color-meta');if(m)m.setAttribute('content',dark?'#000000':'#F5F5F7');var s=localStorage.getItem('kiranime-settings');if(s){var o=JSON.parse(s);var r=document.documentElement;if(o.accent)r.setAttribute('data-accent',o.accent);r.setAttribute('data-animations',o.animations===false?'off':'on');}}catch(e){}})();`
@@ -46,7 +53,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [])
 
   return (
-    <div className={jakarta.variable}>
+    <div className={`${jakarta.variable} ${notoJP.variable}`}>
       <AuthProvider>
         <SettingsProvider>
           <LoadingProvider>

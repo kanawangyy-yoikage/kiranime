@@ -160,7 +160,7 @@ export default function LoginPage() {
                 className="h-12 w-auto object-contain mx-auto mb-2"
                 priority
               />
-              <p className="text-pearl/60">
+              <p className="text-[var(--color-text-muted)]">
                 {method === 'phone'
                   ? t('login.phoneSubtitle')
                   : mode === 'login' ? t('login.subtitle') : t('login.registerSubtitle')}
@@ -173,7 +173,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => { setMethod('email'); resetPhoneFlow() }}
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${
-                  method === 'email' ? 'bg-ocean text-white' : 'text-pearl/60 hover:text-pearl'
+                  method === 'email' ? 'bg-ocean text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                 }`}
               >
                 <MailIcon size={15} /> {t('login.email')}
@@ -182,7 +182,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => { setMethod('phone'); setError('') }}
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${
-                  method === 'phone' ? 'bg-ocean text-white' : 'text-pearl/60 hover:text-pearl'
+                  method === 'phone' ? 'bg-ocean text-white' : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
                 }`}
               >
                 <Phone size={15} /> {t('login.phone')}
@@ -208,7 +208,7 @@ export default function LoginPage() {
                   <button
                     onClick={handleGoogleLogin}
                     disabled={loading}
-                    className="w-full py-3 bg-white hover:bg-gray-100 text-gray-800 font-medium rounded-lg transition-colors flex items-center justify-center gap-3 mb-6 disabled:opacity-50"
+                    className="w-full py-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] text-[var(--color-text)] border border-[var(--color-border)] font-medium rounded-lg transition-colors flex items-center justify-center gap-3 mb-6 disabled:opacity-50"
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                       <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -224,7 +224,7 @@ export default function LoginPage() {
                       <div className="w-full border-t border-ocean/20" />
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-surface-card text-pearl/60">{t('login.or')}</span>
+                      <span className="px-2 bg-surface-card text-[var(--color-text-muted)]">{t('login.or')}</span>
                     </div>
                   </div>
 
@@ -232,7 +232,7 @@ export default function LoginPage() {
                   <form onSubmit={handleEmailSubmit} className="space-y-4">
                     {mode === 'register' && (
                       <div>
-                        <label className="block text-sm font-medium text-pearl mb-2">
+                        <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
                           {t('login.fullName')}
                         </label>
                         <input
@@ -247,7 +247,7 @@ export default function LoginPage() {
                     )}
 
                     <div>
-                      <label className="block text-sm font-medium text-pearl mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
                         {t('login.email')}
                       </label>
                       <input
@@ -261,7 +261,7 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-pearl mb-2">
+                      <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
                         {t('login.password')}
                       </label>
                       <input
@@ -304,7 +304,7 @@ export default function LoginPage() {
                   {!otpSent ? (
                     <form onSubmit={handleSendOtp} className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-pearl mb-2">
+                        <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
                           {t('login.phoneNumber')}
                         </label>
                         <input
@@ -315,7 +315,7 @@ export default function LoginPage() {
                           placeholder="08123456789"
                           required
                         />
-                        <p className="mt-1.5 text-xs text-pearl/50">
+                        <p className="mt-1.5 text-xs text-[var(--color-text-muted)]">
                           {t('login.phoneExample')}
                         </p>
                       </div>
@@ -331,7 +331,7 @@ export default function LoginPage() {
                   ) : (
                     <form onSubmit={handleVerifyOtp} className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-pearl mb-2">
+                        <label className="block text-sm font-medium text-[var(--color-text)] mb-2">
                           {t('login.otp')}
                         </label>
                         <input
@@ -344,7 +344,7 @@ export default function LoginPage() {
                           maxLength={6}
                           required
                         />
-                        <p className="mt-1.5 text-xs text-pearl/50">
+                        <p className="mt-1.5 text-xs text-[var(--color-text-muted)]">
                           {t('login.otpSentTo').replace('{number}', normalizePhoneNumber(phoneNumber))}
                         </p>
                       </div>
@@ -377,7 +377,7 @@ export default function LoginPage() {
             <div className="mt-4 text-center">
               <button
                 onClick={() => router.push('/')}
-                className="text-sm text-pearl/60 hover:text-pearl transition-colors inline-flex items-center gap-1.5"
+                className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors inline-flex items-center gap-1.5"
               >
                 <ArrowLeft size={14} /> {t('login.backHome')}
               </button>

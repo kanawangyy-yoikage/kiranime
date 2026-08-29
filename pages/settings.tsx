@@ -24,7 +24,7 @@ function SectionCard({
           {icon}
         </div>
         <div>
-          <h2 className="font-bold text-pearl">{title}</h2>
+          <h2 className="font-bold text-[var(--color-text)]">{title}</h2>
           <p className="mt-0.5 text-sm" style={{ color: 'var(--color-text-muted)' }}>
             {desc}
           </p>
@@ -80,7 +80,7 @@ export default function SettingsPage() {
                   className={`flex flex-col items-center gap-2 rounded-xl border p-3 transition-colors ${
                     selected
                       ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
-                      : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40'
+                      : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40'
                   }`}
                 >
                   <span
@@ -139,10 +139,10 @@ export default function SettingsPage() {
                   className={`flex flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
                     selected
                       ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
-                      : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40'
+                      : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40'
                   }`}
                 >
-                  <span className="text-sm font-semibold text-pearl">{lang.nativeName}</span>
+                  <span className="text-sm font-semibold text-[var(--color-text)]">{lang.nativeName}</span>
                   <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
                     {lang.englishName}
                   </span>
@@ -169,7 +169,7 @@ export default function SettingsPage() {
                   className={`flex flex-col items-center gap-1 rounded-xl border px-2 py-2.5 transition-colors ${
                     selected
                       ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
-                      : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40'
+                      : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40'
                   }`}
                 >
                   <span className="text-sm font-semibold">{t('settings.percent').replace('{n}', String(value))}</span>

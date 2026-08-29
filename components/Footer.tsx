@@ -50,7 +50,7 @@ export default function Footer() {
               <Image src="/icons/icon-96x96.png" alt="" width={36} height={36} className="rounded-xl" />
               <Image src="/logo-title.png" alt="KiraStream" width={130} height={43} className="h-8 w-auto object-contain" />
             </Link>
-            <p className="mt-4 text-sm leading-6 text-text-light/60 dark:text-text-dark/60">
+            <p className="mt-4 text-sm leading-6 text-[var(--color-text-muted)]">
               {t('footer.tagline')}
             </p>
           </div>
@@ -64,7 +64,7 @@ export default function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-text-light/60 dark:text-text-dark/60 hover:text-primary dark:hover:text-accent transition-colors"
+                      className="text-sm text-[var(--color-text-muted)] hover:text-primary dark:hover:text-accent transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -77,7 +77,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h3 className="font-bold text-sm uppercase tracking-wider mb-4">{t('footer.contact')}</h3>
-            <ul className="space-y-3 text-sm text-text-light/60 dark:text-text-dark/60">
+            <ul className="space-y-3 text-sm text-[var(--color-text-muted)]">
               <li>
                 <a
                   href="mailto:kira@kirastream.example"
@@ -92,13 +92,13 @@ export default function Footer() {
 
         {/* Disclaimer */}
         <div className="mt-10 rounded-2xl border border-pearl/10 bg-pearl/[0.03] p-5">
-          <p className="text-xs leading-5 text-text-light/50 dark:text-text-dark/50">
+          <p className="text-xs leading-5 text-[var(--color-text-muted)]">
             {t('footer.disclaimer')}
           </p>
         </div>
 
         {/* Bottom */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-light/40 dark:text-text-dark/40">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--color-text-muted)]">
           <p>{t('footer.rights')}</p>
           <p>{t('footer.madeWith')}</p>
         </div>

@@ -94,7 +94,7 @@ export default function WebtoonDetailPage() {
             ) : null}
           </div>
           <div className="flex-1 space-y-3">
-            <h1 className="text-2xl md:text-3xl font-bold text-pearl">{webtoon.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)]">{webtoon.title}</h1>
             <button onClick={() => setShareOpen(true)} className="btn-secondary inline-flex items-center gap-2 text-sm">
               <Share2 size={16} /> {t('share.title')}
             </button>
@@ -102,12 +102,12 @@ export default function WebtoonDetailPage() {
         </div>
 
         <div className="card p-6">
-          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
             <ScrollText size={20} className="text-ocean" /> {t('webtoon.episodes').replace('{n}', String(webtoon.episodes?.length || 0))}
           </h2>
 
           {!webtoon.episodes || webtoon.episodes.length === 0 ? (
-            <p className="text-pearl/60">{t('webtoon.noEpisodes')}</p>
+            <p className="text-[var(--color-text-muted)]">{t('webtoon.noEpisodes')}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
               {webtoon.episodes.map((ep, i) => (
@@ -116,7 +116,7 @@ export default function WebtoonDetailPage() {
                   href={`/webtoon/read/${encodeURIComponent(ep.url)}`}
                   className="flex items-center justify-between p-3 bg-surface-dark hover:bg-surface-hover rounded-lg transition-colors group"
                 >
-                  <span className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors truncate">
+                  <span className="text-sm font-medium text-[var(--color-text)] group-hover:text-ocean transition-colors truncate">
                     {ep.title || t('webtoon.episodeN').replace('{n}', String(i + 1))}
                   </span>
                 </Link>

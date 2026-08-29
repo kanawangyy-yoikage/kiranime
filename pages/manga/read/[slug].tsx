@@ -67,7 +67,7 @@ export default function ChapterReaderPage() {
           <button onClick={() => router.back()} className="btn-secondary text-sm inline-flex items-center gap-1.5">
             <ArrowLeft size={16} /> {t('reader.detailManga')}
           </button>
-          <h1 className="text-sm md:text-lg font-bold text-pearl text-center px-4 truncate flex-1">
+          <h1 className="text-sm md:text-lg font-bold text-[var(--color-text)] text-center px-4 truncate flex-1">
             {chapter.title}
           </h1>
         </div>

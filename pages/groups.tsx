@@ -101,7 +101,7 @@ export default function GroupsPage() {
 
         {groups.length === 0 ? (
           <div className="card p-8 text-center">
-            <p className="text-pearl/60 mb-4">{t('groups.empty')}</p>
+            <p className="text-[var(--color-text-muted)] mb-4">{t('groups.empty')}</p>
             <button onClick={() => setCreating(true)} className="btn-primary inline-flex items-center gap-2">
               <Plus size={16} /> {t('groups.create')}
             </button>
@@ -126,9 +126,9 @@ export default function GroupsPage() {
                   )}
                 </div>
                 <div>
-                  <h2 className="font-bold text-pearl truncate">{g.name}</h2>
-                  {g.description && <p className="text-xs text-pearl/60 line-clamp-2 mt-1">{g.description}</p>}
-                  <p className="text-xs text-pearl/40 mt-2">{t('groups.members').replace('{n}', String(g.memberIds?.length || 0))}</p>
+                  <h2 className="font-bold text-[var(--color-text)] truncate">{g.name}</h2>
+                  {g.description && <p className="text-xs text-[var(--color-text-muted)] line-clamp-2 mt-1">{g.description}</p>}
+                  <p className="text-xs text-[var(--color-text-muted)] mt-2">{t('groups.members').replace('{n}', String(g.memberIds?.length || 0))}</p>
                 </div>
                 <Link
                   href={`/groups/${g.id}`}
@@ -157,7 +157,7 @@ export default function GroupsPage() {
             className="fixed z-[61] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-md card p-5 max-h-[85vh] overflow-y-auto custom-scrollbar"
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-lg text-pearl flex items-center gap-2">
+              <h2 className="font-bold text-lg text-[var(--color-text)] flex items-center gap-2">
                 <Users size={18} className="text-ocean" /> {t('groups.createTitle')}
               </h2>
               <button onClick={() => setCreating(false)} className="p-2 rounded-lg hover:bg-pearl/10" aria-label={t('common.close')}>
@@ -184,11 +184,11 @@ export default function GroupsPage() {
               />
 
               <div>
-                <p className="text-xs font-semibold text-pearl/60 uppercase tracking-wider mb-2">
+                <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider mb-2">
                   {t('groups.selectFriends').replace('{n}', String(selected.length))}
                 </p>
                 {friends.length === 0 ? (
-                  <p className="text-xs text-pearl/40">{t('groups.noFriends')}</p>
+                  <p className="text-xs text-[var(--color-text-muted)]">{t('groups.noFriends')}</p>
                 ) : (
                   <div className="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1">
                     {friends.map((f) => {
@@ -204,11 +204,11 @@ export default function GroupsPage() {
                           {f.photoURL ? (
                             <img src={f.photoURL} alt={f.displayName} className="w-9 h-9 rounded-full object-cover shrink-0" />
                           ) : (
-                            <div className="w-9 h-9 rounded-full bg-ocean/30 text-pearl flex items-center justify-center font-bold shrink-0">
+                            <div className="w-9 h-9 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center font-bold shrink-0">
                               {f.displayName?.[0]?.toUpperCase() || '?'}
                             </div>
                           )}
-                          <span className="flex-1 text-sm text-pearl truncate text-left">{f.displayName}</span>
+                          <span className="flex-1 text-sm text-[var(--color-text)] truncate text-left">{f.displayName}</span>
                           <span
                             className={`w-5 h-5 rounded-md border flex items-center justify-center text-xs shrink-0 ${
                               active ? 'bg-ocean border-ocean text-white' : 'border-pearl/30'

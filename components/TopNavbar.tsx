@@ -163,7 +163,7 @@ export default function TopNavbar() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setDrawerOpen(!drawerOpen)}
-              className="lg:hidden p-2 rounded-lg bg-surface dark:bg-surface-dark text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors"
+              className="lg:hidden p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
               aria-label={t('nav.openMenu')}
             >
               {drawerOpen ? <X size={22} /> : <Menu size={22} />}
@@ -183,7 +183,7 @@ export default function TopNavbar() {
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
                   isActive(link.href)
                     ? 'text-primary dark:text-accent'
-                    : 'text-text-light/70 dark:text-text-dark/70 hover:text-primary dark:hover:text-accent'
+                    : 'text-[var(--color-text-muted)] hover:text-primary dark:hover:text-accent'
                 }`}
               >
                 {link.icon} {link.label}
@@ -196,7 +196,7 @@ export default function TopNavbar() {
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
                   isActive(link.href)
                     ? 'text-primary dark:text-accent'
-                    : 'text-text-light/70 dark:text-text-dark/70 hover:text-primary dark:hover:text-accent'
+                    : 'text-[var(--color-text-muted)] hover:text-primary dark:hover:text-accent'
                 }`}
               >
                 {link.icon} {link.label}
@@ -208,7 +208,7 @@ export default function TopNavbar() {
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors"
+              className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
               aria-label={t('nav.search')}
             >
               <Search size={20} aria-hidden="true" />
@@ -216,7 +216,7 @@ export default function TopNavbar() {
 
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors"
+              className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
               aria-label={t('nav.toggleTheme')}
             >
               {isDark ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
@@ -224,7 +224,7 @@ export default function TopNavbar() {
 
             <Link
               href="/settings"
-              className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors"
+              className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
               aria-label={t('nav.settings')}
             >
               <Settings size={20} aria-hidden="true" />
@@ -259,7 +259,7 @@ export default function TopNavbar() {
                   >
                     <Link
                       href="/profile"
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-text-light dark:text-text-dark hover:bg-pearl/10 transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
                       role="menuitem"
                     >
                       <User size={16} /> {t('nav.profile')}
@@ -302,7 +302,7 @@ export default function TopNavbar() {
               onSubmit={handleSearch}
               className="rounded-2xl border border-pearl/10 bg-surface dark:bg-surface-dark shadow-xl p-3 flex items-center gap-2"
             >
-              <Search size={20} className="shrink-0 text-text-light/40 dark:text-text-dark/40" aria-hidden="true" />
+              <Search size={20} className="shrink-0 text-[var(--color-text-muted)]" aria-hidden="true" />
               <input
                 type="search"
                 name="q"
@@ -311,7 +311,7 @@ export default function TopNavbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('hero.searchPlaceholder')}
-                className="flex-1 bg-transparent text-sm text-text-light dark:text-text-dark placeholder:text-text-light/40 dark:placeholder:text-text-dark/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="flex-1 bg-transparent text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
               <button type="submit" className="btn-primary text-xs shrink-0">
                 {t('nav.search')}
@@ -354,7 +354,7 @@ export default function TopNavbar() {
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
                       isActive(link.href)
                         ? 'bg-primary/10 text-primary border border-primary/20'
-                        : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
+                        : 'text-[var(--color-text-muted)] hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
                     }`}
                   >
                     {link.icon} {link.label}
@@ -363,7 +363,7 @@ export default function TopNavbar() {
 
                 {/* Sosial */}
                 <div className="pt-3 mt-3 border-t border-pearl/10 space-y-1">
-                  <p className="px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-pearl/40">{t('nav.social')}</p>
+                  <p className="px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-[var(--color-text-muted)]">{t('nav.social')}</p>
                   {SOCIAL_LINKS.map((link) => (
                     <Link
                       key={link.href}
@@ -371,7 +371,7 @@ export default function TopNavbar() {
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
                         isActive(link.href)
                           ? 'bg-primary/10 text-primary border border-primary/20'
-                          : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
+                          : 'text-[var(--color-text-muted)] hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
                       }`}
                     >
                       {link.icon} {link.label}
@@ -386,7 +386,7 @@ export default function TopNavbar() {
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
                       isActive('/settings')
                         ? 'bg-primary/10 text-primary border border-primary/20'
-                        : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
+                        : 'text-[var(--color-text-muted)] hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
                     }`}
                   >
                     <Settings size={18} aria-hidden="true" /> {t('nav.settings')}
@@ -414,7 +414,7 @@ export default function TopNavbar() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-semibold truncate">{profile?.displayName || user.displayName || 'KiraFan'}</p>
-                          <p className="text-xs text-text-light/50 dark:text-text-dark/50">{t('nav.viewProfile')}</p>
+                          <p className="text-xs text-[var(--color-text-muted)]">{t('nav.viewProfile')}</p>
                         </div>
                       </Link>
                       <button

@@ -34,7 +34,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-jakarta)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-noto-jp)', 'var(--font-jakarta)', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

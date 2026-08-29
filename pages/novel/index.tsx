@@ -63,7 +63,7 @@ export default function NovelListPage() {
                 <Link
                   key={href}
                   href={href}
-                  className="flex flex-col items-center justify-center rounded-xl border border-pearl/10 bg-pearl/[0.03] px-2 py-3 text-center text-xs font-semibold text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40 hover:text-primary dark:hover:text-accent transition-colors"
+                  className="flex flex-col items-center justify-center rounded-xl border border-pearl/10 bg-pearl/[0.03] px-2 py-3 text-center text-xs font-semibold text-[var(--color-text-muted)] hover:border-ocean/40 hover:text-primary dark:hover:text-accent transition-colors"
                 >
                   {label}
                 </Link>
@@ -81,7 +81,7 @@ export default function NovelListPage() {
                 <Link
                   key={g.id}
                   href={`/novel/genre/${g.slug || g.id}`}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-pearl/[0.04] border border-pearl/10 text-text-light/70 dark:text-text-dark/70 hover:bg-ocean hover:text-white"
+                  className="px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-pearl/[0.04] border border-pearl/10 text-[var(--color-text-muted)] hover:bg-ocean hover:text-white"
                 >
                   {g.name}
                 </Link>

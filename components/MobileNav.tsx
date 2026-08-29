@@ -37,7 +37,7 @@ export default function MobileNav() {
               key={href}
               href={href}
               className={`flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold transition-colors ${
-                active ? 'text-primary dark:text-accent' : 'text-text-light/50 dark:text-text-dark/50'
+                active ? 'text-primary dark:text-accent' : 'text-[var(--color-text-muted)]'
               }`}
             >
               <Icon size={20} className={active ? 'scale-110' : ''} aria-hidden="true" />

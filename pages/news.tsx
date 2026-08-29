@@ -67,10 +67,10 @@ export default function NewsPage() {
           </div>
         )}
 
-        {error && <div className="card p-8 text-center text-sm text-pearl/60">{error}</div>}
+        {error && <div className="card p-8 text-center text-sm text-[var(--color-text-muted)]">{error}</div>}
 
         {!loading && !error && items.length === 0 && (
-          <div className="card p-8 text-center text-sm text-pearl/60">{t('news.empty')}</div>
+          <div className="card p-8 text-center text-sm text-[var(--color-text-muted)]">{t('news.empty')}</div>
         )}
 
         {!loading && !error && items.length > 0 && (
@@ -93,14 +93,14 @@ export default function NewsPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-pearl/40 text-xs">No Image</div>
+                    <div className="w-full h-full flex items-center justify-center text-[var(--color-text-muted)] text-xs">No Image</div>
                   )}
                 </div>
                 <div className="mt-2">
-                  <p className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors line-clamp-2">
+                  <p className="text-sm font-medium text-[var(--color-text)] group-hover:text-ocean transition-colors line-clamp-2">
                     {item.title}
                   </p>
-                  <p className="text-xs text-pearl/50 mt-0.5">
+                  <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
                     {item.type ? `${item.type} • ` : ''}
                     {item.score ? `⭐ ${item.score}` : 'N/A'}
                   </p>
@@ -110,7 +110,7 @@ export default function NewsPage() {
           </div>
         )}
 
-        <div className="card p-4 text-xs text-pearl/50 flex items-center gap-2">
+        <div className="card p-4 text-xs text-[var(--color-text-muted)] flex items-center gap-2">
           <ExternalLink size={13} />
           {t('news.dataFrom')}{' '}
           <a href="https://myanimelist.net" target="_blank" rel="noopener noreferrer" className="text-ocean hover:underline">

@@ -43,7 +43,7 @@ export default function AnimeMenuAside() {
                 className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   active
                     ? 'bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent'
-                    : 'text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
+                    : 'text-[var(--color-text-muted)] hover:bg-pearl/10 hover:text-primary dark:hover:text-accent'
                 }`}
               >
                 <Icon size={16} aria-hidden="true" />
@@ -70,7 +70,7 @@ export default function AnimeMenuAside() {
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-text-light/70 dark:text-text-dark/70 hover:bg-pearl/10 hover:text-primary dark:hover:text-accent transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-pearl/10 hover:text-primary dark:hover:text-accent transition-colors"
             >
               <Icon size={16} aria-hidden="true" />
               {t(labelKey)}

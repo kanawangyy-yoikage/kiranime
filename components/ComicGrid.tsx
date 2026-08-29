@@ -33,11 +33,11 @@ export default function ComicGrid({ comics }: ComicGridProps) {
                 <img
                   src={`/api/proxy?url=${encodeURIComponent(comic.image)}`}
                   alt={comic.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   loading="lazy"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-pearl/40">
+                <div className="w-full h-full flex items-center justify-center text-[var(--color-text-muted)]">
                   No Image
                 </div>              )}
 
@@ -61,11 +61,11 @@ export default function ComicGrid({ comics }: ComicGridProps) {
             </div>
 
             <div className="p-3">
-              <h3 className="font-semibold text-pearl text-sm line-clamp-2 group-hover:text-ocean transition-colors duration-200">
+              <h3 className="font-semibold text-[var(--color-text)] text-sm line-clamp-2 group-hover:text-ocean transition-colors duration-200">
                 {comic.title}
               </h3>
               {comic.status && (
-                <p className="text-xs text-pearl/60 mt-1 capitalize">{comic.status}</p>
+                <p className="text-xs text-[var(--color-text-muted)] mt-1 capitalize">{comic.status}</p>
               )}
             </div>
           </Link>

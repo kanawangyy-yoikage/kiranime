@@ -76,24 +76,24 @@ export default function ComicDetailPage() {
             {comic.image ? (
               <img src={`/api/proxy?url=${encodeURIComponent(comic.image)}`} alt={comic.title} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-pearl/40 text-sm">No Image</div>
+              <div className="w-full h-full flex items-center justify-center text-[var(--color-text-muted)] text-sm">No Image</div>
             )}
           </div>
 
           <div className="flex-1 space-y-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-pearl text-center md:text-left">{comic.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] text-center md:text-left">{comic.title}</h1>
             
-            <div className="grid grid-cols-2 gap-2 text-sm text-pearl/80">
-              {comic.author && <p><span className="text-pearl/50">{t('manga.author')}</span> {comic.author}</p>}
-              {comic.artist && <p><span className="text-pearl/50">{t('manga.artist')}</span> {comic.artist}</p>}
-              {comic.status && <p><span className="text-pearl/50">{t('manga.status')}</span> {comic.status}</p>}
-              {comic.released && <p><span className="text-pearl/50">{t('manga.released')}</span> {comic.released}</p>}
-              {comic.type && <p><span className="text-pearl/50">{t('manga.type')}</span> {comic.type}</p>}
+            <div className="grid grid-cols-2 gap-2 text-sm text-[var(--color-text)]">
+              {comic.author && <p><span className="text-[var(--color-text-muted)]">{t('manga.author')}</span> {comic.author}</p>}
+              {comic.artist && <p><span className="text-[var(--color-text-muted)]">{t('manga.artist')}</span> {comic.artist}</p>}
+              {comic.status && <p><span className="text-[var(--color-text-muted)]">{t('manga.status')}</span> {comic.status}</p>}
+              {comic.released && <p><span className="text-[var(--color-text-muted)]">{t('manga.released')}</span> {comic.released}</p>}
+              {comic.type && <p><span className="text-[var(--color-text-muted)]">{t('manga.type')}</span> {comic.type}</p>}
             </div>
 
             <div className="flex flex-wrap gap-2">
               {comic.genres.map((genre) => (
-                <span key={genre} className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 text-pearl text-xs font-medium rounded-full transition-colors">
+                <span key={genre} className="px-3 py-1 bg-ocean/20 hover:bg-ocean/30 text-[var(--color-text)] text-xs font-medium rounded-full transition-colors">
                   {genre}
                 </span>
               ))}
@@ -107,7 +107,7 @@ export default function ComicDetailPage() {
 
             {comic.description && (
               <div className="pt-4 border-t border-ocean/20">
-                <p className="text-sm leading-relaxed text-pearl/80 whitespace-pre-line">{comic.description}</p>
+                <p className="text-sm leading-relaxed text-[var(--color-text)] whitespace-pre-line">{comic.description}</p>
               </div>
             )}
           </div>
@@ -115,10 +115,10 @@ export default function ComicDetailPage() {
 
         {/* Chapter list */}
         <div className="card p-6">
-          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2"><BookOpen size={20} className="text-ocean" /> {t('manga.chapters').replace('{n}', String(comic.chapters.length))}</h2>
+          <h2 className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2"><BookOpen size={20} className="text-ocean" /> {t('manga.chapters').replace('{n}', String(comic.chapters.length))}</h2>
           
           {comic.chapters.length === 0 ? (
-            <p className="text-pearl/60">{t('manga.noChapters')}</p>
+            <p className="text-[var(--color-text-muted)]">{t('manga.noChapters')}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
               {comic.chapters.map((ch) => (
@@ -127,11 +127,11 @@ export default function ComicDetailPage() {
                   href={`/manga/read/${ch.slug}`}
                   className="flex items-center justify-between p-3 bg-surface-dark hover:bg-surface-hover rounded-lg transition-colors group"
                 >
-                  <span className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors truncate">
+                  <span className="text-sm font-medium text-[var(--color-text)] group-hover:text-ocean transition-colors truncate">
                     {ch.title}
                   </span>
                   {ch.date && (
-                    <span className="text-xs text-pearl/50 shrink-0 ml-2">{ch.date}</span>
+                    <span className="text-xs text-[var(--color-text-muted)] shrink-0 ml-2">{ch.date}</span>
                   )}
                 </Link>
               ))}

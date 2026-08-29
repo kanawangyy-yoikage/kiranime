@@ -83,7 +83,7 @@ export default function GenresPage() {
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                       selectedGenre === genre.slug
                         ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
-                        : 'border-pearl/10 bg-pearl/[0.03] text-text-light/70 dark:text-text-dark/70 hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
+                        : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40 hover:text-primary dark:hover:text-accent'
                     }`}
                   >
                     {genre.name}

@@ -62,7 +62,7 @@ export default function DirectMessagePage() {
   if (!other) {
     return (
       <div className="card p-10 text-center space-y-3">
-        <p className="text-pearl/60">{t('messages.userNotFound')}</p>
+        <p className="text-[var(--color-text-muted)]">{t('messages.userNotFound')}</p>
         <Link href="/messages" className="btn-secondary inline-flex items-center gap-2">
           <ArrowLeft size={16} /> {t('common.back')}
         </Link>
@@ -91,13 +91,13 @@ export default function DirectMessagePage() {
           {other.photoURL ? (
             <img src={other.photoURL} alt={other.displayName} className="w-11 h-11 rounded-full object-cover shrink-0" />
           ) : (
-            <div className="w-11 h-11 rounded-full bg-ocean/30 text-pearl flex items-center justify-center font-bold shrink-0">
+            <div className="w-11 h-11 rounded-full bg-ocean/30 text-[var(--color-text)] flex items-center justify-center font-bold shrink-0">
               {other.displayName[0]?.toUpperCase() || '?'}
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h1 className="font-bold text-lg text-pearl truncate">{other.displayName}</h1>
-            <p className="text-xs text-pearl/50">
+            <h1 className="font-bold text-lg text-[var(--color-text)] truncate">{other.displayName}</h1>
+            <p className="text-xs text-[var(--color-text-muted)]">
               {isFriend ? t('messages.isFriend') : t('messages.notFriend')}
             </p>
           </div>

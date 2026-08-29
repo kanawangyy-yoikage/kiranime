@@ -136,7 +136,7 @@ export default function NovelDetailPage() {
               />
             ) : null}
             <div
-              className="w-full h-full items-center justify-center text-pearl/40 text-sm"
+              className="w-full h-full items-center justify-center text-[var(--color-text-muted)] text-sm"
               style={{ display: novel.image ? 'none' : 'flex' }}
             >
               No Image
@@ -144,12 +144,12 @@ export default function NovelDetailPage() {
           </div>
 
           <div className="flex-1 space-y-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-pearl text-center md:text-left">{novel.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] text-center md:text-left">{novel.title}</h1>
 
             {metaItems.length > 0 && (
-              <div className="grid grid-cols-2 gap-2 text-sm text-pearl/80">
+              <div className="grid grid-cols-2 gap-2 text-sm text-[var(--color-text)]">
                 {metaItems.map(([label, value]) => (
-                  <p key={label}><span className="text-pearl/50">{label}</span> {value}</p>
+                  <p key={label}><span className="text-[var(--color-text-muted)]">{label}</span> {value}</p>
                 ))}
               </div>
             )}
@@ -159,7 +159,7 @@ export default function NovelDetailPage() {
                 {novel.genres!.map((genreName) => {
                   const genreId = genreMap[genreName.toLowerCase()]
                   const inner = (
-                    <span className="px-3 py-1 bg-ocean/20 text-pearl text-xs font-medium rounded-full transition-colors">
+                    <span className="px-3 py-1 bg-ocean/20 text-[var(--color-text)] text-xs font-medium rounded-full transition-colors">
                       {genreName}
                     </span>
                   )
@@ -177,7 +177,7 @@ export default function NovelDetailPage() {
             {(novel.tags?.length || 0) > 0 && (
               <div className="flex flex-wrap gap-2">
                 {novel.tags!.map((tag) => (
-                  <span key={tag} className="px-2.5 py-1 bg-pearl/[0.06] border border-pearl/10 text-pearl/60 text-xs rounded-full">
+                  <span key={tag} className="px-2.5 py-1 bg-pearl/[0.06] border border-pearl/10 text-[var(--color-text-muted)] text-xs rounded-full">
                     #{tag}
                   </span>
                 ))}
@@ -192,7 +192,7 @@ export default function NovelDetailPage() {
 
             {novel.summary && (
               <div className="pt-4 border-t border-ocean/20">
-                <p className="text-sm leading-relaxed text-pearl/80 whitespace-pre-line">{novel.summary}</p>
+                <p className="text-sm leading-relaxed text-[var(--color-text)] whitespace-pre-line">{novel.summary}</p>
               </div>
             )}
           </div>
@@ -200,12 +200,12 @@ export default function NovelDetailPage() {
 
         {/* Chapter list */}
         <div className="card p-6">
-          <h2 className="text-xl font-bold text-pearl mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
             <BookMarked size={20} className="text-ocean" /> {t('novel.chapters').replace('{n}', String(chapters.length))}
           </h2>
 
           {chapters.length === 0 ? (
-            <p className="text-pearl/60">{t('novel.chaptersUnavailable')}</p>
+            <p className="text-[var(--color-text-muted)]">{t('novel.chaptersUnavailable')}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2">
               {chapters.map((ch) => (
@@ -214,11 +214,11 @@ export default function NovelDetailPage() {
                   href={`/novel/read/${ch.slug}?novel=${novelId}`}
                   className="flex items-center justify-between p-3 bg-surface-dark hover:bg-surface-hover rounded-lg transition-colors group"
                 >
-                  <span className="text-sm font-medium text-pearl group-hover:text-ocean transition-colors truncate">
+                  <span className="text-sm font-medium text-[var(--color-text)] group-hover:text-ocean transition-colors truncate">
                     {ch.title}
                   </span>
                   {ch.date && (
-                    <span className="text-xs text-pearl/50 shrink-0 ml-2">{ch.date}</span>
+                    <span className="text-xs text-[var(--color-text-muted)] shrink-0 ml-2">{ch.date}</span>
                   )}
                 </Link>
               ))}

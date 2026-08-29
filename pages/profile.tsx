@@ -265,12 +265,12 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <>
-                    <h1 className="text-2xl font-display font-bold text-pearl">
+                    <h1 className="text-2xl font-display font-bold text-[var(--color-text)]">
                       {profile?.displayName || 'KiraFan'}
                     </h1>
-                    <p className="text-pearl/60 text-sm mb-2">{user.email}</p>
+                    <p className="text-[var(--color-text-muted)] text-sm mb-2">{user.email}</p>
                     {profile?.bio && (
-                      <p className="text-pearl/80 text-sm">{profile.bio}</p>
+                      <p className="text-[var(--color-text)] text-sm">{profile.bio}</p>
                     )}
                     <button
                       onClick={() => setEditMode(true)}
@@ -297,23 +297,23 @@ export default function ProfilePage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.watchedEpisodes}</div>
-            <div className="text-xs text-pearl/60">{t('profile.episodesWatched')}</div>
+            <div className="text-xs text-[var(--color-text-muted)]">{t('profile.episodesWatched')}</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.totalHours}h</div>
-            <div className="text-xs text-pearl/60">{t('profile.hours')}</div>
+            <div className="text-xs text-[var(--color-text-muted)]">{t('profile.hours')}</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.favorites}</div>
-            <div className="text-xs text-pearl/60">{t('profile.favorites')}</div>
+            <div className="text-xs text-[var(--color-text-muted)]">{t('profile.favorites')}</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.watchlist}</div>
-            <div className="text-xs text-pearl/60">{t('profile.watchlist')}</div>
+            <div className="text-xs text-[var(--color-text-muted)]">{t('profile.watchlist')}</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-ocean">{stats.continueWatching}</div>
-            <div className="text-xs text-pearl/60">{t('profile.continueWatching')}</div>
+            <div className="text-xs text-[var(--color-text-muted)]">{t('profile.continueWatching')}</div>
           </div>
         </div>
 
@@ -344,21 +344,21 @@ export default function ProfilePage() {
                   <div className="rounded-xl p-4"
                     style={{ background: 'var(--color-surface-alt)' }}
                   >
-                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Sparkles size={18} className="text-ocean" /> {t('profile.recap')}</h3>
+                    <h3 className="font-bold text-[var(--color-text)] mb-3 flex items-center gap-2"><Sparkles size={18} className="text-ocean" /> {t('profile.recap')}</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                       <div className="card p-3 text-center">
                         <div className="text-xl font-bold text-ocean">{history.length}</div>
-                        <div className="text-xs text-pearl/60">{t('profile.watchedTitles')}</div>
+                        <div className="text-xs text-[var(--color-text-muted)]">{t('profile.watchedTitles')}</div>
                       </div>
                       <div className="card p-3 text-center">
                         <div className="text-xl font-bold text-ocean">{favorites.length}</div>
-                        <div className="text-xs text-pearl/60">{t('profile.favorites')}</div>
+                        <div className="text-xs text-[var(--color-text-muted)]">{t('profile.favorites')}</div>
                       </div>
                       <div className="card p-3 text-center">
                         <div className="text-xl font-bold text-ocean">
                           {watchlist.filter((w: any) => w.status === 'completed').length}
                         </div>
-                        <div className="text-xs text-pearl/60">{t('profile.watchedCompleted')}</div>
+                        <div className="text-xs text-[var(--color-text-muted)]">{t('profile.watchedCompleted')}</div>
                       </div>
                       <div className="card p-3 text-center">
                         <div className="text-xl font-bold text-ocean">
@@ -372,11 +372,11 @@ export default function ProfilePage() {
                             return most ? (most[1] as number) : 0
                           })()}
                         </div>
-                        <div className="text-xs text-pearl/60">{t('profile.mostWatched')}</div>
+                        <div className="text-xs text-[var(--color-text-muted)]">{t('profile.mostWatched')}</div>
                       </div>
                     </div>
                     {history.length > 0 && (
-                      <p className="text-xs text-pearl/50 mt-3">
+                      <p className="text-xs text-[var(--color-text-muted)] mt-3">
                         {t('profile.lastWatched').replace('{title}', history[0]?.title || '')}
                       </p>
                     )}
@@ -386,7 +386,7 @@ export default function ProfilePage() {
                 {/* Continue Watching */}
                 {continueWatching.length > 0 && (
                   <div>
-                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Clapperboard size={18} className="text-ocean" /> {t('profile.continueWatching')}</h3>
+                    <h3 className="font-bold text-[var(--color-text)] mb-3 flex items-center gap-2"><Clapperboard size={18} className="text-ocean" /> {t('profile.continueWatching')}</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {continueWatching.slice(0, 4).map((item) => (
                         <a
@@ -398,7 +398,7 @@ export default function ProfilePage() {
                             <img
                               src={getHistoryImage(item)}
                               alt={item.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                             <div className="absolute bottom-0 left-0 right-0 h-1 bg-surface-dark">
                               <div 
@@ -407,7 +407,7 @@ export default function ProfilePage() {
                               />
                             </div>
                           </div>
-                          <p className="text-sm text-pearl truncate">{item.title}</p>
+                          <p className="text-sm text-[var(--color-text)] truncate">{item.title}</p>
                         </a>
                       ))}
                     </div>
@@ -417,7 +417,7 @@ export default function ProfilePage() {
                 {/* Recent History */}
                 {history.length > 0 && (
                   <div>
-                    <h3 className="font-bold text-pearl mb-3 flex items-center gap-2"><Clock size={18} className="text-ocean" /> {t('profile.recentHistory')}</h3>
+                    <h3 className="font-bold text-[var(--color-text)] mb-3 flex items-center gap-2"><Clock size={18} className="text-ocean" /> {t('profile.recentHistory')}</h3>
                     <div className="space-y-2">
                       {history.slice(0, 5).map((item) => (
                         <a
@@ -431,8 +431,8 @@ export default function ProfilePage() {
                             className="w-12 h-16 object-cover rounded"
                           />
                           <div>
-                            <p className="font-medium text-pearl text-sm">{item.title}</p>
-                            <p className="text-xs text-pearl/60">
+                            <p className="font-medium text-[var(--color-text)] text-sm">{item.title}</p>
+                            <p className="text-xs text-[var(--color-text-muted)]">
                               {new Date(item.timestamp || item.lastWatchedAt).toLocaleDateString('id-ID')}
                             </p>
                           </div>
@@ -462,12 +462,12 @@ export default function ProfilePage() {
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-pearl">{item.title}</p>
-                          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-ocean/20 text-pearl/80 capitalize shrink-0">
+                          <p className="font-medium text-[var(--color-text)]">{item.title}</p>
+                          <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-ocean/20 text-[var(--color-text)] capitalize shrink-0">
                             {getTypeLabel(item)}
                           </span>
                         </div>
-                        <p className="text-sm text-pearl/60">
+                        <p className="text-sm text-[var(--color-text-muted)]">
                           {new Date(item.timestamp || item.lastWatchedAt).toLocaleString('id-ID')}
                         </p>
                         {item.progress > 0 && (
@@ -479,7 +479,7 @@ export default function ProfilePage() {
                     </a>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-pearl/60">
+                  <div className="text-center py-8 text-[var(--color-text-muted)]">
                     {t('profile.noHistory')}
                   </div>
                 )}
@@ -502,13 +502,13 @@ export default function ProfilePage() {
                         className="w-16 h-20 object-cover rounded"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-pearl">{item.title}</p>
-                        <p className="text-sm text-pearl/60 flex items-center gap-1"><Star size={12} className="fill-[var(--color-accent)] text-[var(--color-accent)]" /> {item.score || 'N/A'}</p>
+                        <p className="font-medium text-[var(--color-text)]">{item.title}</p>
+                        <p className="text-sm text-[var(--color-text-muted)] flex items-center gap-1"><Star size={12} className="fill-[var(--color-accent)] text-[var(--color-accent)]" /> {item.score || 'N/A'}</p>
                       </div>
                     </a>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-pearl/60">
+                  <div className="text-center py-8 text-[var(--color-text-muted)]">
                     {t('profile.noFavorites')}
                   </div>
                 )}
@@ -531,15 +531,15 @@ export default function ProfilePage() {
                         className="w-16 h-20 object-cover rounded"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-pearl">{item.title}</p>
-                        <p className="text-sm text-pearl/60 capitalize inline-flex items-center gap-1.5">
+                        <p className="font-medium text-[var(--color-text)]">{item.title}</p>
+                        <p className="text-sm text-[var(--color-text-muted)] capitalize inline-flex items-center gap-1.5">
                           {item.status === 'planning' && (<><BookmarkPlus size={14} /> {t('anime.wlPlanning')}</>)}
                           {item.status === 'watching' && (<><PlayCircle size={14} /> {t('anime.wlWatching')}</>)}
                           {item.status === 'completed' && (<><CheckCircle size={14} /> {t('anime.wlCompleted')}</>)}
                           {item.status === 'dropped' && (<><Ban size={14} /> {t('anime.wlDropped')}</>)}
                         </p>
                         {item.totalEpisodes > 0 && (
-                          <p className="text-xs text-pearl/60">
+                          <p className="text-xs text-[var(--color-text-muted)]">
                             {t('profile.episodeProgress').replace('{progress}', String(item.progress || 0)).replace('{total}', String(item.totalEpisodes))}
                           </p>
                         )}
@@ -547,7 +547,7 @@ export default function ProfilePage() {
                     </a>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-pearl/60">
+                  <div className="text-center py-8 text-[var(--color-text-muted)]">
                     {t('profile.watchlistEmpty')}
                   </div>
                 )}
