@@ -328,7 +328,7 @@ export default function MangaPage() {
           {genres.length > 0 && (
             <Section title={t('manga.genre')} jp="ジャンル">
               <div className="flex flex-wrap gap-2">
-                {genres.slice(0, 18).map((g) => (
+                {genres.slice(0, 24).map((g) => (
                   <Link
                     key={g.slug}
                     href={`/manga?genre=${g.slug}`}
