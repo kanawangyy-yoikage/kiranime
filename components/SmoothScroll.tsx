@@ -1,15 +1,18 @@
 // components/SmoothScroll.tsx
-// Lenis smooth scroll — di-skip otomatis saat user memilih prefers-reduced-motion.
+// Lenis smooth scroll — di-skip otomatis saat user memilih settingan animasi KiraStream.
+// Tidak mengikuti prefers-reduced-motion sistem.
 import { useEffect, ReactNode } from 'react'
 import { useRouter } from 'next/router'
+import { useIsReducedMotion } from '@/lib/hooks/useReducedMotion'
 import Lenis from 'lenis'
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   const router = useRouter()
+  const reduced = useIsReducedMotion()
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (reduced) return
 
     const lenis = new Lenis({
       duration: 1.1,
@@ -51,7 +54,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       document.removeEventListener('click', onClickAnchor)
       lenis.destroy()
     }
-  }, [router.events])
+  }, [router.events, reduced])
 
   return <>{children}</>
 }
