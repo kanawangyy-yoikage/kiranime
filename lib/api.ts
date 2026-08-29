@@ -451,9 +451,11 @@ function extractComics(raw: any): Comic[] {
     raw?.komiklist ||
     raw?.results ||
     raw?.comics ||
+    raw?.trending ||
     raw?.data?.komikList ||
     raw?.data?.comics ||
     raw?.data?.results ||
+    raw?.data?.trending ||
     raw?.data ||
     (Array.isArray(raw) ? raw : [])
   if (!Array.isArray(arr)) return []
@@ -535,11 +537,21 @@ export async function fetchComicHomepage(): Promise<{ popular: Comic[]; latest: 
   try {
     const { data } = await comicClient.get(ENDPOINTS.COMIC_HOMEPAGE)
     const d = data.data || data
-    return {
+    const home = {
       popular: extractComics(d.popular || d.populer || []),
       latest: extractComics(d.latest || d.terbaru || []),
       trending: extractComics(d.trending || []),
     }
+    // Fallback: kalau homepage aggregator kosong, isi dari endpoint listing yang sehat
+    if (!home.popular.length || !home.latest.length || !home.trending.length) {
+      const [popular, latest, trending] = await Promise.all([
+        home.popular.length ? Promise.resolve(home.popular) : fetchComicPopular(1),
+        home.latest.length ? Promise.resolve(home.latest) : fetchComicLatest(1),
+        home.trending.length ? Promise.resolve(home.trending) : fetchComicTrending(1),
+      ])
+      return { popular, latest, trending }
+    }
+    return home
   } catch { return { popular: [], latest: [], trending: [] } }
 }
 
