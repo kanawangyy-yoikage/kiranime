@@ -109,10 +109,10 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-[var(--color-text-muted)]">
               <li>
                 <a
-                  href="mailto:kira@kirastream.example"
+                  href="mailto:admin@kirastream.web.id"
                   className="flex items-center gap-2.5 hover:text-primary dark:hover:text-accent transition-colors"
                 >
-                  <Mail size={16} aria-hidden="true" /> kira@kirastream.example
+                  <Mail size={16} aria-hidden="true" /> admin@kirastream.web.id
                 </a>
               </li>
             </ul>
