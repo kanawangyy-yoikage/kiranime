@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Star, CheckCircle2, PlayCircle, BookOpen } from 'lucide-react'
 import { adaptiveDuration, motionTokens } from '@/lib/motionTokens'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 export interface SpotlightItem {
   kind: 'anime' | 'comic'
@@ -40,7 +41,7 @@ export default function LandscapeSpotlight({
   const { language } = useSettings()
   const t = (key: string) => translate(language, key)
   const ctaLabel = isAnime ? t('spotlight.watch') : t('spotlight.read')
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
 
   return (
     <motion.div

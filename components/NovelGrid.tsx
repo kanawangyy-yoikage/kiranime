@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { Star } from 'lucide-react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Novel } from '@/lib/api'
 import { staggerContainer, staggerItem } from './motionVariants'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 interface NovelGridProps {
   novels: Novel[]
@@ -12,7 +13,7 @@ interface NovelGridProps {
 const MotionLink = motion(Link)
 
 export default function NovelGrid({ novels }: NovelGridProps) {
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
   return (
     <motion.div
       className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"

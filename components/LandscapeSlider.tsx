@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback, useRef, type PointerEvent as ReactPointerEvent } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import LandscapeSpotlight, { type SpotlightItem } from './LandscapeSpotlight'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 interface LandscapeSliderProps {
   kind: 'anime' | 'comic'
@@ -15,7 +16,7 @@ interface LandscapeSliderProps {
 export default function LandscapeSlider({ items, imageProxy, interval = 2000 }: LandscapeSliderProps) {
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
-  const reduceMotion = useReducedMotion()
+  const reduceMotion = useAnimationsEnabled()
   const { language } = useSettings()
   const t = (key: string) => translate(language, key)
 

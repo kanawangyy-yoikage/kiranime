@@ -1,12 +1,13 @@
 // components/AnimeGrid.tsx
 import Link from 'next/link'
 import Image from 'next/image'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import type { Anime } from '@/lib/api'
 import { staggerContainer, staggerItem } from './motionVariants'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 // Helper untuk proxy gambar
 const imageProxy = (url: string) => `/api/mal-image?url=${encodeURIComponent(url)}`
@@ -15,7 +16,7 @@ const MotionLink = motion(Link)
 
 const AnimeCard = ({ anime }: { anime: Anime }) => {
   const { language } = useSettings()
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
   const t = (key: string) => translate(language, key)
   return (
     <motion.div variants={staggerItem}>
@@ -50,7 +51,7 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
 }
 
 export default function AnimeGrid({ animes }: { animes: Anime[] }) {
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
   const { language } = useSettings()
   const t = (key: string) => translate(language, key)
   if (!animes || animes.length === 0) {

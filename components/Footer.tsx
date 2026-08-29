@@ -1,15 +1,16 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail } from 'lucide-react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 export default function Footer() {
   const { language } = useSettings()
   const t = (key: string) => translate(language, key)
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
 
   const staggerContainer = {
     hidden: {},

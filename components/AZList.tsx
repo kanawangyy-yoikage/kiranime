@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
@@ -13,7 +14,7 @@ interface AZListProps {
 
 export default function AZList({ compact }: AZListProps) {
   const router = useRouter()
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
   const activeLetter = typeof router.query.letter === 'string' ? router.query.letter.toUpperCase() : ''
 
   const staggerContainer = {

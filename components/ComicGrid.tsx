@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { Star } from 'lucide-react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Comic } from '@/lib/api'
 import { staggerContainer, staggerItem } from './motionVariants'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 interface ComicGridProps {
   comics: Comic[]
@@ -14,7 +15,7 @@ interface ComicGridProps {
 const MotionLink = motion(Link)
 
 export default function ComicGrid({ comics }: ComicGridProps) {
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
   const { language } = useSettings()
   const t = (key: string) => translate(language, key)
   return (

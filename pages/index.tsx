@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { BookOpen, Clapperboard, ImageOff, ScrollText, Search, BookMarked } from 'lucide-react'
 import AnimeGrid from '@/components/AnimeGrid'
 import Section from '@/components/Section'
@@ -13,6 +13,7 @@ import type { Anime, MALAnime } from '@/lib/api'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 const MotionLink = motion(Link)
 
@@ -81,7 +82,7 @@ export default function Home() {
     }
   }
 
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
   const heroStagger = {
     hidden: {},
     visible: {

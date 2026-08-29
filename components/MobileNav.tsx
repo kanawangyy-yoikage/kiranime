@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Home, Clapperboard, BookOpen, ScrollText, BookMarked, User } from 'lucide-react'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 const MotionLink = motion.create(Link)
 
@@ -28,7 +29,7 @@ const itemVariants = {
 export default function MobileNav() {
   const router = useRouter()
   const { language } = useSettings()
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
   const t = (key: string) => translate(language, key)
 
   const ITEMS = [

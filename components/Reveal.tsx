@@ -3,8 +3,9 @@
 // - Hanya animasi transform + opacity (aman performa).
 // - Hormat prefers-reduced-motion (langsung tampil, tanpa geser).
 // - Durasi adaptif untuk perangkat lemah.
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { ReactNode } from 'react'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 
 interface RevealProps {
@@ -24,7 +25,7 @@ export default function Reveal({
   once = true,
   as = 'div',
 }: RevealProps) {
-  const reduce = useReducedMotion()
+  const reduce = useAnimationsEnabled()
   const Tag = as === 'li' ? motion.li : as === 'section' ? motion.section : motion.div
 
   return (

@@ -2,7 +2,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState, FormEvent, ReactNode } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 import {
   Search,
   Moon,
@@ -61,7 +62,7 @@ export default function TopNavbar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [loggingOut, setLoggingOut] = useState(false)
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
-  const reduceMotion = useReducedMotion()
+  const reduceMotion = useAnimationsEnabled()
   const navRef = useRef<HTMLElement | null>(null)
 
   const drawerContainerVariants = {
