@@ -63,7 +63,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (action === 'detail') {
-      const html = await fetchHtml(String(url || ''))
+      const baseUrl = String(url || '')
+      const html = await fetchHtml(baseUrl)
       const $ = cheerio.load(html)
       const title = $('h1.subj, h3.subj, .info .subj').first().text().trim() ||
         $('meta[property="og:title"]').attr('content') || ''
@@ -73,21 +74,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         $('meta[property="og:description"]').attr('content') || ''
       const episodes: Array<Record<string, unknown>> = []
 
-      $('#_listUl > li, ul#_listUl > li').each((_, el) => {
-        const $li = $(el)
-        const $a = $li.find('a').first()
-        const href = $a.attr('href') || ''
-        if (!href) return
-        const epNo = Number($li.attr('data-episode-no')) || Number(href.match(/episode_no=(\d+)/)?.[1]) || null
-        episodes.push({
-          episodeNo: epNo,
-          title: $a.find('.subj span, .subj').first().text().trim() || $a.attr('title')?.trim() || $a.text().trim(),
-          thumbnail: $a.find('.thmb img, img').first().attr('src') || '',
-          url: href.startsWith('http') ? href : `${BASE}${href}`,
+      const parseEpisodeList = ($root: ReturnType<typeof cheerio.load>) => {
+        $root('#_listUl > li, ul#_listUl > li').each((_, el) => {
+          const $li = $root(el)
+          const $a = $li.find('a').first()
+          const href = $a.attr('href') || ''
+          if (!href) return
+          const epNo = Number($li.attr('data-episode-no')) || Number(href.match(/episode_no=(\d+)/)?.[1]) || null
+          episodes.push({
+            episodeNo: epNo,
+            title: $a.find('.subj span, .subj').first().text().trim() || $a.attr('title')?.trim() || $a.text().trim(),
+            thumbnail: $a.find('.thmb img, img').first().attr('src') || '',
+            url: href.startsWith('http') ? href : `${BASE}${href}`,
+          })
         })
+      }
+
+      // Halaman list webtoon dipaginasi (10 episode per halaman).
+      // Ambil semua halaman supaya daftar episode lengkap, bukan hanya 10 terbaru.
+      parseEpisodeList($)
+
+      let totalPages = 1
+      $('div.paginate a, .paginate a').each((_, el) => {
+        const t = Number($(el).text().trim())
+        if (Number.isFinite(t) && t > totalPages) totalPages = t
       })
 
-      return res.status(200).json({ title, thumbnail, synopsis, url, episodes })
+      const MAX_PAGES = 200 // safety cap (~2000 episode)
+      const lastPage = Math.min(totalPages, MAX_PAGES)
+      const sep = baseUrl.includes('?') ? '&' : '?'
+      for (let start = 2; start <= lastPage; start += 5) {
+        const end = Math.min(start + 4, lastPage)
+        const results = await Promise.allSettled(
+          Array.from({ length: end - start + 1 }, (_, i) => fetchHtml(`${baseUrl}${sep}page=${start + i}`))
+        )
+        for (const result of results) {
+          if (result.status !== 'fulfilled') continue
+          parseEpisodeList(cheerio.load(result.value))
+        }
+      }
+
+      return res.status(200).json({ title, thumbnail, synopsis, url, episodes: uniqueByUrl(episodes) })
     }
 
     if (action === 'pages') {
