@@ -25,12 +25,15 @@ import {
 import { useAuth } from '@/contexts/AuthContext'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
+import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 
 interface NavItem {
   label: string
   href: string
   icon: ReactNode
 }
+
+const MotionLink = motion(Link)
 
 export default function TopNavbar() {
   const router = useRouter()
@@ -60,6 +63,35 @@ export default function TopNavbar() {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
   const reduceMotion = useReducedMotion()
   const navRef = useRef<HTMLElement | null>(null)
+
+  const drawerContainerVariants = {
+    hidden: {},
+    visible: {
+      transition: reduceMotion
+        ? { staggerChildren: 0, delayChildren: 0 }
+        : { staggerChildren: 0.05, delayChildren: 0.05 },
+    },
+  }
+
+  const drawerItemVariants = {
+    hidden: { opacity: 0, y: reduceMotion ? 0 : motionTokens.distance.sm },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: reduceMotion ? 0 : adaptiveDuration(motionTokens.duration.fast),
+        ease: motionTokens.easing.smooth,
+      },
+    },
+  }
+
+  const themeIconInitial = reduceMotion ? { opacity: 0 } : { rotate: -90, scale: 0.5, opacity: 0 }
+  const themeIconAnimate = { rotate: 0, scale: 1, opacity: 1 }
+  const themeIconExit = reduceMotion ? { opacity: 0 } : { rotate: 90, scale: 0.5, opacity: 0 }
+  const themeIconTransition = {
+    duration: adaptiveDuration(motionTokens.duration.normal),
+    ease: motionTokens.easing.smooth,
+  }
   const drawerRef = useRef<HTMLElement | null>(null)
   const profileMenuRef = useRef<HTMLDivElement | null>(null)
 
@@ -180,12 +212,20 @@ export default function TopNavbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                className={`relative z-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
                   isActive(link.href)
                     ? 'text-primary dark:text-accent'
                     : 'text-[var(--color-text-muted)] hover:text-primary dark:hover:text-accent'
                 }`}
               >
+                {isActive(link.href) && (
+                  <motion.span
+                    layoutId="nav-active-pill"
+                    transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 32 }}
+                    className="absolute inset-0 -z-10 rounded-lg bg-primary/10 dark:bg-accent/15 pointer-events-none"
+                    aria-hidden="true"
+                  />
+                )}
                 {link.icon} {link.label}
               </Link>
             ))}
@@ -193,12 +233,20 @@ export default function TopNavbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                className={`relative z-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
                   isActive(link.href)
                     ? 'text-primary dark:text-accent'
                     : 'text-[var(--color-text-muted)] hover:text-primary dark:hover:text-accent'
                 }`}
               >
+                {isActive(link.href) && (
+                  <motion.span
+                    layoutId="nav-active-pill"
+                    transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 32 }}
+                    className="absolute inset-0 -z-10 rounded-lg bg-primary/10 dark:bg-accent/15 pointer-events-none"
+                    aria-hidden="true"
+                  />
+                )}
                 {link.icon} {link.label}
               </Link>
             ))}
@@ -219,7 +267,31 @@ export default function TopNavbar() {
               className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
               aria-label={t('nav.toggleTheme')}
             >
-              {isDark ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
+              <AnimatePresence mode="wait" initial={false}>
+                {isDark ? (
+                  <motion.span
+                    key="theme-sun"
+                    initial={themeIconInitial}
+                    animate={themeIconAnimate}
+                    exit={themeIconExit}
+                    transition={themeIconTransition}
+                    className="flex"
+                  >
+                    <Sun size={20} aria-hidden="true" />
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="theme-moon"
+                    initial={themeIconInitial}
+                    animate={themeIconAnimate}
+                    exit={themeIconExit}
+                    transition={themeIconTransition}
+                    className="flex"
+                  >
+                    <Moon size={20} aria-hidden="true" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
 
             <Link
@@ -346,11 +418,17 @@ export default function TopNavbar() {
               transition={reduceMotion ? { duration: 0 } : { type: 'spring', damping: 28, stiffness: 260 }}
               className="fixed top-[calc(4rem+env(safe-area-inset-top))] bottom-0 left-0 w-72 bg-surface dark:bg-surface-dark z-50 lg:hidden overflow-y-auto overscroll-contain custom-scrollbar border-r border-pearl/10 shadow-xl"
             >
-              <nav className="p-4 space-y-1">
+              <motion.nav
+                className="p-4 space-y-1"
+                initial="hidden"
+                animate="visible"
+                variants={drawerContainerVariants}
+              >
                 {NAV_LINKS.map((link) => (
-                  <Link
+                  <MotionLink
                     key={link.href}
                     href={link.href}
+                    variants={drawerItemVariants}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
                       isActive(link.href)
                         ? 'bg-primary/10 text-primary border border-primary/20'
@@ -358,11 +436,11 @@ export default function TopNavbar() {
                     }`}
                   >
                     {link.icon} {link.label}
-                  </Link>
+                  </MotionLink>
                 ))}
 
                 {/* Sosial */}
-                <div className="pt-3 mt-3 border-t border-pearl/10 space-y-1">
+                <motion.div variants={drawerItemVariants} className="pt-3 mt-3 border-t border-pearl/10 space-y-1">
                   <p className="px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-[var(--color-text-muted)]">{t('nav.social')}</p>
                   {SOCIAL_LINKS.map((link) => (
                     <Link
@@ -377,10 +455,10 @@ export default function TopNavbar() {
                       {link.icon} {link.label}
                     </Link>
                   ))}
-                </div>
+                </motion.div>
 
                 {/* Settings */}
-                <div className="pt-3 mt-3 border-t border-pearl/10 space-y-1">
+                <motion.div variants={drawerItemVariants} className="pt-3 mt-3 border-t border-pearl/10 space-y-1">
                   <Link
                     href="/settings"
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
@@ -391,10 +469,10 @@ export default function TopNavbar() {
                   >
                     <Settings size={18} aria-hidden="true" /> {t('nav.settings')}
                   </Link>
-                </div>
+                </motion.div>
 
                 {/* Account */}
-                <div className="pt-3 mt-3 border-t border-pearl/10 space-y-2">
+                <motion.div variants={drawerItemVariants} className="pt-3 mt-3 border-t border-pearl/10 space-y-2">
                   {authLoading ? (
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-pearl/5 animate-pulse">
                       <div className="w-9 h-9 rounded-full bg-pearl/10 shrink-0" />
@@ -435,8 +513,8 @@ export default function TopNavbar() {
                       {t('nav.loginRegister')}
                     </Link>
                   )}
-                </div>
-              </nav>
+                </motion.div>
+              </motion.nav>
             </motion.aside>
           </>
         )}

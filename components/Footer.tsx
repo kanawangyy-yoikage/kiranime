@@ -1,12 +1,37 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail } from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
+import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 
 export default function Footer() {
   const { language } = useSettings()
   const t = (key: string) => translate(language, key)
+  const reduce = useReducedMotion()
+
+  const staggerContainer = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.05,
+      },
+    },
+  }
+
+  const staggerItem = {
+    hidden: { opacity: 0, y: reduce ? 0 : motionTokens.distance.sm },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: adaptiveDuration(motionTokens.duration.normal),
+        ease: motionTokens.easing.smooth,
+      },
+    },
+  }
 
   const NAV_COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
     {
@@ -40,9 +65,15 @@ export default function Footer() {
   return (
     <footer className="site-footer border-t border-pearl/10 bg-surface dark:bg-surface-dark mt-10 pb-24 lg:pb-8">
       <div className="mx-auto max-w-[1600px] px-4 md:px-6 lg:px-8 py-10">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          className="grid gap-8 md:grid-cols-2 lg:grid-cols-4"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+        >
           {/* Brand */}
-          <div>
+          <motion.div variants={staggerItem}>
             <Link href="/" className="flex items-center gap-2.5">
               <Image src="/icons/icon-96x96.png" alt="" width={36} height={36} className="rounded-xl" />
               <Image src="/logo-title.png" alt="KiraStream" width={130} height={43} className="h-8 w-auto object-contain" />
@@ -50,11 +81,11 @@ export default function Footer() {
             <p className="mt-4 text-sm leading-6 text-[var(--color-text-muted)]">
               {t('footer.tagline')}
             </p>
-          </div>
+          </motion.div>
 
           {/* Nav columns */}
           {NAV_COLUMNS.map((col) => (
-            <div key={col.title}>
+            <motion.div key={col.title} variants={staggerItem}>
               <h3 className="font-bold text-sm uppercase tracking-wider mb-4">{col.title}</h3>
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
@@ -68,11 +99,11 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
 
           {/* Contact */}
-          <div>
+          <motion.div variants={staggerItem}>
             <h3 className="font-bold text-sm uppercase tracking-wider mb-4">{t('footer.contact')}</h3>
             <ul className="space-y-3 text-sm text-[var(--color-text-muted)]">
               <li>
@@ -84,8 +115,8 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Disclaimer */}
         <div className="mt-10 rounded-2xl border border-pearl/10 bg-pearl/[0.03] p-5">

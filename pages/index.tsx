@@ -14,6 +14,8 @@ import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 
+const MotionLink = motion(Link)
+
 interface WebtoonItem {
   title: string
   thumbnail?: string
@@ -162,14 +164,17 @@ export default function Home() {
             {/* Quick category links */}
             <motion.div variants={heroItem} className="mt-9 grid w-full max-w-2xl grid-cols-2 gap-2.5 sm:grid-cols-4">
               {quickLinks.map(({ href, label, Icon }) => (
-                <Link
+                <MotionLink
                   key={href}
                   href={href}
                   className="flex items-center justify-center gap-2 rounded-full border border-[var(--color-border)] bg-surface px-4 py-2.5 text-sm font-semibold text-[var(--color-text)] dark:bg-surface-dark transition-colors hover:border-ocean hover:text-ocean dark:hover:border-accent dark:hover:text-accent"
+                  whileHover={reduce ? undefined : { scale: 1.03 }}
+                  whileTap={reduce ? undefined : { scale: 0.97 }}
+                  transition={{ duration: adaptiveDuration(motionTokens.duration.fast), ease: motionTokens.easing.smooth }}
                 >
                   <Icon size={16} className="text-ocean dark:text-accent" aria-hidden="true" />
                   {label}
-                </Link>
+                </MotionLink>
               ))}
             </motion.div>
           </motion.div>
@@ -228,7 +233,11 @@ export default function Home() {
           ) : (
             <div className="anime-grid">
               {data.webtoons.slice(0, 8).map((item) => (
-                <Link key={item.url} href={`/webtoon/${encodeURIComponent(item.url)}`} className="anime-card group">
+                <MotionLink key={item.url} href={`/webtoon/${encodeURIComponent(item.url)}`} className="anime-card group"
+                  whileHover={reduce ? undefined : { y: -4 }}
+                  whileTap={reduce ? undefined : { scale: 0.98 }}
+                  transition={{ duration: adaptiveDuration(motionTokens.duration.fast), ease: motionTokens.easing.smooth }}
+                >
                   <div className="relative aspect-[3/4] bg-[var(--color-surface-alt)]">
                     {item.thumbnail ? (
                       <Image src={`/api/proxy?url=${encodeURIComponent(item.thumbnail || '')}`} alt={item.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
@@ -241,7 +250,7 @@ export default function Home() {
                   <div className="p-2.5">
                     <h3 className="line-clamp-2 text-xs font-semibold sm:text-sm" style={textStyle()}>{item.title}</h3>
                   </div>
-                </Link>
+                </MotionLink>
               ))}
             </div>
           )}
@@ -258,13 +267,17 @@ export default function Home() {
                   </div>
                   <div className="grid grid-cols-3 gap-3">
                     {animes.slice(0, 3).map((anime) => (
-                      <Link key={anime.slug} href={`/anime/${anime.slug}`} className="group">
+                      <MotionLink key={anime.slug} href={`/anime/${anime.slug}`} className="group"
+                        whileHover={reduce ? undefined : { y: -4 }}
+                        whileTap={reduce ? undefined : { scale: 0.98 }}
+                        transition={{ duration: adaptiveDuration(motionTokens.duration.fast), ease: motionTokens.easing.smooth }}
+                      >
                         <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-[var(--color-surface-alt)]">
                           <Image src={`/api/mal-image?url=${encodeURIComponent(anime.image || '')}`} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                           {anime.episode && <div className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-sm px-1 py-1 text-center text-xs font-bold text-white">Ep {anime.episode}</div>}
                         </div>
                         <p className="mt-1 line-clamp-2 text-center text-xs font-medium" style={textStyle()}>{anime.title}</p>
-                      </Link>
+                      </MotionLink>
                     ))}
                   </div>
                 </div>
@@ -277,7 +290,11 @@ export default function Home() {
           <Section title={t('section.seasonal')} jp="今期" viewAll="/seasonal">
             <div className="anime-grid">
               {data.malSeason.slice(0, 8).map((anime) => (
-                <Link key={anime.mal_id} href={`/mal/${anime.mal_id}`} className="anime-card group">
+                <MotionLink key={anime.mal_id} href={`/mal/${anime.mal_id}`} className="anime-card group"
+                  whileHover={reduce ? undefined : { y: -4 }}
+                  whileTap={reduce ? undefined : { scale: 0.98 }}
+                  transition={{ duration: adaptiveDuration(motionTokens.duration.fast), ease: motionTokens.easing.smooth }}
+                >
                   <div className="relative aspect-[3/4] bg-[var(--color-surface-alt)]">
                     <Image src={`/api/mal-image?url=${encodeURIComponent(anime.images.jpg.large_image_url || anime.images.jpg.image_url || '')}`} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                     <div className="absolute right-2 top-2 rounded-full bg-primary/90 dark:bg-accent/90 px-2 py-1 text-xs font-bold text-white backdrop-blur-sm">{anime.score?.toFixed(1) || 'N/A'}</div>
@@ -285,7 +302,7 @@ export default function Home() {
                   <div className="p-2.5">
                     <h3 className="truncate text-sm font-semibold" style={textStyle()}>{anime.title}</h3>
                   </div>
-                </Link>
+                </MotionLink>
               ))}
             </div>
           </Section>

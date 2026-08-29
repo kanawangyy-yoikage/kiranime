@@ -6,16 +6,26 @@ import type { Anime } from '@/lib/api'
 import { staggerContainer, staggerItem } from './motionVariants'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
+import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 
 // Helper untuk proxy gambar
 const imageProxy = (url: string) => `/api/mal-image?url=${encodeURIComponent(url)}`
 
+const MotionLink = motion(Link)
+
 const AnimeCard = ({ anime }: { anime: Anime }) => {
   const { language } = useSettings()
+  const reduce = useReducedMotion()
   const t = (key: string) => translate(language, key)
   return (
     <motion.div variants={staggerItem}>
-      <Link href={`/anime/${anime.slug}`} className="anime-card group block">
+      <MotionLink
+        href={`/anime/${anime.slug}`}
+        className="anime-card group block"
+        whileHover={reduce ? undefined : { y: -4 }}
+        whileTap={reduce ? undefined : { scale: 0.98 }}
+        transition={{ duration: adaptiveDuration(motionTokens.duration.fast), ease: motionTokens.easing.smooth }}
+      >
         <div className="relative aspect-[3/4] bg-[var(--color-surface-alt)] overflow-hidden">
           <Image
             src={imageProxy(anime.image)}
@@ -34,7 +44,7 @@ const AnimeCard = ({ anime }: { anime: Anime }) => {
             {anime.title}
           </h3>
         </div>
-      </Link>
+      </MotionLink>
     </motion.div>
   )
 }

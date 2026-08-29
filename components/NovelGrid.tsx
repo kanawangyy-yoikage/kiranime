@@ -3,10 +3,13 @@ import { Star } from 'lucide-react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Novel } from '@/lib/api'
 import { staggerContainer, staggerItem } from './motionVariants'
+import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 
 interface NovelGridProps {
   novels: Novel[]
 }
+
+const MotionLink = motion(Link)
 
 export default function NovelGrid({ novels }: NovelGridProps) {
   const reduce = useReducedMotion()
@@ -20,9 +23,12 @@ export default function NovelGrid({ novels }: NovelGridProps) {
     >
       {novels.map((novel) => (
         <motion.div key={novel.slug} variants={staggerItem}>
-          <Link
+          <MotionLink
             href={`/novel/${novel.slug}`}
             className="card group hover:scale-105 transition-transform duration-200 block"
+            whileHover={reduce ? undefined : { y: -4 }}
+            whileTap={reduce ? undefined : { scale: 0.98 }}
+            transition={{ duration: adaptiveDuration(motionTokens.duration.fast), ease: motionTokens.easing.smooth }}
           >
             <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-surface dark:bg-surface-dark">
               {novel.image ? (
@@ -70,7 +76,7 @@ export default function NovelGrid({ novels }: NovelGridProps) {
                 <p className="text-xs text-[var(--color-text-muted)] mt-1 capitalize">{novel.status}</p>
               ) : null}
             </div>
-          </Link>
+          </MotionLink>
         </motion.div>
       ))}
     </motion.div>

@@ -5,10 +5,13 @@ import { Comic } from '@/lib/api'
 import { staggerContainer, staggerItem } from './motionVariants'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
+import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 
 interface ComicGridProps {
   comics: Comic[]
 }
+
+const MotionLink = motion(Link)
 
 export default function ComicGrid({ comics }: ComicGridProps) {
   const reduce = useReducedMotion()
@@ -24,9 +27,12 @@ export default function ComicGrid({ comics }: ComicGridProps) {
     >
       {comics.map((comic) => (
         <motion.div key={comic.slug} variants={staggerItem}>
-          <Link
+          <MotionLink
             href={`/manga/${comic.slug}`}
             className="card group hover:scale-105 transition-transform duration-200 block"
+            whileHover={reduce ? undefined : { y: -4 }}
+            whileTap={reduce ? undefined : { scale: 0.98 }}
+            transition={{ duration: adaptiveDuration(motionTokens.duration.fast), ease: motionTokens.easing.smooth }}
           >
             <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-surface dark:bg-surface-dark">
               {comic.image ? (
@@ -68,7 +74,7 @@ export default function ComicGrid({ comics }: ComicGridProps) {
                 <p className="text-xs text-[var(--color-text-muted)] mt-1 capitalize">{comic.status}</p>
               )}
             </div>
-          </Link>
+          </MotionLink>
         </motion.div>
       ))}
     </motion.div>
