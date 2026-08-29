@@ -77,20 +77,20 @@ export default function AnimeHomePage() {
             <LandscapeSlider kind="anime" items={slides} imageProxy={imageProxy} />
           ) : null}
 
-          <Section title={t('section.ongoing')} viewAll="/ongoing">
+          <Section title={t('section.ongoing')} jp="放送中" viewAll="/ongoing">
             {loading
               ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
               : <AnimeGrid animes={latest.slice(0, 8)} />}
           </Section>
 
-          <Section title={t('section.popular')} viewAll="/popular">
+          <Section title={t('section.popular')} jp="人気" viewAll="/popular">
             {loading
               ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
               : <AnimeGrid animes={popular.slice(0, 8)} />}
           </Section>
 
           {!loading && completed.length > 0 && (
-            <Section title={t('section.completedAiring')} viewAll="/completed">
+            <Section title={t('section.completedAiring')} jp="完結" viewAll="/completed">
               <div className="grid gap-4 md:grid-cols-2">
                 {completed.slice(0, 2).map((a) => (
                   <LandscapeSpotlight key={a.slug} {...toSpotlight(a)} imageProxy={imageProxy} />

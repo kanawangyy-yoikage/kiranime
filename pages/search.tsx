@@ -161,25 +161,25 @@ export default function SearchPage() {
             {hasResults ? (
               <>
                 {activeType === 'anime' && (
-                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(animeResults.length))}>
+                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(animeResults.length))} jp="アニメ">
                     <AnimeGrid animes={animeResults} />
                   </Section>
                 )}
 
                 {activeType === 'manga' && (
-                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(mangaResults.length))}>
+                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(mangaResults.length))} jp="漫画">
                     <ComicGrid comics={mangaResults} />
                   </Section>
                 )}
 
                 {activeType === 'novel' && (
-                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(novelResults.length))}>
+                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(novelResults.length))} jp="小説">
                     <NovelGrid novels={novelResults} />
                   </Section>
                 )}
 
                 {activeType === 'webtoon' && (
-                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(webtoonResults.length))}>
+                  <Section title={t('search.results').replace('{q}', String(q)).replace('{n}', String(webtoonResults.length))} jp="コミック">
                     <div className="anime-grid">
                       {webtoonResults.map((item, i) => (
                         <Link key={i} href={`/webtoon/${encodeURIComponent(item.url)}`} className="anime-card group">
@@ -216,7 +216,7 @@ export default function SearchPage() {
 
             {/* MAL Results (only for anime tab) */}
             {activeType === 'anime' && malResults.length > 0 && (
-              <Section title={t('search.malResults')}>
+              <Section title={t('search.malResults')} jp="検索結果">
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                   {malResults.slice(0, 6).map((anime) => (
                     <a

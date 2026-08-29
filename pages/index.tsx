@@ -175,12 +175,12 @@ export default function Home() {
           </motion.div>
         </section>
 
-        <Section title={t('section.latest')} viewAll="/ongoing">
+        <Section title={t('section.latest')} jp="新着" viewAll="/ongoing">
           {loading ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div> : <AnimeGrid animes={data.latest.slice(0, 8)} />}
         </Section>
 
         {data.completed.length > 0 && (
-          <Section title={t('section.completedAiring')} viewAll="/completed">
+          <Section title={t('section.completedAiring')} jp="完結" viewAll="/completed">
             {loading ? (
               <div className="skeleton min-h-[200px] rounded-3xl" />
             ) : (
@@ -200,7 +200,7 @@ export default function Home() {
         )}
 
         {data.completedWebtoons.length > 0 && (
-          <Section title={t('section.finishedReading')} viewAll="/webtoon?day=completed">
+          <Section title={t('section.finishedReading')} jp="読了" viewAll="/webtoon?day=completed">
             <div className="grid gap-4 sm:grid-cols-2">
               {data.completedWebtoons.slice(0, 2).map((item) => (
                 <LandscapeSpotlight
@@ -216,11 +216,11 @@ export default function Home() {
           </Section>
         )}
 
-        <Section title={t('section.popular')} viewAll="/popular">
+        <Section title={t('section.popular')} jp="人気" viewAll="/popular">
           {loading ? <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div> : <AnimeGrid animes={data.popular.slice(0, 8)} />}
         </Section>
 
-        <Section title={t('nav.webtoon')} viewAll="/webtoon">
+        <Section title={t('nav.webtoon')} jp="漫画" viewAll="/webtoon">
           {loading ? (
             <div className="anime-grid">{Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)}</div>
           ) : data.webtoons.length === 0 ? (
@@ -248,7 +248,7 @@ export default function Home() {
         </Section>
 
         {Object.keys(data.schedule).length > 0 && (
-          <Section title={t('section.schedule')} viewAll="/schedule">
+          <Section title={t('section.schedule')} jp="放送予定" viewAll="/schedule">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {Object.entries(data.schedule).slice(0, 6).map(([day, animes]) => (
                 <div key={day} className="card p-4">
@@ -274,7 +274,7 @@ export default function Home() {
         )}
 
         {data.malSeason.length > 0 && (
-          <Section title={t('section.seasonal')} viewAll="/seasonal">
+          <Section title={t('section.seasonal')} jp="今期" viewAll="/seasonal">
             <div className="anime-grid">
               {data.malSeason.slice(0, 8).map((anime) => (
                 <Link key={anime.mal_id} href={`/mal/${anime.mal_id}`} className="anime-card group">

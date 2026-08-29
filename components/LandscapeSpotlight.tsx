@@ -70,6 +70,20 @@ export default function LandscapeSpotlight({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/20" aria-hidden="true" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" aria-hidden="true" />
+            {/* Aksen katakana vertikal 縦書き (dekoratif, brand) */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute right-4 top-5 hidden select-none text-white/20 sm:right-8 sm:top-7 sm:block"
+              style={{
+                writingMode: 'vertical-rl',
+                fontFamily: 'var(--font-noto-jp)',
+                fontWeight: 700,
+                fontSize: '1.5rem',
+                letterSpacing: '0.4em',
+              }}
+            >
+              キラストリーム
+            </span>
           </>
         )}
 
