@@ -228,8 +228,8 @@ export default function TopNavbar() {
                   className="group !px-3.5 !py-2 !rounded-full"
                   labelClassName={
                     isActive(link.href)
-                      ? 'text-primary dark:text-accent'
-                      : 'text-[var(--color-text-muted)] group-hover:text-primary dark:group-hover:text-accent'
+                      ? '!text-primary dark:!text-accent'
+                      : '!text-[var(--color-text-muted)] group-hover:!text-primary dark:group-hover:!text-accent'
                   }
                 >
                   {link.icon} {link.label}
@@ -264,8 +264,8 @@ export default function TopNavbar() {
                   className="group !px-3.5 !py-2 !rounded-full"
                   labelClassName={
                     isActive(link.href)
-                      ? 'text-primary dark:text-accent'
-                      : 'text-[var(--color-text-muted)] group-hover:text-primary dark:group-hover:text-accent'
+                      ? '!text-primary dark:!text-accent'
+                      : '!text-[var(--color-text-muted)] group-hover:!text-primary dark:group-hover:!text-accent'
                   }
                 >
                   {link.icon} {link.label}

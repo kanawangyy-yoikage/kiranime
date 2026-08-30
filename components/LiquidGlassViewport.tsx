@@ -520,7 +520,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({ renderMode, labelClassName,
     {/* Inner Label wrapper with horizontal flex layout to align icon and text side-by-side */}
     <span
       className={cn(
-        "relative z-20 text-sm font-semibold tracking-wide text-black/85 select-none pointer-events-none flex items-center justify-center gap-2",
+        "relative z-20 text-sm font-semibold tracking-wide text-[var(--color-text)] select-none pointer-events-none flex items-center justify-center gap-2",
         labelClassName
       )}
     >
