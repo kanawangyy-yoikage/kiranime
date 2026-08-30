@@ -25,6 +25,7 @@ interface LiquidGlassContextType {
   registerButton: (id: string, element: HTMLElement) => void;
   unregisterButton: (id: string) => void;
   mode: "svg" | "webgl" | "blur";
+  backdropUrlSupported: boolean;
 }
 
 // --- Context Configuration ---
@@ -33,6 +34,67 @@ const LiquidGlassContext = React.createContext<LiquidGlassContextType | null>(nu
 const BINS = 24;
 const DISP_SCALE = 35;
 const LIGHT_SOURCE = { x: 0.5, y: 0.0 }; // Fixed scene light source (top-center)
+
+// --- Shared lens displacement map generation ---
+export interface LensMap {
+  width: number;
+  height: number;
+  data: Uint8ClampedArray;
+  url: string;
+}
+
+/**
+ * Generates a smooth convex-lens displacement map as a PNG data URL.
+ * Outside the superellipse the channels stay neutral (128) so no displacement
+ * occurs; inside, the vector field points outward from center, producing a
+ * refractive (magnifying) lens when fed into feDisplacementMap / the WebGL
+ * shader. `alphaOutside` keeps the outside transparent for the WebGL texture
+ * (skip-tested via dm.a) but opaque for the per-surface SVG backdrop filters.
+ */
+export const createLensMap = (width: number, height: number, alphaOutside = 255): LensMap | null => {
+  const w = Math.max(1, Math.round(width) || 0);
+  const h = Math.max(1, Math.round(height) || 0);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+
+  const imgData = ctx.createImageData(w, h);
+  const data = imgData.data;
+  const power = 3.5;
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const nx = (x / w) * 2 - 1;
+      const ny = (y / h) * 2 - 1;
+      const d = Math.pow(Math.abs(nx), power) + Math.pow(Math.abs(ny), power);
+
+      let r = 128, g = 128, a = alphaOutside;
+
+      if (d <= 1) {
+        const curveMagnitude = Math.sin(Math.pow(d, 0.8) * Math.PI);
+        const dx = -nx * curveMagnitude;
+        const dy = -ny * curveMagnitude;
+
+        r = Math.round(128 + dx * 127);
+        g = Math.round(128 + dy * 127);
+        a = 255;
+      }
+
+      const index = (y * w + x) * 4;
+      data[index] = r;
+      data[index + 1] = g;
+      data[index + 2] = 128;
+      data[index + 3] = a;
+    }
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+  return { width: w, height: h, data, url: canvas.toDataURL("image/png") };
+};
 
 // --- Viewport Wrapper Component ---
 export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassViewportProps>(
@@ -48,6 +110,7 @@ export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassV
     const filterId1 = React.useId().replace(/:/g, "-") + "1";
 
     const [mode, setMode] = React.useState<"svg" | "webgl" | "blur">("svg");
+    const [backdropUrlSupported, setBackdropUrlSupported] = React.useState(false);
     const buttonsRef = React.useRef<Record<string, HTMLElement>>({});
     
     const activeFilter = React.useRef(0);
@@ -66,52 +129,12 @@ export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassV
     const glLocRef = React.useRef<Record<string, WebGLUniformLocation | null>>({});
     const glReadyRef = React.useRef(false);
 
-    // Dynamic Displacement Generator
+    // Dynamic Displacement Generator (shared map, cached for scene-light analysis)
     const generateSmoothConvexMap = React.useCallback((width: number, height: number, renderMode: string) => {
-      const w = Math.max(1, Math.round(width) || 0);
-      const h = Math.max(1, Math.round(height) || 0);
-
-      const canvas = document.createElement("canvas");
-      canvas.width = w;
-      canvas.height = h;
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return null;
-
-      const imgData = ctx.createImageData(w, h);
-      const data = imgData.data;
-      const power = 3.5;
-
-      for (let y = 0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-          const nx = (x / w) * 2 - 1;
-          const ny = (y / h) * 2 - 1;
-          const d = Math.pow(Math.abs(nx), power) + Math.pow(Math.abs(ny), power);
-
-          let r = 128, g = 128, a = 0;
-
-          if (d <= 1) {
-            const curveMagnitude = Math.sin(Math.pow(d, 0.8) * Math.PI);
-            const dx = -nx * curveMagnitude;
-            const dy = -ny * curveMagnitude;
-
-            r = Math.round(128 + dx * 127);
-            g = Math.round(128 + dy * 127);
-            a = 255;
-          }
-
-          const index = (y * w + x) * 4;
-          data[index] = r;
-          data[index + 1] = g;
-          data[index + 2] = 128;
-          data[index + 3] = renderMode === "webgl" ? a : 255;
-        }
-      }
-
-      ctx.putImageData(imgData, 0, 0);
-      const url = canvas.toDataURL("image/png");
-      lastMapRef.current = { width: w, height: h, data, url };
-      return url;
+      const map = createLensMap(width, height, renderMode === "webgl" ? 0 : 255);
+      if (!map) return null;
+      lastMapRef.current = map;
+      return map.url;
     }, []);
 
     const analyzeRefraction = React.useCallback((lightAz: number) => {
@@ -288,6 +311,24 @@ export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassV
       delete buttonsRef.current[id];
     }, []);
 
+    // Feature-detect SVG-filter references inside backdrop-filter. Only browsers
+    // that resolve `url(#filter)` in backdrop-filter get the refractive
+    // per-surface treatment; the rest fall back to the plain blur.
+    React.useEffect(() => {
+      if (typeof window === "undefined" || typeof CSS === "undefined" || !CSS.supports) {
+        setBackdropUrlSupported(false);
+        return;
+      }
+      try {
+        const probe = "url(#liquid-glass-probe) blur(1px)";
+        const std = CSS.supports("backdrop-filter", probe);
+        const webkit = CSS.supports("-webkit-backdrop-filter", probe);
+        setBackdropUrlSupported(std || webkit);
+      } catch {
+        setBackdropUrlSupported(false);
+      }
+    }, []);
+
     // --- Dynamic Coordinates Viewport Tracking Loop ---
     React.useEffect(() => {
       const container = containerRef.current;
@@ -423,8 +464,9 @@ export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassV
     const contextValue = React.useMemo(() => ({
       registerButton,
       unregisterButton,
-      mode
-    }), [registerButton, unregisterButton, mode]);
+      mode,
+      backdropUrlSupported
+    }), [registerButton, unregisterButton, mode, backdropUrlSupported]);
 
     return (
       <LiquidGlassContext.Provider value={contextValue}>
@@ -475,19 +517,42 @@ LiquidGlassViewport.displayName = "LiquidGlassViewport";
 // --- Shared glass surface layers (specular + rim + label) ---
 interface GlassSurfaceProps {
   renderMode: "svg" | "webgl" | "blur";
+  filterId: string;
+  surfaceMap: LensMap | null;
+  backdropUrlSupported: boolean;
   labelClassName?: string;
   children?: React.ReactNode;
 }
 
-const GlassSurface: React.FC<GlassSurfaceProps> = ({ renderMode, labelClassName, children }) => (
-  <>
-    {/* Specular layer / bevel highlight styles */}
-    <span
-      className="absolute inset-0 rounded-[inherit] pointer-events-none z-0"
-      style={{
-        background: renderMode === "webgl" ? "transparent" : "color-mix(in srgb, white 25%, transparent)",
-        backdropFilter: renderMode === "webgl" ? "none" : "blur(2px) saturate(180%) brightness(1.05)",
-        WebkitBackdropFilter: renderMode === "webgl" ? "none" : "blur(1px) saturate(180%) brightness(1.05)",
+const GlassSurface: React.FC<GlassSurfaceProps> = ({ renderMode, filterId, surfaceMap, backdropUrlSupported, labelClassName, children }) => {
+  // Refractive (lens) backdrop: only Chromium/Edge render SVG url() references
+  // inside backdrop-filter, and only when a per-surface displacement map exists.
+  const useRefractiveBackdrop = renderMode === "svg" && backdropUrlSupported && !!surfaceMap;
+
+  return (
+    <>
+      {useRefractiveBackdrop && surfaceMap && (
+        <svg className="absolute w-0 h-0 overflow-hidden pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id={filterId} x="0" y="0" width={surfaceMap.width} height={surfaceMap.height} filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+              <feImage href={surfaceMap.url} width="100%" height="100%" preserveAspectRatio="none" result="lens" />
+              <feDisplacementMap in="SourceGraphic" in2="lens" scale={DISP_SCALE.toString()} xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </defs>
+        </svg>
+      )}
+
+      {/* Specular layer / bevel highlight styles */}
+      <span
+        className="absolute inset-0 rounded-[inherit] pointer-events-none z-0"
+        style={{
+          background: renderMode === "webgl" ? "transparent" : "color-mix(in srgb, white 25%, transparent)",
+          backdropFilter: renderMode === "webgl"
+            ? "none"
+            : useRefractiveBackdrop
+              ? `url(#${filterId}) blur(2px) saturate(180%) brightness(1.05)`
+              : "blur(2px) saturate(180%) brightness(1.05)",
+          WebkitBackdropFilter: renderMode === "webgl" ? "none" : "blur(1px) saturate(180%) brightness(1.05)",
         backgroundImage: renderMode === "webgl" ? "none" : "radial-gradient(circle at calc(50% - var(--cos) * 50%) calc(50% - var(--sin) * 50%), rgba(255,255,255,0.2) 0%, transparent 60%)",
         boxShadow: `
               inset 0 0 0 1px color-mix(in srgb, white calc(var(--rim-intensity) * 20%), transparent),
@@ -526,8 +591,44 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({ renderMode, labelClassName,
     >
       {children}
     </span>
-  </>
-);
+    </>
+  );
+};
+
+// Shared per-surface displacement map generation for refractive backdrops.
+// Generates a full-size lens map sized to the element; re-generates on resize.
+// Only active in svg mode when the browser supports url() in backdrop-filter.
+function useSurfaceLensMap(
+  elementRef: React.RefObject<HTMLElement | null>,
+  enabled: boolean
+): LensMap | null {
+  const [map, setMap] = React.useState<LensMap | null>(null);
+
+  React.useEffect(() => {
+    if (!enabled) {
+      setMap(null);
+      return;
+    }
+    const el = elementRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const w = el.offsetWidth || 180;
+      const h = el.offsetHeight || 60;
+      setMap(createLensMap(w, h, 255));
+    };
+    update();
+
+    if (typeof ResizeObserver !== "undefined") {
+      const ro = new ResizeObserver(update);
+      ro.observe(el);
+      return () => ro.disconnect();
+    }
+    return undefined;
+  }, [elementRef, enabled]);
+
+  return map;
+}
 
 // --- Glass Button Component ---
 export const LiquidGlassButton = React.forwardRef<HTMLButtonElement, LiquidGlassButtonProps>(
@@ -536,6 +637,7 @@ export const LiquidGlassButton = React.forwardRef<HTMLButtonElement, LiquidGlass
     const internalRef = React.useRef<HTMLButtonElement>(null);
     const activeRef = (ref as React.RefObject<HTMLButtonElement>) || internalRef;
     const buttonId = React.useId();
+    const filterId = buttonId.replace(/:/g, "-") + "-surface";
 
     React.useEffect(() => {
       if (context && activeRef.current) {
@@ -549,6 +651,8 @@ export const LiquidGlassButton = React.forwardRef<HTMLButtonElement, LiquidGlass
     }, [context, activeRef, buttonId]);
 
     const renderMode = context ? context.mode : "svg";
+    const backdropUrlSupported = context?.backdropUrlSupported ?? false;
+    const surfaceMap = useSurfaceLensMap(activeRef, renderMode === "svg" && backdropUrlSupported);
 
     return (
       <button
@@ -566,7 +670,7 @@ export const LiquidGlassButton = React.forwardRef<HTMLButtonElement, LiquidGlass
         } as React.CSSProperties}
         {...props}
       >
-        <GlassSurface renderMode={renderMode} labelClassName={labelClassName}>
+        <GlassSurface renderMode={renderMode} filterId={filterId} surfaceMap={surfaceMap} backdropUrlSupported={backdropUrlSupported} labelClassName={labelClassName}>
           {children}
         </GlassSurface>
       </button>
@@ -581,6 +685,7 @@ export const LiquidGlassLink = React.forwardRef<HTMLAnchorElement, LiquidGlassLi
     const internalRef = React.useRef<HTMLAnchorElement>(null);
     const activeRef = (ref as React.RefObject<HTMLAnchorElement>) || internalRef;
     const linkId = React.useId();
+    const filterId = linkId.replace(/:/g, "-") + "-surface";
 
     React.useEffect(() => {
       if (context && activeRef.current) {
@@ -594,6 +699,8 @@ export const LiquidGlassLink = React.forwardRef<HTMLAnchorElement, LiquidGlassLi
     }, [context, activeRef, linkId]);
 
     const renderMode = context ? context.mode : "svg";
+    const backdropUrlSupported = context?.backdropUrlSupported ?? false;
+    const surfaceMap = useSurfaceLensMap(activeRef, renderMode === "svg" && backdropUrlSupported);
 
     return (
       <Link
@@ -611,7 +718,7 @@ export const LiquidGlassLink = React.forwardRef<HTMLAnchorElement, LiquidGlassLi
         } as React.CSSProperties}
         {...props}
       >
-        <GlassSurface renderMode={renderMode} labelClassName={labelClassName}>
+        <GlassSurface renderMode={renderMode} filterId={filterId} surfaceMap={surfaceMap} backdropUrlSupported={backdropUrlSupported} labelClassName={labelClassName}>
           {children}
         </GlassSurface>
       </Link>
