@@ -27,6 +27,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
+import { LiquidGlassButton } from './LiquidGlassViewport'
 
 interface NavItem {
   label: string
@@ -39,7 +40,7 @@ const MotionLink = motion(Link)
 export default function TopNavbar() {
   const router = useRouter()
   const { user, profile, loading: authLoading, logout } = useAuth()
-  const { language } = useSettings()
+  const { language, liquidGlass } = useSettings()
   const t = (key: string) => translate(language, key)
 
   const NAV_LINKS: NavItem[] = [
@@ -194,13 +195,23 @@ export default function TopNavbar() {
         <div className="mx-auto max-w-[1600px] h-full px-4 md:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Left: Logo + mobile menu */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setDrawerOpen(!drawerOpen)}
-              className="lg:hidden p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
-              aria-label={t('nav.openMenu')}
-            >
-              {drawerOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
+            {liquidGlass ? (
+              <LiquidGlassButton
+                onClick={() => setDrawerOpen(!drawerOpen)}
+                className="lg:hidden !p-2 !rounded-full text-[var(--color-text)]"
+                aria-label={t('nav.openMenu')}
+              >
+                {drawerOpen ? <X size={22} /> : <Menu size={22} />}
+              </LiquidGlassButton>
+            ) : (
+              <button
+                onClick={() => setDrawerOpen(!drawerOpen)}
+                className="lg:hidden p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
+                aria-label={t('nav.openMenu')}
+              >
+                {drawerOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+            )}
             <Link href="/" className="flex items-center gap-2 transition-transform hover:scale-105">
               <Image src="/icons/icon-96x96.png" alt="" width={32} height={32} className="rounded-lg" />
               <Image src="/logo-title.png" alt="KiraStream" width={110} height={36} className="h-7 w-auto object-contain" priority />
@@ -255,45 +266,89 @@ export default function TopNavbar() {
 
           {/* Right: Actions */}
           <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
-              aria-label={t('nav.search')}
-            >
-              <Search size={20} aria-hidden="true" />
-            </button>
+            {liquidGlass ? (
+              <LiquidGlassButton
+                onClick={() => setSearchOpen(!searchOpen)}
+                className="!p-2 !rounded-full text-[var(--color-text)]"
+                aria-label={t('nav.search')}
+              >
+                <Search size={20} aria-hidden="true" />
+              </LiquidGlassButton>
+            ) : (
+              <button
+                onClick={() => setSearchOpen(!searchOpen)}
+                className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
+                aria-label={t('nav.search')}
+              >
+                <Search size={20} aria-hidden="true" />
+              </button>
+            )}
 
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
-              aria-label={t('nav.toggleTheme')}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {isDark ? (
-                  <motion.span
-                    key="theme-sun"
-                    initial={themeIconInitial}
-                    animate={themeIconAnimate}
-                    exit={themeIconExit}
-                    transition={themeIconTransition}
-                    className="flex"
-                  >
-                    <Sun size={20} aria-hidden="true" />
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key="theme-moon"
-                    initial={themeIconInitial}
-                    animate={themeIconAnimate}
-                    exit={themeIconExit}
-                    transition={themeIconTransition}
-                    className="flex"
-                  >
-                    <Moon size={20} aria-hidden="true" />
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </button>
+            {liquidGlass ? (
+              <LiquidGlassButton
+                onClick={toggleTheme}
+                className="!p-2 !rounded-full text-[var(--color-text)]"
+                aria-label={t('nav.toggleTheme')}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {isDark ? (
+                    <motion.span
+                      key="theme-sun"
+                      initial={themeIconInitial}
+                      animate={themeIconAnimate}
+                      exit={themeIconExit}
+                      transition={themeIconTransition}
+                      className="flex"
+                    >
+                      <Sun size={20} aria-hidden="true" />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="theme-moon"
+                      initial={themeIconInitial}
+                      animate={themeIconAnimate}
+                      exit={themeIconExit}
+                      transition={themeIconTransition}
+                      className="flex"
+                    >
+                      <Moon size={20} aria-hidden="true" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </LiquidGlassButton>
+            ) : (
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
+                aria-label={t('nav.toggleTheme')}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {isDark ? (
+                    <motion.span
+                      key="theme-sun"
+                      initial={themeIconInitial}
+                      animate={themeIconAnimate}
+                      exit={themeIconExit}
+                      transition={themeIconTransition}
+                      className="flex"
+                    >
+                      <Sun size={20} aria-hidden="true" />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="theme-moon"
+                      initial={themeIconInitial}
+                      animate={themeIconAnimate}
+                      exit={themeIconExit}
+                      transition={themeIconTransition}
+                      className="flex"
+                    >
+                      <Moon size={20} aria-hidden="true" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
+            )}
 
             <Link
               href="/settings"

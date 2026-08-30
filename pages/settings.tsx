@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { Palette, Sparkles, Languages, MoveVertical, Settings as SettingsIcon, Check } from 'lucide-react'
+import { Palette, Sparkles, Droplets, Languages, MoveVertical, Settings as SettingsIcon, Check } from 'lucide-react'
 import { ACCENT_COLORS, AccentKey, useSettings } from '@/contexts/SettingsContext'
 import { LANGUAGES, translate } from '@/lib/i18n'
 
@@ -39,10 +39,12 @@ export default function SettingsPage() {
   const {
     accent,
     animations,
+    liquidGlass,
     language,
     readerScrollDistance,
     setAccent,
     setAnimations,
+    setLiquidGlass,
     setLanguage,
     setReaderScrollDistance,
   } = useSettings()
@@ -119,6 +121,32 @@ export default function SettingsPage() {
           </button>
           <p className="mt-2 text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
             {animations ? t('settings.on') : t('settings.off')}
+          </p>
+        </SectionCard>
+
+        <SectionCard
+          icon={<Droplets size={20} aria-hidden="true" />}
+          title={t('settings.liquidGlass')}
+          desc={t('settings.liquidGlassDesc')}
+        >
+          <button
+            type="button"
+            role="switch"
+            aria-checked={liquidGlass}
+            aria-label={t('settings.liquidGlass')}
+            onClick={() => setLiquidGlass(!liquidGlass)}
+            className={`relative h-8 w-14 rounded-full transition-colors ${
+              liquidGlass ? 'bg-ocean' : 'bg-pearl/20'
+            }`}
+          >
+            <span
+              className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform ${
+                liquidGlass ? 'translate-x-7' : 'translate-x-1'
+              }`}
+            />
+          </button>
+          <p className="mt-2 text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
+            {liquidGlass ? t('settings.on') : t('settings.off')}
           </p>
         </SectionCard>
 

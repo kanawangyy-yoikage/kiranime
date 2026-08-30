@@ -414,3 +414,49 @@ html:fullscreen main,
 html.reader-immersive main {
   padding-top: 1rem;
 }
+
+/* ─── LIQUID GLASS (data-liquid-glass='on') ─────────────────── */
+/* Scoped to html[data-liquid-glass='on'] so the app is pixel-identical
+   when the attribute is absent/'off'. Only additive overrides — base
+   component classes are never removed. */
+
+/* Navbar main bar: more translucent + stronger blur */
+html[data-liquid-glass='on'] .site-header > div.h-16 {
+  background: color-mix(in srgb, var(--color-surface) 60%, transparent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+}
+html[data-liquid-glass='on'].dark .site-header > div.h-16 {
+  background: color-mix(in srgb, var(--color-surface) 60%, transparent);
+}
+
+/* Buttons: translucent frosted surface */
+html[data-liquid-glass='on'] .btn-primary,
+html[data-liquid-glass='on'] .btn-secondary {
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+/* btn-primary keeps white text readable -> tint with the primary color */
+html[data-liquid-glass='on'] .btn-primary {
+  background: color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+/* btn-secondary text is --color-text (dark in light / light in dark) -> white/black frosted */
+html[data-liquid-glass='on'] .btn-secondary {
+  background: color-mix(in srgb, white 70%, transparent);
+}
+html[data-liquid-glass='on'].dark .btn-secondary {
+  background: color-mix(in srgb, black 70%, transparent);
+}
+html[data-liquid-glass='on'] .btn-primary:hover,
+html[data-liquid-glass='on'] .btn-secondary:hover {
+  filter: brightness(1.1);
+}
+
+/* Cards: subtle translucent surface (menus / modals / sections) */
+html[data-liquid-glass='on'] .card {
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
