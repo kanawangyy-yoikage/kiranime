@@ -27,7 +27,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
-import { LiquidGlassButton } from './LiquidGlassViewport'
+import { LiquidGlassButton, LiquidGlassLink } from './LiquidGlassViewport'
 
 interface NavItem {
   label: string
@@ -220,48 +220,78 @@ export default function TopNavbar() {
 
           {/* Center: Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`relative z-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                  isActive(link.href)
-                    ? 'text-primary dark:text-accent'
-                    : 'text-[var(--color-text-muted)] hover:text-primary dark:hover:text-accent'
-                }`}
-              >
-                {isActive(link.href) && (
-                  <motion.span
-                    layoutId="nav-active-pill"
-                    transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 32 }}
-                    className="absolute inset-0 -z-10 rounded-lg bg-primary/10 dark:bg-accent/15 pointer-events-none"
-                    aria-hidden="true"
-                  />
-                )}
-                {link.icon} {link.label}
-              </Link>
-            ))}
-            {SOCIAL_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`relative z-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                  isActive(link.href)
-                    ? 'text-primary dark:text-accent'
-                    : 'text-[var(--color-text-muted)] hover:text-primary dark:hover:text-accent'
-                }`}
-              >
-                {isActive(link.href) && (
-                  <motion.span
-                    layoutId="nav-active-pill"
-                    transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 32 }}
-                    className="absolute inset-0 -z-10 rounded-lg bg-primary/10 dark:bg-accent/15 pointer-events-none"
-                    aria-hidden="true"
-                  />
-                )}
-                {link.icon} {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) =>
+              liquidGlass ? (
+                <LiquidGlassLink
+                  key={link.href}
+                  href={link.href}
+                  className="group !px-3.5 !py-2 !rounded-full"
+                  labelClassName={
+                    isActive(link.href)
+                      ? 'text-primary dark:text-accent'
+                      : 'text-[var(--color-text-muted)] group-hover:text-primary dark:group-hover:text-accent'
+                  }
+                >
+                  {link.icon} {link.label}
+                </LiquidGlassLink>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative z-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    isActive(link.href)
+                      ? 'text-primary dark:text-accent'
+                      : 'text-[var(--color-text-muted)] hover:text-primary dark:hover:text-accent'
+                  }`}
+                >
+                  {isActive(link.href) && (
+                    <motion.span
+                      layoutId="nav-active-pill"
+                      transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 32 }}
+                      className="absolute inset-0 -z-10 rounded-lg bg-primary/10 dark:bg-accent/15 pointer-events-none"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {link.icon} {link.label}
+                </Link>
+              )
+            )}
+            {SOCIAL_LINKS.map((link) =>
+              liquidGlass ? (
+                <LiquidGlassLink
+                  key={link.href}
+                  href={link.href}
+                  className="group !px-3.5 !py-2 !rounded-full"
+                  labelClassName={
+                    isActive(link.href)
+                      ? 'text-primary dark:text-accent'
+                      : 'text-[var(--color-text-muted)] group-hover:text-primary dark:group-hover:text-accent'
+                  }
+                >
+                  {link.icon} {link.label}
+                </LiquidGlassLink>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`relative z-0 flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    isActive(link.href)
+                      ? 'text-primary dark:text-accent'
+                      : 'text-[var(--color-text-muted)] hover:text-primary dark:hover:text-accent'
+                  }`}
+                >
+                  {isActive(link.href) && (
+                    <motion.span
+                      layoutId="nav-active-pill"
+                      transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 32 }}
+                      className="absolute inset-0 -z-10 rounded-lg bg-primary/10 dark:bg-accent/15 pointer-events-none"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {link.icon} {link.label}
+                </Link>
+              )
+            )}
           </nav>
 
           {/* Right: Actions */}
@@ -350,35 +380,65 @@ export default function TopNavbar() {
               </button>
             )}
 
-            <Link
-              href="/settings"
-              className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
-              aria-label={t('nav.settings')}
-            >
-              <Settings size={20} aria-hidden="true" />
-            </Link>
+            {liquidGlass ? (
+              <LiquidGlassLink
+                href="/settings"
+                className="!p-2 !rounded-full"
+                aria-label={t('nav.settings')}
+              >
+                <Settings size={20} aria-hidden="true" />
+              </LiquidGlassLink>
+            ) : (
+              <Link
+                href="/settings"
+                className="p-2 rounded-lg bg-surface dark:bg-surface-dark text-[var(--color-text)] hover:bg-pearl/10 transition-colors"
+                aria-label={t('nav.settings')}
+              >
+                <Settings size={20} aria-hidden="true" />
+              </Link>
+            )}
 
             {authLoading ? (
               <div className="hidden sm:block w-9 h-9 rounded-full bg-pearl/10 animate-pulse" />
             ) : user ? (
               <div ref={profileMenuRef} className="hidden sm:relative sm:block">
-                <button
-                  onClick={() => setProfileMenuOpen((v) => !v)}
-                  className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full border border-pearl/10 hover:bg-pearl/10 transition-colors"
-                  aria-haspopup="menu"
-                  aria-expanded={profileMenuOpen}
-                >
-                  <div className="w-8 h-8 rounded-full bg-primary dark:bg-accent flex items-center justify-center overflow-hidden">
-                    {profile?.photoURL ? (
-                      <img src={profile.photoURL} alt={profile?.displayName || 'Avatar'} className="w-full h-full object-cover" />
-                    ) : (
-                      <User size={16} className="text-white" />
-                    )}
-                  </div>
-                  <span className="hidden xl:block text-sm font-semibold max-w-[100px] truncate">
-                    {profile?.displayName || user.displayName || 'KiraFan'}
-                  </span>
-                </button>
+                {liquidGlass ? (
+                  <LiquidGlassButton
+                    onClick={() => setProfileMenuOpen((v) => !v)}
+                    className="!pl-1 !pr-3 !py-1 !rounded-full"
+                    aria-haspopup="menu"
+                    aria-expanded={profileMenuOpen}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-primary dark:bg-accent flex items-center justify-center overflow-hidden">
+                      {profile?.photoURL ? (
+                        <img src={profile.photoURL} alt={profile?.displayName || 'Avatar'} className="w-full h-full object-cover" />
+                      ) : (
+                        <User size={16} className="text-white" />
+                      )}
+                    </div>
+                    <span className="hidden xl:block text-sm font-semibold max-w-[100px] truncate text-[var(--color-text)]">
+                      {profile?.displayName || user.displayName || 'KiraFan'}
+                    </span>
+                  </LiquidGlassButton>
+                ) : (
+                  <button
+                    onClick={() => setProfileMenuOpen((v) => !v)}
+                    className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full border border-pearl/10 hover:bg-pearl/10 transition-colors"
+                    aria-haspopup="menu"
+                    aria-expanded={profileMenuOpen}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-primary dark:bg-accent flex items-center justify-center overflow-hidden">
+                      {profile?.photoURL ? (
+                        <img src={profile.photoURL} alt={profile?.displayName || 'Avatar'} className="w-full h-full object-cover" />
+                      ) : (
+                        <User size={16} className="text-white" />
+                      )}
+                    </div>
+                    <span className="hidden xl:block text-sm font-semibold max-w-[100px] truncate">
+                      {profile?.displayName || user.displayName || 'KiraFan'}
+                    </span>
+                  </button>
+                )}
 
                 {profileMenuOpen && (
                   <div

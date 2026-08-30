@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 // --- Types & Interfaces ---
@@ -11,10 +12,17 @@ export interface LiquidGlassViewportProps extends React.HTMLAttributes<HTMLDivEl
 
 export interface LiquidGlassButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
+  labelClassName?: string;
+}
+
+export interface LiquidGlassLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+  children?: React.ReactNode;
+  labelClassName?: string;
 }
 
 interface LiquidGlassContextType {
-  registerButton: (id: string, element: HTMLButtonElement) => void;
+  registerButton: (id: string, element: HTMLElement) => void;
   unregisterButton: (id: string) => void;
   mode: "svg" | "webgl" | "blur";
 }
@@ -40,7 +48,7 @@ export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassV
     const filterId1 = React.useId().replace(/:/g, "-") + "1";
 
     const [mode, setMode] = React.useState<"svg" | "webgl" | "blur">("svg");
-    const buttonsRef = React.useRef<Record<string, HTMLButtonElement>>({});
+    const buttonsRef = React.useRef<Record<string, HTMLElement>>({});
     
     const activeFilter = React.useRef(0);
     const lastKeyRef = React.useRef("");
@@ -259,7 +267,7 @@ export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassV
       setMode("blur");
     }, []);
 
-    const registerButton = React.useCallback((id: string, element: HTMLButtonElement) => {
+    const registerButton = React.useCallback((id: string, element: HTMLElement) => {
       buttonsRef.current[id] = element;
       const btnW = element.offsetWidth || 180;
       const btnH = element.offsetHeight || 60;
@@ -309,8 +317,14 @@ export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassV
           return;
         }
 
-        const btn = buttons[0];
-        const rect = btn.getBoundingClientRect();
+        // Reference element: first VISIBLE glass control (drives the SVG lens
+        // position + the shared scene-light analysis). Falls back to the first
+        // registered element (e.g. before layout/paint).
+        const refEl =
+          buttons.find(
+            (b) => b.getBoundingClientRect().height > 0 && getComputedStyle(b).display !== "none"
+          ) || buttons[0];
+        const rect = refEl.getBoundingClientRect();
         const pRect = container.getBoundingClientRect();
 
         const btnCenterX = rect.left + rect.width / 2;
@@ -335,11 +349,16 @@ export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassV
               const lightAngleDeg = (analysis.domAngle * 180) / Math.PI + 90;
               const rimGradient = buildConicGradient(analysis.profile, lightAngleDeg);
 
-              btn.style.setProperty("--cos", cosVal.toString());
-              btn.style.setProperty("--sin", sinVal.toString());
-              btn.style.setProperty("--light-angle", `${lightAngleDeg}deg`);
-              btn.style.setProperty("--rim-intensity", analysis.magnitude.toString());
-              btn.style.setProperty("--rim-gradient", rimGradient);
+              // Apply the scene-light treatment to EVERY registered glass control,
+              // so all nav links / icons / buttons share the same animated look
+              // as the first (previously only buttons[0] got the dynamic vars).
+              for (const b of buttons) {
+                b.style.setProperty("--cos", cosVal.toString());
+                b.style.setProperty("--sin", sinVal.toString());
+                b.style.setProperty("--light-angle", `${lightAngleDeg}deg`);
+                b.style.setProperty("--rim-intensity", analysis.magnitude.toString());
+                b.style.setProperty("--rim-gradient", rimGradient);
+              }
             }
           }
         }
@@ -453,9 +472,66 @@ export const LiquidGlassViewport = React.forwardRef<HTMLDivElement, LiquidGlassV
 );
 LiquidGlassViewport.displayName = "LiquidGlassViewport";
 
+// --- Shared glass surface layers (specular + rim + label) ---
+interface GlassSurfaceProps {
+  renderMode: "svg" | "webgl" | "blur";
+  labelClassName?: string;
+  children?: React.ReactNode;
+}
+
+const GlassSurface: React.FC<GlassSurfaceProps> = ({ renderMode, labelClassName, children }) => (
+  <>
+    {/* Specular layer / bevel highlight styles */}
+    <span
+      className="absolute inset-0 rounded-[inherit] pointer-events-none z-0"
+      style={{
+        background: renderMode === "webgl" ? "transparent" : "color-mix(in srgb, white 25%, transparent)",
+        backdropFilter: renderMode === "webgl" ? "none" : "blur(2px) saturate(180%) brightness(1.05)",
+        WebkitBackdropFilter: renderMode === "webgl" ? "none" : "blur(1px) saturate(180%) brightness(1.05)",
+        backgroundImage: renderMode === "webgl" ? "none" : "radial-gradient(circle at calc(50% - var(--cos) * 50%) calc(50% - var(--sin) * 50%), rgba(255,255,255,0.2) 0%, transparent 60%)",
+        boxShadow: `
+              inset 0 0 0 1px color-mix(in srgb, white calc(var(--rim-intensity) * 20%), transparent),
+              inset calc(var(--cos) * 1.8px) calc(var(--sin) * 3px) 0px -2px color-mix(in srgb, white calc(var(--rim-intensity) * 90%), transparent),
+              inset calc(var(--cos) * -2px) calc(var(--sin) * -2px) 0px -2px color-mix(in srgb, white calc(var(--rim-intensity) * 80%), transparent),
+              inset calc(var(--cos) * -3px) calc(var(--sin) * -8px) 1px -6px color-mix(in srgb, white calc(var(--rim-intensity) * 60%), transparent),
+              inset calc(var(--cos) * -0.3px) calc(var(--sin) * -1px) 4px 0px color-mix(in srgb, black 12%, transparent),
+              inset calc(var(--cos) * -1.5px) calc(var(--sin) * 2.5px) 0px -2px color-mix(in srgb, black 20%, transparent),
+              inset calc(var(--cos) * 0px) calc(var(--sin) * 3px) 4px -2px color-mix(in srgb, black 20%, transparent),
+              inset calc(var(--cos) * 2px) calc(var(--sin) * -6.5px) 1px -4px color-mix(in srgb, black 10%, transparent),
+              calc(var(--cos) * 4px) calc(var(--sin) * 4px) 10px 0px color-mix(in srgb, black 15%, transparent),
+              calc(var(--cos) * 9px) calc(var(--sin) * 9px) 18px 0px color-mix(in srgb, black 10%, transparent)
+            `
+      }}
+    />
+
+    {/* Highlight outer rim */}
+    <span
+      className="absolute inset-0 z-10 rounded-[inherit] p-[1px] pointer-events-none"
+      style={{
+        background: "var(--rim-gradient)",
+        WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+        WebkitMaskComposite: "xor",
+        mask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+        maskComposite: "exclude",
+        opacity: "calc(0.62 + var(--rim-intensity) * 0.24)",
+      }}
+    />
+
+    {/* Inner Label wrapper with horizontal flex layout to align icon and text side-by-side */}
+    <span
+      className={cn(
+        "relative z-20 text-sm font-semibold tracking-wide text-black/85 select-none pointer-events-none flex items-center justify-center gap-2",
+        labelClassName
+      )}
+    >
+      {children}
+    </span>
+  </>
+);
+
 // --- Glass Button Component ---
 export const LiquidGlassButton = React.forwardRef<HTMLButtonElement, LiquidGlassButtonProps>(
-  ({ className, children, ...props }, ref) => {
+  ({ className, labelClassName, children, ...props }, ref) => {
     const context = React.useContext(LiquidGlassContext);
     const internalRef = React.useRef<HTMLButtonElement>(null);
     const activeRef = (ref as React.RefObject<HTMLButtonElement>) || internalRef;
@@ -490,48 +566,57 @@ export const LiquidGlassButton = React.forwardRef<HTMLButtonElement, LiquidGlass
         } as React.CSSProperties}
         {...props}
       >
-        {/* Specular layer / bevel highlight styles */}
-        <span
-          className="absolute inset-0 rounded-[inherit] pointer-events-none z-0"
-          style={{
-            background: renderMode === "webgl" ? "transparent" : "color-mix(in srgb, white 25%, transparent)",
-            backdropFilter: renderMode === "webgl" ? "none" : "blur(2px) saturate(180%) brightness(1.05)",
-            WebkitBackdropFilter: renderMode === "webgl" ? "none" : "blur(1px) saturate(180%) brightness(1.05)",
-            backgroundImage: renderMode === "webgl" ? "none" : "radial-gradient(circle at calc(50% - var(--cos) * 50%) calc(50% - var(--sin) * 50%), rgba(255,255,255,0.2) 0%, transparent 60%)",
-            boxShadow: `
-              inset 0 0 0 1px color-mix(in srgb, white calc(var(--rim-intensity) * 20%), transparent),
-              inset calc(var(--cos) * 1.8px) calc(var(--sin) * 3px) 0px -2px color-mix(in srgb, white calc(var(--rim-intensity) * 90%), transparent),
-              inset calc(var(--cos) * -2px) calc(var(--sin) * -2px) 0px -2px color-mix(in srgb, white calc(var(--rim-intensity) * 80%), transparent),
-              inset calc(var(--cos) * -3px) calc(var(--sin) * -8px) 1px -6px color-mix(in srgb, white calc(var(--rim-intensity) * 60%), transparent),
-              inset calc(var(--cos) * -0.3px) calc(var(--sin) * -1px) 4px 0px color-mix(in srgb, black 12%, transparent),
-              inset calc(var(--cos) * -1.5px) calc(var(--sin) * 2.5px) 0px -2px color-mix(in srgb, black 20%, transparent),
-              inset calc(var(--cos) * 0px) calc(var(--sin) * 3px) 4px -2px color-mix(in srgb, black 20%, transparent),
-              inset calc(var(--cos) * 2px) calc(var(--sin) * -6.5px) 1px -4px color-mix(in srgb, black 10%, transparent),
-              calc(var(--cos) * 4px) calc(var(--sin) * 4px) 10px 0px color-mix(in srgb, black 15%, transparent),
-              calc(var(--cos) * 9px) calc(var(--sin) * 9px) 18px 0px color-mix(in srgb, black 10%, transparent)
-            `
-          }}
-        />
-
-        {/* Highlight outer rim */}
-        <span
-          className="absolute inset-0 z-10 rounded-[inherit] p-[1px] pointer-events-none"
-          style={{
-            background: "var(--rim-gradient)",
-            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            WebkitMaskComposite: "xor",
-            mask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            maskComposite: "exclude",
-            opacity: "calc(0.62 + var(--rim-intensity) * 0.24)",
-          }}
-        />
-
-        {/* Inner Label wrapper with horizontal flex layout to align icon and text side-by-side */}
-        <span className="relative z-20 text-sm font-semibold tracking-wide text-black/85 select-none pointer-events-none flex items-center justify-center gap-2">
+        <GlassSurface renderMode={renderMode} labelClassName={labelClassName}>
           {children}
-        </span>
+        </GlassSurface>
       </button>
     );
   }
 );
+
+// --- Glass Link Component (Next.js Link with the same liquid-glass treatment) ---
+export const LiquidGlassLink = React.forwardRef<HTMLAnchorElement, LiquidGlassLinkProps>(
+  ({ className, labelClassName, children, ...props }, ref) => {
+    const context = React.useContext(LiquidGlassContext);
+    const internalRef = React.useRef<HTMLAnchorElement>(null);
+    const activeRef = (ref as React.RefObject<HTMLAnchorElement>) || internalRef;
+    const linkId = React.useId();
+
+    React.useEffect(() => {
+      if (context && activeRef.current) {
+        context.registerButton(linkId, activeRef.current);
+      }
+      return () => {
+        if (context) {
+          context.unregisterButton(linkId);
+        }
+      };
+    }, [context, activeRef, linkId]);
+
+    const renderMode = context ? context.mode : "svg";
+
+    return (
+      <Link
+        ref={activeRef}
+        className={cn(
+          "relative select-none pointer-events-auto inline-flex items-center justify-center px-12 py-5 border-0 bg-transparent cursor-pointer outline-none origin-center transition-transform duration-[400ms] ease-[cubic-bezier(0.4,1.5,0.3,1)] active:scale-[0.96]",
+          className
+        )}
+        style={{
+          "--cos": "0",
+          "--sin": "0",
+          "--light-angle": "0deg",
+          "--rim-intensity": "0.6",
+          "--rim-gradient": "none",
+        } as React.CSSProperties}
+        {...props}
+      >
+        <GlassSurface renderMode={renderMode} labelClassName={labelClassName}>
+          {children}
+        </GlassSurface>
+      </Link>
+    );
+  }
+);
+LiquidGlassLink.displayName = "LiquidGlassLink";
 LiquidGlassButton.displayName = "LiquidGlassButton";
