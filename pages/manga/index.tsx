@@ -19,7 +19,6 @@ import {
   fetchComicByType,
   fetchComicByGenre,
   fetchComicAll,
-  fetchComicGenres,
   type Comic,
   type ComicGenre,
 } from '@/lib/api'
@@ -72,6 +71,106 @@ function toSpotlight(comic: Comic): SpotlightItem {
   }
 }
 
+const GENRES: ComicGenre[] = [
+  { name: 'Academy', slug: 'academy' },
+  { name: 'Action', slug: 'action' },
+  { name: 'Adult', slug: 'adult' },
+  { name: 'Adventure', slug: 'adventure' },
+  { name: 'apocalypse', slug: 'apocalypse' },
+  { name: 'Beasts', slug: 'beasts' },
+  { name: 'Blacksmith', slug: 'blacksmith' },
+  { name: 'Comedy', slug: 'comedy' },
+  { name: 'Comic', slug: 'comic' },
+  { name: 'Cooking', slug: 'cooking' },
+  { name: 'Crime', slug: 'crime' },
+  { name: 'Crossdressing', slug: 'crossdressing' },
+  { name: 'Dark Fantasy', slug: 'dark-fantasy' },
+  { name: 'Demon', slug: 'demon' },
+  { name: 'Demons', slug: 'demons' },
+  { name: 'Doujinshi', slug: 'doujinshi' },
+  { name: 'Drama', slug: 'drama' },
+  { name: 'Ecchi', slug: 'ecchi' },
+  { name: 'Entertainment', slug: 'entertainment' },
+  { name: 'Fantasy', slug: 'fantasy' },
+  { name: 'Fight', slug: 'fight' },
+  { name: 'Furry', slug: 'furry' },
+  { name: 'Game', slug: 'game' },
+  { name: 'Gender Bender', slug: 'gender-bender' },
+  { name: 'Genderswap', slug: 'genderswap' },
+  { name: 'Genius', slug: 'genius' },
+  { name: 'Ghosts', slug: 'ghosts' },
+  { name: "Girls' Love", slug: 'girls-love' },
+  { name: 'Gore', slug: 'gore' },
+  { name: 'Gyaru', slug: 'gyaru' },
+  { name: 'Harem', slug: 'harem' },
+  { name: 'Historical', slug: 'historical' },
+  { name: 'Horror', slug: 'horror' },
+  { name: 'Isekai', slug: 'isekai' },
+  { name: 'Josei', slug: 'josei' },
+  { name: 'Knight', slug: 'knight' },
+  { name: 'Long Strip', slug: 'long-strip' },
+  { name: 'Magic', slug: 'magic' },
+  { name: 'Manga', slug: 'manga' },
+  { name: 'Mangatoon', slug: 'mangatoon' },
+  { name: 'Manhwa', slug: 'manhwa' },
+  { name: 'Martial Art', slug: 'martial-art' },
+  { name: 'Martial Arts', slug: 'martial-arts' },
+  { name: 'Mature', slug: 'mature' },
+  { name: 'MC Rebirth', slug: 'mc-rebirth' },
+  { name: 'Mecha', slug: 'mecha' },
+  { name: 'Medical', slug: 'medical' },
+  { name: 'Military', slug: 'military' },
+  { name: 'Monster', slug: 'monster' },
+  { name: 'Monster girls', slug: 'monster-girls' },
+  { name: 'Monsters', slug: 'monsters' },
+  { name: 'Murim', slug: 'murim' },
+  { name: 'Music', slug: 'music' },
+  { name: 'Mystery', slug: 'mystery' },
+  { name: 'Mythology', slug: 'mythology' },
+  { name: 'One Shot', slug: 'one-shot' },
+  { name: 'Oneshot', slug: 'oneshot' },
+  { name: 'Police', slug: 'police' },
+  { name: 'Psychological', slug: 'psychological' },
+  { name: 'Regression', slug: 'regression' },
+  { name: 'Reincarnation', slug: 'reincarnation' },
+  { name: 'Revenge', slug: 'revenge' },
+  { name: 'Reverse Harem', slug: 'reverse-harem' },
+  { name: 'Romance', slug: 'romance' },
+  { name: 'School', slug: 'school' },
+  { name: 'School life', slug: 'school-life' },
+  { name: 'Sci-fi', slug: 'sci-fi' },
+  { name: 'Seinen', slug: 'seinen' },
+  { name: 'Shoujo', slug: 'shoujo' },
+  { name: 'Shoujo Ai', slug: 'shoujo-ai' },
+  { name: 'Shoujo(G)', slug: 'shougo' },
+  { name: 'Shounen', slug: 'shounen' },
+  { name: 'Shounen Ai', slug: 'shounen-ai' },
+  { name: 'Slice of Life', slug: 'slice-of-life' },
+  { name: 'Slow Life', slug: 'slow-life' },
+  { name: 'Smut', slug: 'smut' },
+  { name: 'Sport', slug: 'sport' },
+  { name: 'Sports', slug: 'sports' },
+  { name: 'Strategy', slug: 'strategy' },
+  { name: 'Super Power', slug: 'super-power' },
+  { name: 'Supernatural', slug: 'supernatural' },
+  { name: 'Survival', slug: 'survival' },
+  { name: 'Sword Fight', slug: 'sword-fight' },
+  { name: 'Sword Master', slug: 'sword-master' },
+  { name: 'Swormanship', slug: 'swordsmanship' },
+  { name: 'System', slug: 'system' },
+  { name: 'Thriller', slug: 'thriller' },
+  { name: 'Time Travel', slug: 'time-travel' },
+  { name: 'Tragedy', slug: 'tragedy' },
+  { name: 'Trauma', slug: 'trauma' },
+  { name: 'Vampire', slug: 'vampire' },
+  { name: 'Video Games', slug: 'video-games' },
+  { name: 'Villainess', slug: 'villainess' },
+  { name: 'Violence', slug: 'violence' },
+  { name: 'Webtoon', slug: 'webtoon' },
+  { name: 'Webtoons', slug: 'webtoons' },
+  { name: 'Yuri', slug: 'yuri' },
+]
+
 export default function MangaPage() {
   const router = useRouter()
   const { language } = useSettings()
@@ -88,7 +187,7 @@ export default function MangaPage() {
   const [home, setHome] = useState<HomeData>({ popular: [], latest: [], trending: [] })
   const [homeLoading, setHomeLoading] = useState(true)
   const [comics, setComics] = useState<Comic[]>([])
-  const [genres, setGenres] = useState<ComicGenre[]>([])
+  const [genres] = useState<ComicGenre[]>(GENRES)
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
 
@@ -101,7 +200,6 @@ export default function MangaPage() {
   const BATCH_SIZE = 24
 
   useEffect(() => {
-    fetchComicGenres().then(setGenres)
   }, [])
 
   useEffect(() => {
@@ -264,9 +362,8 @@ export default function MangaPage() {
               </>
             )}
           </div>
-
-          <MangaMenuAside genres={genres} />
         </div>
+        <MangaMenuAside genres={genres} />
       </>
     )
   }
@@ -341,9 +438,9 @@ export default function MangaPage() {
             </Section>
           )}
         </div>
-
         <MangaMenuAside genres={genres} />
       </div>
     </>
   )
 }
+
