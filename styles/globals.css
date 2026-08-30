@@ -460,3 +460,21 @@ html[data-liquid-glass='on'] .card {
   backdrop-filter: blur(14px) saturate(160%);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
 }
+
+/* Episode / chapter list rows: frosted surface that keeps the original
+   RGB (--surface-dark-rgb / --surface-hover-rgb) — only alpha changes. */
+html[data-liquid-glass='on'] .card .grid.max-h-96 > a {
+  background: color-mix(in srgb, rgb(var(--surface-dark-rgb)) 78%, transparent);
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+}
+html[data-liquid-glass='on'] .card .grid.max-h-96 > a:hover {
+  background: color-mix(in srgb, rgb(var(--surface-hover-rgb)) 86%, transparent);
+}
+
+/* Mobile nav drawer: frosted panel (same --color-surface, alpha only) */
+html[data-liquid-glass='on'] .site-header > aside {
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+}
