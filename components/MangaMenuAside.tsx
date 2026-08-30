@@ -61,7 +61,7 @@ export default function MangaMenuAside({ genres }: MangaMenuAsideProps) {
             <Tags size={16} className="text-ocean" /> {t('manga.genre')}
           </h3>
           <div className="flex flex-wrap gap-2">
-            {genres.slice(0, 18).map((g) => (
+            {genres.map((g) => (
               <Link
                 key={g.slug}
                 href={`/manga?genre=${g.slug}`}
