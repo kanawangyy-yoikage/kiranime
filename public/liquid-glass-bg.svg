@@ -1,63 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <!-- Flat black backdrop — matches non-liquid-glass dark mode (bg-dark: #000000).
+       No aurora/gradient: the glass surfaces keep their own sheen + rim highlights,
+       so the liquid look stays without recoloring the page background. -->
   <defs>
-    <!-- Base deep indigo -> violet gradient -->
-    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#1a1038"/>
-      <stop offset="0.45" stop-color="#2b1a5e"/>
-      <stop offset="0.75" stop-color="#3b1f6e"/>
-      <stop offset="1" stop-color="#241040"/>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
-
-    <!-- Aurora glows -->
-    <radialGradient id="glowMagenta" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#ff3ec8" stop-opacity="0.55"/>
-      <stop offset="0.55" stop-color="#b026ff" stop-opacity="0.28"/>
-      <stop offset="1" stop-color="#b026ff" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="glowCyan" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.5"/>
-      <stop offset="0.6" stop-color="#0ea5e9" stop-opacity="0.22"/>
-      <stop offset="1" stop-color="#0ea5e9" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="glowViolet" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.5"/>
-      <stop offset="0.6" stop-color="#6d28d9" stop-opacity="0.24"/>
-      <stop offset="1" stop-color="#6d28d9" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="glowIndigo" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#4f46e5" stop-opacity="0.45"/>
-      <stop offset="0.6" stop-color="#4338ca" stop-opacity="0.2"/>
-      <stop offset="1" stop-color="#4338ca" stop-opacity="0"/>
-    </radialGradient>
-
-    <!-- Soft blur for aurora blobs -->
-    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="120"/>
-    </filter>
-    <filter id="soft2" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="200"/>
-    </filter>
   </defs>
-
-  <!-- Base deep gradient -->
-  <rect width="1920" height="1080" fill="url(#base)"/>
-
-  <!-- Aurora blobs (blurred, layered) -->
-  <g filter="url(#soft2)">
-    <ellipse cx="420" cy="180" rx="700" ry="420" fill="url(#glowIndigo)"/>
-    <ellipse cx="1560" cy="240" rx="760" ry="460" fill="url(#glowViolet)"/>
-  </g>
-  <g filter="url(#soft)">
-    <ellipse cx="980" cy="520" rx="820" ry="520" fill="url(#glowMagenta)"/>
-    <ellipse cx="300" cy="900" rx="640" ry="420" fill="url(#glowCyan)"/>
-    <ellipse cx="1680" cy="880" rx="620" ry="400" fill="url(#glowCyan)"/>
-    <ellipse cx="1450" cy="620" rx="560" ry="380" fill="url(#glowMagenta)"/>
-  </g>
-
-  <!-- Subtle top sheen for depth -->
-  <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#ffffff" stop-opacity="0.06"/>
-    <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-  </linearGradient>
+  <rect width="1920" height="1080" fill="#000000"/>
   <rect width="1920" height="1080" fill="url(#sheen)"/>
 </svg>
