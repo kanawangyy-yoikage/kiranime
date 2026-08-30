@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Home, Clapperboard, BookOpen, ScrollText, BookMarked, User } from 'lucide-react'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
+import { LiquidGlassLink } from './LiquidGlassViewport'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
@@ -28,7 +29,7 @@ const itemVariants = {
 
 export default function MobileNav() {
   const router = useRouter()
-  const { language } = useSettings()
+  const { language, liquidGlass } = useSettings()
   const reduce = useAnimationsEnabled()
   const t = (key: string) => translate(language, key)
 
@@ -60,7 +61,17 @@ export default function MobileNav() {
       >
         {ITEMS.map(({ label, href, icon: Icon }) => {
           const active = isActive(href)
-          return (
+          return liquidGlass && active ? (
+            <LiquidGlassLink
+              key={href}
+              href={href}
+              className="!w-full !px-0 !py-2.5 !rounded-xl"
+              labelClassName="!flex-col !gap-1 !text-[10px] !font-semibold !text-primary dark:!text-accent"
+            >
+              <Icon size={20} className="scale-110" aria-hidden="true" />
+              {label}
+            </LiquidGlassLink>
+          ) : (
             <MotionLink
               key={href}
               href={href}
