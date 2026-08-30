@@ -221,16 +221,12 @@ export default function TopNavbar() {
           {/* Center: Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
             {NAV_LINKS.map((link) =>
-              liquidGlass ? (
+              liquidGlass && isActive(link.href) ? (
                 <LiquidGlassLink
                   key={link.href}
                   href={link.href}
                   className="group !px-3.5 !py-2 !rounded-full"
-                  labelClassName={
-                    isActive(link.href)
-                      ? '!text-primary dark:!text-accent'
-                      : '!text-[var(--color-text-muted)] group-hover:!text-primary dark:group-hover:!text-accent'
-                  }
+                  labelClassName="!text-primary dark:!text-accent"
                 >
                   {link.icon} {link.label}
                 </LiquidGlassLink>
@@ -257,16 +253,12 @@ export default function TopNavbar() {
               )
             )}
             {SOCIAL_LINKS.map((link) =>
-              liquidGlass ? (
+              liquidGlass && isActive(link.href) ? (
                 <LiquidGlassLink
                   key={link.href}
                   href={link.href}
                   className="group !px-3.5 !py-2 !rounded-full"
-                  labelClassName={
-                    isActive(link.href)
-                      ? '!text-primary dark:!text-accent'
-                      : '!text-[var(--color-text-muted)] group-hover:!text-primary dark:group-hover:!text-accent'
-                  }
+                  labelClassName="!text-primary dark:!text-accent"
                 >
                   {link.icon} {link.label}
                 </LiquidGlassLink>
