@@ -5,6 +5,7 @@ import { Home, Clapperboard, BookOpen, ScrollText, BookMarked, User } from 'luci
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { LiquidGlassLink } from './LiquidGlassViewport'
+import { LiquidGlassCursorLink } from './LiquidGlassCursor'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
@@ -29,9 +30,10 @@ const itemVariants = {
 
 export default function MobileNav() {
   const router = useRouter()
-  const { language, liquidGlass } = useSettings()
+  const { language, liquidGlass, liquidGlassMode } = useSettings()
   const reduce = useAnimationsEnabled()
   const t = (key: string) => translate(language, key)
+  const GlassLink = liquidGlassMode === 'cursor' ? LiquidGlassCursorLink : LiquidGlassLink
 
   const ITEMS = [
     { label: t('nav.home'), href: '/', icon: Home },
@@ -62,7 +64,7 @@ export default function MobileNav() {
         {ITEMS.map(({ label, href, icon: Icon }) => {
           const active = isActive(href)
           return liquidGlass && active ? (
-            <LiquidGlassLink
+            <GlassLink
               key={href}
               href={href}
               className="!w-full !px-0 !py-2.5 !rounded-xl"
@@ -70,7 +72,7 @@ export default function MobileNav() {
             >
               <Icon size={20} className="scale-110" aria-hidden="true" />
               {label}
-            </LiquidGlassLink>
+            </GlassLink>
           ) : (
             <MotionLink
               key={href}

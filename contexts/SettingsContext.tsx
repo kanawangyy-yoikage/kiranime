@@ -2,11 +2,15 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { LanguageCode, getLanguageMeta } from '@/lib/i18n'
 
 export type AccentKey = 'blue' | 'violet' | 'emerald' | 'rose' | 'amber' | 'cyan'
+// 'static'  = existing fixed lens treatment (LiquidGlassButton / navbar CSS)
+// 'cursor'  = new liquid-glass-react-style effect that bends & follows the pointer
+export type LiquidGlassMode = 'static' | 'cursor'
 
 export interface Settings {
   accent: AccentKey
   animations: boolean
   liquidGlass: boolean
+  liquidGlassMode: LiquidGlassMode
   language: LanguageCode
   readerScrollDistance: number
 }
@@ -15,6 +19,7 @@ interface SettingsContextType extends Settings {
   setAccent: (accent: AccentKey) => void
   setAnimations: (animations: boolean) => void
   setLiquidGlass: (liquidGlass: boolean) => void
+  setLiquidGlassMode: (mode: LiquidGlassMode) => void
   setLanguage: (language: LanguageCode) => void
   setReaderScrollDistance: (distance: number) => void
 }
@@ -34,6 +39,7 @@ export const DEFAULT_SETTINGS: Settings = {
   accent: 'blue',
   animations: true,
   liquidGlass: true,
+  liquidGlassMode: 'static',
   language: 'id',
   readerScrollDistance: 90,
 }
@@ -56,6 +62,10 @@ function readStoredSettings(): Settings {
         typeof parsed.animations === 'boolean' ? parsed.animations : DEFAULT_SETTINGS.animations,
       liquidGlass:
         typeof parsed.liquidGlass === 'boolean' ? parsed.liquidGlass : DEFAULT_SETTINGS.liquidGlass,
+      liquidGlassMode:
+        parsed.liquidGlassMode === 'cursor' || parsed.liquidGlassMode === 'static'
+          ? parsed.liquidGlassMode
+          : DEFAULT_SETTINGS.liquidGlassMode,
       language: (parsed.language as LanguageCode) ?? DEFAULT_SETTINGS.language,
       readerScrollDistance: clampScrollDistance(parsed.readerScrollDistance),
     }
@@ -70,6 +80,7 @@ function applySettingsToDocument(settings: Settings) {
   root.setAttribute('data-accent', settings.accent)
   root.setAttribute('data-animations', settings.animations ? 'on' : 'off')
   root.setAttribute('data-liquid-glass', settings.liquidGlass ? 'on' : 'off')
+  root.setAttribute('data-liquid-glass-mode', settings.liquidGlassMode)
   root.lang = settings.language
   root.dir = getLanguageMeta(settings.language).dir
 }
@@ -95,13 +106,23 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setAccent = (accent: AccentKey) => setSettings((s) => ({ ...s, accent }))
   const setAnimations = (animations: boolean) => setSettings((s) => ({ ...s, animations }))
   const setLiquidGlass = (liquidGlass: boolean) => setSettings((s) => ({ ...s, liquidGlass }))
+  const setLiquidGlassMode = (liquidGlassMode: LiquidGlassMode) =>
+    setSettings((s) => ({ ...s, liquidGlassMode }))
   const setLanguage = (language: LanguageCode) => setSettings((s) => ({ ...s, language }))
   const setReaderScrollDistance = (readerScrollDistance: number) =>
     setSettings((s) => ({ ...s, readerScrollDistance: clampScrollDistance(readerScrollDistance) }))
 
   return (
     <SettingsContext.Provider
-      value={{ ...settings, setAccent, setAnimations, setLiquidGlass, setLanguage, setReaderScrollDistance }}
+      value={{
+        ...settings,
+        setAccent,
+        setAnimations,
+        setLiquidGlass,
+        setLiquidGlassMode,
+        setLanguage,
+        setReaderScrollDistance,
+      }}
     >
       {children}
     </SettingsContext.Provider>

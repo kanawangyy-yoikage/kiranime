@@ -28,6 +28,7 @@ import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 import { LiquidGlassButton, LiquidGlassLink } from './LiquidGlassViewport'
+import { LiquidGlassCursorButton, LiquidGlassCursorLink } from './LiquidGlassCursor'
 
 interface NavItem {
   label: string
@@ -40,8 +41,35 @@ const MotionLink = motion(Link)
 export default function TopNavbar() {
   const router = useRouter()
   const { user, profile, loading: authLoading, logout } = useAuth()
-  const { language, liquidGlass } = useSettings()
+  const { language, liquidGlass, liquidGlassMode } = useSettings()
   const t = (key: string) => translate(language, key)
+  // Cursor mode = liquid-glass-react-style pointer-following glass;
+  // static mode = the existing fixed lens (LiquidGlassViewport).
+  // Cast to a shared minimal prop shape — both variants accept
+  // onClick/className/labelClassName/aria-* and children, which is
+  // all the call sites below use.
+  type GlassButtonProps = {
+    onClick?: () => void
+    className?: string
+    labelClassName?: string
+    'aria-label'?: string
+    'aria-haspopup'?: boolean | 'menu' | 'true' | 'false' | 'listbox' | 'tree' | 'grid' | 'dialog'
+    'aria-expanded'?: boolean
+    children?: ReactNode
+  }
+  type GlassLinkProps = {
+    href: string
+    className?: string
+    labelClassName?: string
+    'aria-label'?: string
+    children?: ReactNode
+  }
+  const GlassButton = (liquidGlassMode === 'cursor' ? LiquidGlassCursorButton : LiquidGlassButton) as (
+    props: GlassButtonProps
+  ) => JSX.Element
+  const GlassLink = (liquidGlassMode === 'cursor' ? LiquidGlassCursorLink : LiquidGlassLink) as (
+    props: GlassLinkProps
+  ) => JSX.Element
 
   const NAV_LINKS: NavItem[] = [
     { label: t('nav.home'), href: '/', icon: <Home size={16} /> },
@@ -196,13 +224,13 @@ export default function TopNavbar() {
           {/* Left: Logo + mobile menu */}
           <div className="flex items-center gap-3">
             {liquidGlass ? (
-              <LiquidGlassButton
+              <GlassButton
                 onClick={() => setDrawerOpen(!drawerOpen)}
                 className="lg:hidden !p-2 !rounded-full text-[var(--color-text)]"
                 aria-label={t('nav.openMenu')}
               >
                 {drawerOpen ? <X size={22} /> : <Menu size={22} />}
-              </LiquidGlassButton>
+              </GlassButton>
             ) : (
               <button
                 onClick={() => setDrawerOpen(!drawerOpen)}
@@ -222,14 +250,14 @@ export default function TopNavbar() {
           <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
             {NAV_LINKS.map((link) =>
               liquidGlass && isActive(link.href) ? (
-                <LiquidGlassLink
+                <GlassLink
                   key={link.href}
                   href={link.href}
                   className="group !px-3.5 !py-2 !rounded-full"
                   labelClassName="!text-primary dark:!text-accent"
                 >
                   {link.icon} {link.label}
-                </LiquidGlassLink>
+                </GlassLink>
               ) : (
                 <Link
                   key={link.href}
@@ -254,14 +282,14 @@ export default function TopNavbar() {
             )}
             {SOCIAL_LINKS.map((link) =>
               liquidGlass && isActive(link.href) ? (
-                <LiquidGlassLink
+                <GlassLink
                   key={link.href}
                   href={link.href}
                   className="group !px-3.5 !py-2 !rounded-full"
                   labelClassName="!text-primary dark:!text-accent"
                 >
                   {link.icon} {link.label}
-                </LiquidGlassLink>
+                </GlassLink>
               ) : (
                 <Link
                   key={link.href}
@@ -289,13 +317,13 @@ export default function TopNavbar() {
           {/* Right: Actions */}
           <div className="flex items-center gap-1.5">
             {liquidGlass ? (
-              <LiquidGlassButton
+              <GlassButton
                 onClick={() => setSearchOpen(!searchOpen)}
                 className="!p-2 !rounded-full text-[var(--color-text)]"
                 aria-label={t('nav.search')}
               >
                 <Search size={20} aria-hidden="true" />
-              </LiquidGlassButton>
+              </GlassButton>
             ) : (
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
@@ -307,7 +335,7 @@ export default function TopNavbar() {
             )}
 
             {liquidGlass ? (
-              <LiquidGlassButton
+              <GlassButton
                 onClick={toggleTheme}
                 className="!p-2 !rounded-full text-[var(--color-text)]"
                 aria-label={t('nav.toggleTheme')}
@@ -337,7 +365,7 @@ export default function TopNavbar() {
                     </motion.span>
                   )}
                 </AnimatePresence>
-              </LiquidGlassButton>
+              </GlassButton>
             ) : (
               <button
                 onClick={toggleTheme}
@@ -373,13 +401,13 @@ export default function TopNavbar() {
             )}
 
             {liquidGlass ? (
-              <LiquidGlassLink
+              <GlassLink
                 href="/settings"
                 className="!p-2 !rounded-full"
                 aria-label={t('nav.settings')}
               >
                 <Settings size={20} aria-hidden="true" />
-              </LiquidGlassLink>
+              </GlassLink>
             ) : (
               <Link
                 href="/settings"
@@ -395,7 +423,7 @@ export default function TopNavbar() {
             ) : user ? (
               <div ref={profileMenuRef} className="hidden sm:relative sm:block">
                 {liquidGlass ? (
-                  <LiquidGlassButton
+                  <GlassButton
                     onClick={() => setProfileMenuOpen((v) => !v)}
                     className="!pl-1 !pr-3 !py-1 !rounded-full"
                     aria-haspopup="menu"
@@ -411,7 +439,7 @@ export default function TopNavbar() {
                     <span className="hidden xl:block text-sm font-semibold max-w-[100px] truncate text-[var(--color-text)]">
                       {profile?.displayName || user.displayName || 'KiraFan'}
                     </span>
-                  </LiquidGlassButton>
+                  </GlassButton>
                 ) : (
                   <button
                     onClick={() => setProfileMenuOpen((v) => !v)}

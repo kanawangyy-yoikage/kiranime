@@ -5,6 +5,7 @@ import LandscapeSpotlight, { type SpotlightItem } from './LandscapeSpotlight'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { LiquidGlassButton } from './LiquidGlassViewport'
+import { LiquidGlassCursorButton } from './LiquidGlassCursor'
 import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
 interface LandscapeSliderProps {
@@ -18,8 +19,9 @@ export default function LandscapeSlider({ items, imageProxy, interval = 2000 }: 
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const reduceMotion = useAnimationsEnabled()
-  const { language, liquidGlass } = useSettings()
+  const { language, liquidGlass, liquidGlassMode } = useSettings()
   const t = (key: string) => translate(language, key)
+  const GlassButton = liquidGlassMode === 'cursor' ? LiquidGlassCursorButton : LiquidGlassButton
 
   const goTo = useCallback((i: number) => {
     setIndex(((i % items.length) + items.length) % items.length)
@@ -120,14 +122,14 @@ export default function LandscapeSlider({ items, imageProxy, interval = 2000 }: 
         <>
           {/* Prev / Next */}
           {liquidGlass ? (
-            <LiquidGlassButton
+            <GlassButton
               onClick={prev}
               aria-label={t('slider.previous')}
               className="!absolute left-3 top-1/2 -translate-y-1/2 z-20 hidden sm:flex !w-10 !h-10 !p-0 !rounded-full text-white hover:scale-105 focus-visible:opacity-100 !transition-[opacity,transform] opacity-0 group-hover:opacity-100"
               labelClassName="!text-white"
             >
               <ChevronLeft size={20} aria-hidden="true" />
-            </LiquidGlassButton>
+            </GlassButton>
           ) : (
             <button
               onClick={prev}
@@ -138,14 +140,14 @@ export default function LandscapeSlider({ items, imageProxy, interval = 2000 }: 
             </button>
           )}
           {liquidGlass ? (
-            <LiquidGlassButton
+            <GlassButton
               onClick={next}
               aria-label={t('slider.next')}
               className="!absolute right-3 top-1/2 -translate-y-1/2 z-20 hidden sm:flex !w-10 !h-10 !p-0 !rounded-full text-white hover:scale-105 focus-visible:opacity-100 !transition-[opacity,transform] opacity-0 group-hover:opacity-100"
               labelClassName="!text-white"
             >
               <ChevronRight size={20} aria-hidden="true" />
-            </LiquidGlassButton>
+            </GlassButton>
           ) : (
             <button
               onClick={next}
