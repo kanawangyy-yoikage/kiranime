@@ -89,7 +89,7 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
     },
     forwardedRef
   ) => {
-    const localRef = React.useRef<HTMLDivElement | null>(null);
+    const localRef = React.useRef<HTMLDivElement | null>(null) as React.MutableRefObject<HTMLDivElement | null>;
     const setRefs = React.useCallback(
       (node: HTMLDivElement | null) => {
         localRef.current = node;
