@@ -105,25 +105,27 @@ export default function SettingsPage() {
           title={t('settings.animation')}
           desc={t('settings.animationDesc')}
         >
-          <button
-            type="button"
-            role="switch"
-            aria-checked={animations}
-            aria-label={t('settings.animation')}
-            onClick={() => setAnimations(!animations)}
-            className={`relative h-8 w-14 rounded-full transition-colors ${
-              animations ? 'bg-ocean' : 'bg-pearl/20'
-            }`}
-          >
-            <span
-              className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform ${
-                animations ? 'translate-x-7' : 'translate-x-1'
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
+              {animations ? t('settings.on') : t('settings.off')}
+            </p>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={animations}
+              aria-label={t('settings.animation')}
+              onClick={() => setAnimations(!animations)}
+              className={`relative h-8 w-14 shrink-0 rounded-full transition-colors ${
+                animations ? 'bg-ocean' : 'bg-pearl/20'
               }`}
-            />
-          </button>
-          <p className="mt-2 text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
-            {animations ? t('settings.on') : t('settings.off')}
-          </p>
+            >
+              <span
+                className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform ${
+                  animations ? 'translate-x-7' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
         </SectionCard>
 
         <SectionCard
@@ -131,51 +133,58 @@ export default function SettingsPage() {
           title={t('settings.liquidGlass')}
           desc={t('settings.liquidGlassDesc')}
         >
-          <button
-            type="button"
-            role="switch"
-            aria-checked={liquidGlass}
-            aria-label={t('settings.liquidGlass')}
-            onClick={() => setLiquidGlass(!liquidGlass)}
-            className={`relative h-8 w-14 rounded-full transition-colors ${
-              liquidGlass ? 'bg-ocean' : 'bg-pearl/20'
-            }`}
-          >
-            <span
-              className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform ${
-                liquidGlass ? 'translate-x-7' : 'translate-x-1'
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
+              {liquidGlass ? t('settings.on') : t('settings.off')}
+            </p>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={liquidGlass}
+              aria-label={t('settings.liquidGlass')}
+              onClick={() => setLiquidGlass(!liquidGlass)}
+              className={`relative h-8 w-14 shrink-0 rounded-full transition-colors ${
+                liquidGlass ? 'bg-ocean' : 'bg-pearl/20'
               }`}
-            />
-          </button>
-          <p className="mt-2 text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
-            {liquidGlass ? t('settings.on') : t('settings.off')}
-          </p>
+            >
+              <span
+                className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform ${
+                  liquidGlass ? 'translate-x-7' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
 
           {liquidGlass && (
-            <div className="mt-4 grid grid-cols-2 gap-2 max-w-sm">
-              {(['static', 'cursor'] as const).map((mode) => {
-                const selected = liquidGlassMode === mode
-                return (
-                  <button
-                    key={mode}
-                    type="button"
-                    onClick={() => setLiquidGlassMode(mode)}
-                    aria-pressed={selected}
-                    className={`flex flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
-                      selected
-                        ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
-                        : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40'
-                    }`}
-                  >
-                    <span className="text-sm font-semibold text-[var(--color-text)]">
-                      {t(`settings.liquidGlassMode.${mode}`)}
-                    </span>
-                    <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                      {t(`settings.liquidGlassMode.${mode}Desc`)}
-                    </span>
-                  </button>
-                )
-              })}
+            <div className="mt-5 pt-4 border-t border-pearl/10">
+              <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--color-text-muted)' }}>
+                {t('settings.liquidGlassModeLabel')}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {(['static', 'cursor'] as const).map((mode) => {
+                  const selected = liquidGlassMode === mode
+                  return (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setLiquidGlassMode(mode)}
+                      aria-pressed={selected}
+                      className={`flex flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                        selected
+                          ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
+                          : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40'
+                      }`}
+                    >
+                      <span className="text-sm font-semibold text-[var(--color-text)]">
+                        {t(`settings.liquidGlassMode.${mode}`)}
+                      </span>
+                      <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                        {t(`settings.liquidGlassMode.${mode}Desc`)}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           )}
         </SectionCard>
