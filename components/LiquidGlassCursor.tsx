@@ -59,7 +59,7 @@ export interface LiquidGlassCursorProps {
   onClick?: () => void;
   "aria-label"?: string;
   "aria-haspopup"?: React.AriaAttributes["aria-haspopup"];
-  "aria-expanded"?: boolean;
+  "aria-expanded"?: React.AriaAttributes["aria-expanded"];
 }
 
 const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
