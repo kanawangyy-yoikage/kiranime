@@ -90,7 +90,19 @@ function roundedRectSdf(x: number, y: number, halfWidth: number, halfHeight: num
   return Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - radius;
 }
 
-/** Convex-lens bulge: the reference project's `fragment` — pulls texture coords toward center near the glass. */
+/**
+ * Convex-lens bulge — the reference project's `fragment`.
+ *
+ * Two nested smoothStep passes, same as the original:
+ *  1. `displacement` maps SDF distance to a 0..1 falloff across a wide band
+ *     (edge0=0.8..edge1=0, offset by -0.15) — this is what gives the glass
+ *     a long, gradual "shoulder" near the rim instead of a hard cutoff.
+ *  2. `scaled = smoothStep(0, 1, displacement)` re-shapes that falloff with
+ *     the classic ease-in/ease-out S-curve, which is what makes the center
+ *     of the lens go fully "flat" (no distortion, like looking straight
+ *     through glass) while the distortion ramps up sharply just inside the
+ *     rim — the visual signature of a real plano-convex lens.
+ */
 function defaultFragment(
   uv: { x: number; y: number },
   halfWidth: number,
@@ -123,16 +135,30 @@ function defaultFragment(
  * project's `updateShader`: first pass computes raw pixel-space (dx, dy) for
  * every pixel, second pass normalizes and writes them into the RGBA buffer.
  * Returns both the data URL and the `scale` feDisplacementMap should use.
+ *
+ * Rendered at full 1:1 resolution (no downsampling) — the reference project
+ * builds its displacement map at the glass's real pixel dimensions, and any
+ * downsampling here is exactly what makes the bulge look blocky/stepped
+ * instead of a smooth, continuous lens curve. `maxSide` caps compute cost
+ * for very large panels without softening the curve itself, since the map
+ * is still built at native device-pixel density up to that cap.
  */
 function buildDisplacementMap(
   width: number,
   height: number,
   cornerRadius: number,
   polar: boolean,
-  downsample = 4
+  maxSide = 512
 ): { url: string; maxScale: number } | null {
-  const w = Math.max(2, Math.round(width / downsample));
-  const h = Math.max(2, Math.round(height / downsample));
+  const dpr = typeof window !== "undefined" ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+  const nativeW = Math.max(2, Math.round(width * dpr));
+  const nativeH = Math.max(2, Math.round(height * dpr));
+  // Only downscale if the panel is genuinely huge (e.g. a full-width hero
+  // card) — for normal button/pill sizes this is a no-op and we render 1:1.
+  const scaleDown = Math.min(1, maxSide / Math.max(nativeW, nativeH));
+  const w = Math.max(2, Math.round(nativeW * scaleDown));
+  const h = Math.max(2, Math.round(nativeH * scaleDown));
+
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
@@ -144,21 +170,24 @@ function buildDisplacementMap(
   const radius = clamp(cornerRadius / Math.min(width, height), 0.02, 0.5);
 
   const data = new Uint8ClampedArray(w * h * 4);
-  const rawValues: number[] = [];
+  const rawValues = new Float32Array(w * h * 2);
   let maxScale = 0;
 
-  for (let i = 0; i < data.length; i += 4) {
-    const px = (i / 4) % w;
-    const py = Math.floor(i / 4 / w);
-    const uv = { x: px / w, y: py / h };
+  let rvi = 0;
+  for (let py = 0; py < h; py++) {
+    const v = (py + 0.5) / h;
+    for (let px = 0; px < w; px++) {
+      const u = (px + 0.5) / w;
+      const pos = defaultFragment({ x: u, y: v }, halfWidth, halfHeight, radius, polar);
 
-    const pos = defaultFragment(uv, halfWidth, halfHeight, radius, polar);
+      const dx = (pos.x - u) * w;
+      const dy = (pos.y - v) * h;
 
-    const dx = (pos.x - uv.x) * w;
-    const dy = (pos.y - uv.y) * h;
-
-    maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy));
-    rawValues.push(dx, dy);
+      if (Math.abs(dx) > maxScale) maxScale = Math.abs(dx);
+      if (Math.abs(dy) > maxScale) maxScale = Math.abs(dy);
+      rawValues[rvi++] = dx;
+      rawValues[rvi++] = dy;
+    }
   }
 
   maxScale = Math.max(maxScale, 1e-6);
@@ -174,9 +203,11 @@ function buildDisplacementMap(
   }
 
   ctx.putImageData(new ImageData(data, w, h), 0, 0);
-  // maxScale was computed in downsampled pixel units; scale back up so the
-  // feDisplacementMap `scale` attribute (which operates in real px) matches.
-  return { url: canvas.toDataURL("image/png"), maxScale: maxScale * downsample };
+  // maxScale was computed in the map's own pixel units; scale back up by
+  // however much we shrank from native device pixels so the
+  // feDisplacementMap `scale` attribute (real CSS px) lines up correctly.
+  const upscale = 1 / scaleDown / dpr;
+  return { url: canvas.toDataURL("image/png"), maxScale: maxScale * upscale };
 }
 
 let uid = 0;
