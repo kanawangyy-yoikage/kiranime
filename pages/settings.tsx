@@ -115,13 +115,13 @@ export default function SettingsPage() {
               aria-checked={animations}
               aria-label={t('settings.animation')}
               onClick={() => setAnimations(!animations)}
-              className={`relative h-8 w-14 shrink-0 rounded-full transition-colors ${
+              className={`relative h-8 w-14 shrink-0 rounded-full p-0 transition-colors ${
                 animations ? 'bg-ocean' : 'bg-pearl/20'
               }`}
             >
               <span
-                className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform ${
-                  animations ? 'translate-x-7' : 'translate-x-1'
+                className={`absolute top-1 left-1 block h-6 w-6 aspect-square rounded-full bg-white shadow transition-transform ${
+                  animations ? 'translate-x-6' : 'translate-x-0'
                 }`}
               />
             </button>
@@ -143,13 +143,13 @@ export default function SettingsPage() {
               aria-checked={liquidGlass}
               aria-label={t('settings.liquidGlass')}
               onClick={() => setLiquidGlass(!liquidGlass)}
-              className={`relative h-8 w-14 shrink-0 rounded-full transition-colors ${
+              className={`relative h-8 w-14 shrink-0 rounded-full p-0 transition-colors ${
                 liquidGlass ? 'bg-ocean' : 'bg-pearl/20'
               }`}
             >
               <span
-                className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform ${
-                  liquidGlass ? 'translate-x-7' : 'translate-x-1'
+                className={`absolute top-1 left-1 block h-6 w-6 aspect-square rounded-full bg-white shadow transition-transform ${
+                  liquidGlass ? 'translate-x-6' : 'translate-x-0'
                 }`}
               />
             </button>
