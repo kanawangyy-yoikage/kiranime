@@ -10,16 +10,19 @@ function SectionCard({
   icon,
   title,
   desc,
+  badge,
   children,
 }: {
   icon: React.ReactNode
   title: string
   desc: string
+  badge?: React.ReactNode
   children: React.ReactNode
 }) {
   return (
-    <section className="card p-6">
-      <div className="flex items-start gap-3 mb-5">
+    <section className="card relative p-6">
+      {badge && <div className="absolute top-4 right-4">{badge}</div>}
+      <div className={`flex items-start gap-3 mb-5 ${badge ? 'pr-16' : ''}`}>
         <div className="w-10 h-10 rounded-xl bg-ocean/10 text-ocean flex items-center justify-center shrink-0">
           {icon}
         </div>
@@ -132,6 +135,11 @@ export default function SettingsPage() {
           icon={<Droplets size={20} aria-hidden="true" />}
           title={t('settings.liquidGlass')}
           desc={t('settings.liquidGlassDesc')}
+          badge={
+            <span className="inline-flex items-center rounded-full bg-ocean/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ocean">
+              {t('settings.beta')}
+            </span>
+          }
         >
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm font-medium" style={{ color: 'var(--color-text-muted)' }}>
