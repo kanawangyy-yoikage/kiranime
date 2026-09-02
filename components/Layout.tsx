@@ -9,7 +9,6 @@ import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { LiquidGlassViewport } from './LiquidGlassViewport'
-import { LiquidGlassOrb } from './LiquidGlassOrb'
 
 interface LayoutProps {
   children: ReactNode
@@ -17,7 +16,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const router = useRouter()
-  const { language, liquidGlass, liquidGlassMode } = useSettings()
+  const { language, liquidGlass } = useSettings()
   const t = (key: string) => translate(language, key)
 
   const appShell = (
@@ -61,22 +60,6 @@ export default function Layout({ children }: LayoutProps) {
         </LiquidGlassViewport>
       ) : (
         appShell
-      )}
-
-      {liquidGlass && liquidGlassMode === 'orb' && (
-        <div className="fixed inset-0 z-[70] pointer-events-none" aria-hidden="true">
-          <div className="relative w-full h-full">
-            <LiquidGlassOrb
-              shape="rounded"
-              width={220}
-              height={140}
-              initialX={24}
-              initialY={96}
-              constrainToParent
-              className="pointer-events-auto"
-            />
-          </div>
-        </div>
       )}
     </div>
   )

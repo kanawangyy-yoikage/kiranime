@@ -43,13 +43,11 @@ export default function SettingsPage() {
     accent,
     animations,
     liquidGlass,
-    liquidGlassMode,
     language,
     readerScrollDistance,
     setAccent,
     setAnimations,
     setLiquidGlass,
-    setLiquidGlassMode,
     setLanguage,
     setReaderScrollDistance,
   } = useSettings()
@@ -162,39 +160,6 @@ export default function SettingsPage() {
               />
             </button>
           </div>
-
-          {liquidGlass && (
-            <div className="mt-5 pt-4 border-t border-pearl/10">
-              <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--color-text-muted)' }}>
-                {t('settings.liquidGlassModeLabel')}
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                {(['static', 'cursor', 'orb'] as const).map((mode) => {
-                  const selected = liquidGlassMode === mode
-                  return (
-                    <button
-                      key={mode}
-                      type="button"
-                      onClick={() => setLiquidGlassMode(mode)}
-                      aria-pressed={selected}
-                      className={`flex flex-col items-start gap-0.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${
-                        selected
-                          ? 'border-primary bg-primary/10 text-primary dark:border-accent dark:bg-accent/15 dark:text-accent'
-                          : 'border-pearl/10 bg-pearl/[0.03] text-[var(--color-text-muted)] hover:border-ocean/40'
-                      }`}
-                    >
-                      <span className="text-sm font-semibold text-[var(--color-text)]">
-                        {t(`settings.liquidGlassMode.${mode}`)}
-                      </span>
-                      <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                        {t(`settings.liquidGlassMode.${mode}Desc`)}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
         </SectionCard>
 
         <SectionCard

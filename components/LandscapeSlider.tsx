@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import LandscapeSpotlight, { type SpotlightItem } from './LandscapeSpotlight'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
-import { LiquidGlassButton } from './LiquidGlassViewport'
 import { LiquidGlassCursorButton } from './LiquidGlassCursor'
 import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
 
@@ -19,9 +18,9 @@ export default function LandscapeSlider({ items, imageProxy, interval = 2000 }: 
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const reduceMotion = useAnimationsEnabled()
-  const { language, liquidGlass, liquidGlassMode } = useSettings()
+  const { language, liquidGlass } = useSettings()
   const t = (key: string) => translate(language, key)
-  const GlassButton = liquidGlassMode === 'cursor' ? LiquidGlassCursorButton : LiquidGlassButton
+  const GlassButton = LiquidGlassCursorButton
 
   const goTo = useCallback((i: number) => {
     setIndex(((i % items.length) + items.length) % items.length)

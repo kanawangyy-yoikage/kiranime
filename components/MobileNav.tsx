@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { Home, Clapperboard, BookOpen, ScrollText, BookMarked, User } from 'lucide-react'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
-import { LiquidGlassLink } from './LiquidGlassViewport'
 import { LiquidGlassCursorLink } from './LiquidGlassCursor'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
 import { useAnimationsEnabled } from '@/lib/hooks/useAnimations'
@@ -30,10 +29,10 @@ const itemVariants = {
 
 export default function MobileNav() {
   const router = useRouter()
-  const { language, liquidGlass, liquidGlassMode } = useSettings()
+  const { language, liquidGlass } = useSettings()
   const reduce = useAnimationsEnabled()
   const t = (key: string) => translate(language, key)
-  const GlassLink = liquidGlassMode === 'cursor' ? LiquidGlassCursorLink : LiquidGlassLink
+  const GlassLink = LiquidGlassCursorLink
 
   const ITEMS = [
     { label: t('nav.home'), href: '/', icon: Home },

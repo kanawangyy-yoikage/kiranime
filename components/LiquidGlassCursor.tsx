@@ -2,15 +2,28 @@
 /**
  * LiquidGlassCursor
  * ------------------
- * Standalone "liquid glass" wrapper modeled after rdev/liquid-glass-react:
- * https://github.com/rdev/liquid-glass-react
+ * Standalone "liquid glass" wrapper implementing the same core technique as
+ * childrentime/liquid-glass (https://github.com/childrentime/liquid-glass),
+ * which itself references shuding/liquid-glass.js:
  *
- * Wrap any content and it becomes a refractive glass surface that bends
- * and follows the cursor with a spring-like ("elastic") response, complete
- * with chromatic aberration at the edges and a specular highlight that
- * tracks the pointer. Unlike KiraStream's existing `LiquidGlassButton`
- * (a fixed lens for nav pills), this component is meant for arbitrary,
- * freely-placed content — cards, panels, floating pills, hero badges, etc.
+ *   1. An SDF (signed distance field) describes the glass shape (rounded
+ *      rect / capsule / circle).
+ *   2. For every pixel we run a "fragment shader" that turns SDF distance
+ *      into a per-pixel displacement vector (a convex-lens bulge — pixels
+ *      near the center get pulled inward more than pixels near the rim).
+ *   3. Those vectors are encoded into the R/G channels of an off-screen
+ *      <canvas> (R = horizontal, G = vertical), matching the encoding
+ *      `feDisplacementMap` expects.
+ *   4. The canvas is serialized to a PNG data URL and fed into an SVG
+ *      <feImage>/<feDisplacementMap> filter, applied via
+ *      `backdrop-filter: url(#filter)` so real page content behind the
+ *      glass gets refracted by the browser's own compositor.
+ *
+ * On top of that core algorithm this component adds the "liquid" cursor
+ * follow behaviour: the whole glass leans toward the pointer with a
+ * spring/elastic response, and a chromatic-aberration pass (three
+ * differently-scaled feDisplacementMap copies, recombined with feBlend)
+ * fakes the RGB fringing you see at the edge of real glass.
  *
  * Usage:
  *   <LiquidGlassCursor cornerRadius={24} padding="16px 24px">
@@ -64,6 +77,108 @@ export interface LiquidGlassCursorProps {
 
 const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
 
+/** t*t*(3-2t) — slow→fast→slow easing, same as the reference implementation's smoothStep. */
+function smoothStep(edge0: number, edge1: number, x: number): number {
+  const t = clamp((x - edge0) / (edge1 - edge0 || 1e-6), 0, 1);
+  return t * t * (3 - 2 * t);
+}
+
+/** Signed distance field for a rounded rectangle centered at the origin. Negative = inside. */
+function roundedRectSdf(x: number, y: number, halfWidth: number, halfHeight: number, radius: number): number {
+  const qx = Math.abs(x) - halfWidth + radius;
+  const qy = Math.abs(y) - halfHeight + radius;
+  return Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - radius;
+}
+
+/** Convex-lens bulge: the reference project's `fragment` — pulls texture coords toward center near the glass. */
+function defaultFragment(
+  uv: { x: number; y: number },
+  halfWidth: number,
+  halfHeight: number,
+  radius: number,
+  polar: boolean
+) {
+  const ix = uv.x - 0.5;
+  const iy = uv.y - 0.5;
+
+  const distanceToEdge = roundedRectSdf(ix, iy, halfWidth, halfHeight, radius);
+  const displacement = smoothStep(0.8, 0, distanceToEdge - 0.15);
+  const scaled = smoothStep(0, 1, displacement);
+
+  if (polar) {
+    // Swirl the pull slightly around the center for the "polar" visual mode.
+    const angle = Math.atan2(iy, ix) + scaled * 0.6;
+    const radiusFromCenter = Math.hypot(ix, iy) * (1 - scaled * 0.5);
+    return {
+      x: Math.cos(angle) * radiusFromCenter + 0.5,
+      y: Math.sin(angle) * radiusFromCenter + 0.5,
+    };
+  }
+
+  return { x: ix * scaled + 0.5, y: iy * scaled + 0.5 };
+}
+
+/**
+ * Builds the R/G-encoded displacement map canvas exactly like the reference
+ * project's `updateShader`: first pass computes raw pixel-space (dx, dy) for
+ * every pixel, second pass normalizes and writes them into the RGBA buffer.
+ * Returns both the data URL and the `scale` feDisplacementMap should use.
+ */
+function buildDisplacementMap(
+  width: number,
+  height: number,
+  cornerRadius: number,
+  polar: boolean,
+  downsample = 4
+): { url: string; maxScale: number } | null {
+  const w = Math.max(2, Math.round(width / downsample));
+  const h = Math.max(2, Math.round(height / downsample));
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+
+  const halfWidth = 0.5 - (Math.max(4, cornerRadius) / Math.min(width, height)) * 0.5;
+  const halfHeight = halfWidth; // symmetric bulge footprint; shape comes from `radius` below
+  const radius = clamp(cornerRadius / Math.min(width, height), 0.02, 0.5);
+
+  const data = new Uint8ClampedArray(w * h * 4);
+  const rawValues: number[] = [];
+  let maxScale = 0;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const px = (i / 4) % w;
+    const py = Math.floor(i / 4 / w);
+    const uv = { x: px / w, y: py / h };
+
+    const pos = defaultFragment(uv, halfWidth, halfHeight, radius, polar);
+
+    const dx = (pos.x - uv.x) * w;
+    const dy = (pos.y - uv.y) * h;
+
+    maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy));
+    rawValues.push(dx, dy);
+  }
+
+  maxScale = Math.max(maxScale, 1e-6);
+
+  let idx = 0;
+  for (let i = 0; i < data.length; i += 4) {
+    const r = rawValues[idx++] / maxScale + 0.5;
+    const g = rawValues[idx++] / maxScale + 0.5;
+    data[i] = r * 255;
+    data[i + 1] = g * 255;
+    data[i + 2] = 128;
+    data[i + 3] = 255;
+  }
+
+  ctx.putImageData(new ImageData(data, w, h), 0, 0);
+  // maxScale was computed in downsampled pixel units; scale back up so the
+  // feDisplacementMap `scale` attribute (which operates in real px) matches.
+  return { url: canvas.toDataURL("image/png"), maxScale: maxScale * downsample };
+}
+
 let uid = 0;
 
 export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCursorProps>(
@@ -103,6 +218,7 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
     const [size, setSize] = React.useState({ width: 0, height: 0 });
     const [hovered, setHovered] = React.useState(false);
     const [active, setActive] = React.useState(false);
+    const [map, setMap] = React.useState<{ url: string; maxScale: number } | null>(null);
 
     // Raw (unsprung) offset of pointer relative to element center, normalized -1..1
     const targetOffset = React.useRef({ x: 0, y: 0 });
@@ -113,11 +229,19 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
     const [renderOffset, setRenderOffset] = React.useState({ x: 0, y: 0 });
     const [glarePos, setGlarePos] = React.useState({ x: 50, y: 50 });
 
-    // Track element size for the SVG filter + displacement map viewport.
+    // Track element size for the SVG filter + displacement map viewport, and
+    // (re)build the displacement map whenever the glass is resized.
     React.useEffect(() => {
       const el = localRef.current;
       if (!el) return;
-      const update = () => setSize({ width: el.offsetWidth, height: el.offsetHeight });
+      const update = () => {
+        const width = el.offsetWidth;
+        const height = el.offsetHeight;
+        setSize({ width, height });
+        if (width > 1 && height > 1) {
+          setMap(buildDisplacementMap(width, height, cornerRadius, mode === "polar"));
+        }
+      };
       update();
       if (typeof ResizeObserver !== "undefined") {
         const ro = new ResizeObserver(update);
@@ -125,7 +249,7 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
         return () => ro.disconnect();
       }
       return undefined;
-    }, []);
+    }, [cornerRadius, mode]);
 
     // Spring loop: eases springOffset toward targetOffset every frame while
     // either is non-trivial, mimicking Apple's "liquid" elastic bending.
@@ -257,8 +381,12 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
 
     // Edge-only displacement scale: prominent mode pushes harder, polar mode
     // relies more on the swirl baked into the displacement map itself.
-    const scale =
+    const modeScale =
       mode === "prominent" ? displacementScale * 1.4 : mode === "polar" ? displacementScale * 0.85 : displacementScale;
+    // Normalize against the map's own natural scale so `displacementScale`
+    // keeps meaning a "px of bulge" regardless of glass size.
+    const baseScale = map ? (modeScale / 64) * (map.maxScale || 1) : modeScale;
+    const aberrationOffset = aberrationIntensity * 3;
 
     const pressScale = active ? 0.97 : hovered ? 1.015 : 1;
     const tiltX = renderOffset.y * -0.6;
@@ -305,33 +433,37 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
           ...style,
         }}
       >
-        {/* SVG lens filter: edge-weighted displacement + chromatic aberration */}
-        {w > 1 && h > 1 && (
+        {/* SVG lens filter: real SDF-driven displacement map (see buildDisplacementMap
+            above) plus a chromatic-aberration pass — same technique as
+            childrentime/liquid-glass, just with three scaled copies recombined. */}
+        {w > 1 && h > 1 && map && (
           <svg className="absolute w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
             <defs>
               <filter
                 id={filterId}
-                x="-20%"
-                y="-20%"
-                width="140%"
-                height="140%"
-                filterUnits="objectBoundingBox"
+                x="0"
+                y="0"
+                width={w}
+                height={h}
+                filterUnits="userSpaceOnUse"
+                primitiveUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
               >
-                <feTurbulence
-                  type={mode === "polar" ? "turbulence" : "fractalNoise"}
-                  baseFrequency={mode === "polar" ? "0.008 0.012" : "0.012 0.018"}
-                  numOctaves={2}
-                  seed={7}
-                  result="noise"
+                <feImage
+                  href={map.url}
+                  x="0"
+                  y="0"
+                  width={w}
+                  height={h}
+                  preserveAspectRatio="none"
+                  result="map"
                 />
-                <feGaussianBlur in="noise" stdDeviation={mode === "prominent" ? 3 : 2} result="softNoise" />
 
-                {/* Red channel: displaced further out for chromatic fringing */}
+                {/* Red channel: displaced slightly further out for chromatic fringing */}
                 <feDisplacementMap
                   in="SourceGraphic"
-                  in2="softNoise"
-                  scale={scale + aberrationIntensity * 6}
+                  in2="map"
+                  scale={baseScale + aberrationOffset}
                   xChannelSelector="R"
                   yChannelSelector="G"
                   result="dispR"
@@ -346,8 +478,8 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
                 {/* Blue channel: displaced the opposite way */}
                 <feDisplacementMap
                   in="SourceGraphic"
-                  in2="softNoise"
-                  scale={-(scale + aberrationIntensity * 6)}
+                  in2="map"
+                  scale={baseScale - aberrationOffset}
                   xChannelSelector="R"
                   yChannelSelector="G"
                   result="dispB"
@@ -362,8 +494,8 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
                 {/* Green / base channel: the "true" refraction, no fringe offset */}
                 <feDisplacementMap
                   in="SourceGraphic"
-                  in2="softNoise"
-                  scale={scale}
+                  in2="map"
+                  scale={baseScale}
                   xChannelSelector="R"
                   yChannelSelector="G"
                   result="dispG"
@@ -389,7 +521,9 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
           className="absolute inset-0 z-0 pointer-events-none"
           style={{
             borderRadius: "inherit",
-            backdropFilter: `url(#${filterId}) saturate(${saturation}%) brightness(${overLight ? 0.98 : 1.06})`,
+            backdropFilter: map
+              ? `url(#${filterId}) saturate(${saturation}%) brightness(${overLight ? 0.98 : 1.06})`
+              : `blur(${blurAmount}px) saturate(${saturation}%) brightness(${overLight ? 0.98 : 1.06})`,
             WebkitBackdropFilter: `blur(${Math.max(blurAmount, 4)}px) saturate(${saturation}%)`,
             background: tint,
           }}
@@ -431,9 +565,8 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
 LiquidGlassCursor.displayName = "LiquidGlassCursor";
 
 /* ------------------------------------------------------------------ */
-/* Drop-in adapters so nav pills/buttons can switch to the cursor-     */
-/* following variant with the same call sites as LiquidGlassViewport's */
-/* LiquidGlassButton / LiquidGlassLink.                                 */
+/* Drop-in adapters so nav pills/buttons can use the cursor-following   */
+/* glass with the same call sites as the plain button/link primitives. */
 /* ------------------------------------------------------------------ */
 
 export interface LiquidGlassCursorButtonProps

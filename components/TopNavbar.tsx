@@ -27,7 +27,6 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useSettings } from '@/contexts/SettingsContext'
 import { translate } from '@/lib/i18n'
 import { motionTokens, adaptiveDuration } from '@/lib/motionTokens'
-import { LiquidGlassButton, LiquidGlassLink } from './LiquidGlassViewport'
 import { LiquidGlassCursorButton, LiquidGlassCursorLink } from './LiquidGlassCursor'
 
 interface NavItem {
@@ -41,35 +40,11 @@ const MotionLink = motion(Link)
 export default function TopNavbar() {
   const router = useRouter()
   const { user, profile, loading: authLoading, logout } = useAuth()
-  const { language, liquidGlass, liquidGlassMode } = useSettings()
+  const { language, liquidGlass } = useSettings()
   const t = (key: string) => translate(language, key)
-  // Cursor mode = liquid-glass-react-style pointer-following glass;
-  // static mode = the existing fixed lens (LiquidGlassViewport).
-  // Cast to a shared minimal prop shape — both variants accept
-  // onClick/className/labelClassName/aria-* and children, which is
-  // all the call sites below use.
-  type GlassButtonProps = {
-    onClick?: () => void
-    className?: string
-    labelClassName?: string
-    'aria-label'?: string
-    'aria-haspopup'?: boolean | 'menu' | 'true' | 'false' | 'listbox' | 'tree' | 'grid' | 'dialog'
-    'aria-expanded'?: boolean
-    children?: ReactNode
-  }
-  type GlassLinkProps = {
-    href: string
-    className?: string
-    labelClassName?: string
-    'aria-label'?: string
-    children?: ReactNode
-  }
-  const GlassButton = (liquidGlassMode === 'cursor' ? LiquidGlassCursorButton : LiquidGlassButton) as (
-    props: GlassButtonProps
-  ) => JSX.Element
-  const GlassLink = (liquidGlassMode === 'cursor' ? LiquidGlassCursorLink : LiquidGlassLink) as (
-    props: GlassLinkProps
-  ) => JSX.Element
+  // Glass nav pills always use the cursor-following liquid glass effect.
+  const GlassButton = LiquidGlassCursorButton
+  const GlassLink = LiquidGlassCursorLink
 
   const NAV_LINKS: NavItem[] = [
     { label: t('nav.home'), href: '/', icon: <Home size={16} /> },
