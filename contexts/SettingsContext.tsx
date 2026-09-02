@@ -3,8 +3,9 @@ import { LanguageCode, getLanguageMeta } from '@/lib/i18n'
 
 export type AccentKey = 'blue' | 'violet' | 'emerald' | 'rose' | 'amber' | 'cyan'
 // 'static'  = existing fixed lens treatment (LiquidGlassButton / navbar CSS)
-// 'cursor'  = new liquid-glass-react-style effect that bends & follows the pointer
-export type LiquidGlassMode = 'static' | 'cursor'
+// 'cursor'  = liquid-glass-react-style effect that bends & follows the pointer
+// 'orb'     = childrentime/liquid-glass-style draggable glass panel floating over the page
+export type LiquidGlassMode = 'static' | 'cursor' | 'orb'
 
 export interface Settings {
   accent: AccentKey
@@ -63,7 +64,7 @@ function readStoredSettings(): Settings {
       liquidGlass:
         typeof parsed.liquidGlass === 'boolean' ? parsed.liquidGlass : DEFAULT_SETTINGS.liquidGlass,
       liquidGlassMode:
-        parsed.liquidGlassMode === 'cursor' || parsed.liquidGlassMode === 'static'
+        parsed.liquidGlassMode === 'cursor' || parsed.liquidGlassMode === 'static' || parsed.liquidGlassMode === 'orb'
           ? parsed.liquidGlassMode
           : DEFAULT_SETTINGS.liquidGlassMode,
       language: (parsed.language as LanguageCode) ?? DEFAULT_SETTINGS.language,

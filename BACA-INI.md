@@ -1,45 +1,36 @@
-# File yang diganti/ditambahkan — Liquid Glass "Ikuti Kursor"
-
-Salin file-file ini ke folder project `kiranime-main/` kamu di path yang sama
-(timpa file lama). Struktur folder di zip ini sudah sama persis dengan struktur
-project aslinya.
+# File baru/diubah — Liquid Glass "Bola Kaca" (gaya childrentime/liquid-glass)
 
 ## File BARU
-- `components/LiquidGlassCursor.tsx`
-  Komponen liquid glass baru bergaya `rdev/liquid-glass-react` — kaca melengkung
-  & mengikuti kursor, dengan chromatic aberration dan efek elastis.
+- `components/LiquidGlassOrb.tsx`
+  Panel/bola kaca yang bisa diseret (drag) bebas ke mana saja di layar.
+  Konten di baliknya benar-benar terdistorsi secara real-time (SDF +
+  feDisplacementMap), sama seperti referensi childrentime/liquid-glass.
 
 ## File yang DIUBAH
 - `contexts/SettingsContext.tsx`
-  Tambah opsi `liquidGlassMode: 'static' | 'cursor'` (tersimpan di localStorage).
+  Tambah mode ketiga: `liquidGlassMode: 'static' | 'cursor' | 'orb'`.
+
+- `components/Layout.tsx`
+  Merender `LiquidGlassOrb` sebagai widget mengambang (fixed, di atas
+  seluruh halaman) saat mode "orb" dipilih.
 
 - `pages/settings.tsx`
-  Tambah toggle "Statis" vs "Ikuti Kursor" di halaman Pengaturan → Liquid Glass.
-
-- `components/TopNavbar.tsx`
-  Tombol/link navbar otomatis pakai versi "Ikuti Kursor" saat mode itu dipilih.
-
-- `components/MobileNav.tsx`
-  Item nav bawah (mobile) ikut pakai mode yang sama.
-
-- `components/LandscapeSlider.tsx`
-  Tombol prev/next slider ikut pakai mode yang sama.
+  Grid pilihan mode sekarang 3 kolom: Statis / Ikuti Kursor / Bola Kaca.
 
 - `lib/i18n.ts`
-  Tambah string terjemahan (ID & EN) untuk toggle mode baru.
+  Tambah string terjemahan (ID & EN) untuk mode "Bola Kaca".
 
-## Cara pakai setelah disalin
-```
-npm install
-npm run dev
-```
-Lalu buka **Pengaturan → Liquid Glass → Ikuti Kursor**.
+## Cara pakai
+1. Timpa file-file di atas ke folder project kamu (path sama).
+2. `npm run dev` / `npm run build`.
+3. Buka **Pengaturan → Liquid Glass → Bola Kaca**.
+4. Sebuah panel kaca kecil akan muncul mengambang di pojok kiri atas
+   halaman — bisa langsung diseret (drag) ke mana saja, dan konten di
+   baliknya akan terlihat terdistorsi seperti lensa.
 
-Kalau mau pakai komponennya sendiri di tempat lain:
+## Pakai sendiri di tempat lain
 ```tsx
-import LiquidGlassCursor from '@/components/LiquidGlassCursor'
+import LiquidGlassOrb from '@/components/LiquidGlassOrb'
 
-<LiquidGlassCursor cornerRadius={24} elasticity={0.3} aberrationIntensity={2}>
-  <span>Konten kamu</span>
-</LiquidGlassCursor>
+<LiquidGlassOrb shape="circle" width={160} height={160} />
 ```

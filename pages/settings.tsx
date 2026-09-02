@@ -168,8 +168,8 @@ export default function SettingsPage() {
               <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--color-text-muted)' }}>
                 {t('settings.liquidGlassModeLabel')}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {(['static', 'cursor'] as const).map((mode) => {
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {(['static', 'cursor', 'orb'] as const).map((mode) => {
                   const selected = liquidGlassMode === mode
                   return (
                     <button
