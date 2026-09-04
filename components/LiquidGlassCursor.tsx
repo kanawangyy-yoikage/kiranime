@@ -426,6 +426,15 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
     // keeps meaning a "px of bulge" regardless of glass size.
     const baseScale = map ? (modeScale / 64) * (map.maxScale || 1) : modeScale;
     const aberrationOffset = aberrationIntensity * 3;
+    // How far feDisplacementMap can push a pixel is bounded by the largest
+    // scale we feed it (the red/blue chromatic-aberration passes go a bit
+    // further than baseScale). Half that value is the true max offset in
+    // any direction (SVG's displacement scale is a full-range, so a pixel
+    // moves up to `scale / 2` px from its source position). Add a flat 8px
+    // safety pad on top so rounding/DPR differences never clip a sliver of
+    // the curve right at the rim.
+    const maxDisplacement = Math.abs(baseScale) + aberrationOffset;
+    const filterMargin = Math.ceil(maxDisplacement / 2 + 8);
 
     const pressScale = active ? 0.97 : hovered ? 1.015 : 1;
     const tiltX = renderOffset.y * -0.6;
@@ -474,16 +483,23 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
       >
         {/* SVG lens filter: real SDF-driven displacement map (see buildDisplacementMap
             above) plus a chromatic-aberration pass — same technique as
-            childrentime/liquid-glass, just with three scaled copies recombined. */}
+            childrentime/liquid-glass, just with three scaled copies recombined.
+
+            IMPORTANT: the filter region needs real margin around the glass
+            box. With userSpaceOnUse and x/y/width/height pinned exactly to
+            the box (0,0,w,h — no margin), every pixel that
+            feDisplacementMap pushes outward gets clipped by the filter
+            region itself before it's ever composited, which is what made
+            the effect look like plain blur with zero curvature. */}
         {w > 1 && h > 1 && map && (
           <svg className="absolute w-0 h-0 overflow-hidden pointer-events-none" aria-hidden="true">
             <defs>
               <filter
                 id={filterId}
-                x="0"
-                y="0"
-                width={w}
-                height={h}
+                x={-filterMargin}
+                y={-filterMargin}
+                width={w + filterMargin * 2}
+                height={h + filterMargin * 2}
                 filterUnits="userSpaceOnUse"
                 primitiveUnits="userSpaceOnUse"
                 colorInterpolationFilters="sRGB"
