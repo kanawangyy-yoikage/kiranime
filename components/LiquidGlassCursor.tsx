@@ -93,15 +93,20 @@ function roundedRectSdf(x: number, y: number, halfWidth: number, halfHeight: num
 /**
  * Convex-lens bulge — the reference project's `fragment`.
  *
- * Two nested smoothStep passes, same as the original:
- *  1. `displacement` maps SDF distance to a 0..1 falloff across a wide band
- *     (edge0=0.8..edge1=0, offset by -0.15) — this is what gives the glass
- *     a long, gradual "shoulder" near the rim instead of a hard cutoff.
- *  2. `scaled = smoothStep(0, 1, displacement)` re-shapes that falloff with
- *     the classic ease-in/ease-out S-curve, which is what makes the center
- *     of the lens go fully "flat" (no distortion, like looking straight
- *     through glass) while the distortion ramps up sharply just inside the
- *     rim — the visual signature of a real plano-convex lens.
+ * `roundedRectSdf` returns a value that is very negative deep inside the
+ * shape, approaches 0 right at the rim (from inside), and goes positive
+ * once outside the shape.
+ *
+ * We want the classic plano-convex lens look: dead flat (no pull at all,
+ * `scaled = 0`) at the center, ramping smoothly up to maximum pull
+ * (`scaled ≈ 1`) right at the inner edge of the rim, then dropping straight
+ * back to 0 the instant we're outside the glass — a real lens doesn't bend
+ * light past its own edge.
+ *
+ * `smoothStep(-band, 0, d)` is monotonic across that whole inside region
+ * (0 far from the rim → 1 at the rim), which is exactly that curve; the
+ * explicit `d > 0 → 0` branch handles "outside the shape" since smoothStep
+ * alone would otherwise stay pinned at 1 forever past the edge.
  */
 function defaultFragment(
   uv: { x: number; y: number },
@@ -113,9 +118,12 @@ function defaultFragment(
   const ix = uv.x - 0.5;
   const iy = uv.y - 0.5;
 
-  const distanceToEdge = roundedRectSdf(ix, iy, halfWidth, halfHeight, radius);
-  const displacement = smoothStep(0.8, 0, distanceToEdge - 0.15);
-  const scaled = smoothStep(0, 1, displacement);
+  const d = roundedRectSdf(ix, iy, halfWidth, halfHeight, radius);
+  // Width of the transition band, in the same normalized units as `d`.
+  // Wider band = the bulge reaches further toward the center; narrower =
+  // distortion stays confined to a thin ring right at the rim.
+  const band = Math.max(halfWidth, halfHeight) * 0.9;
+  const scaled = d > 0 ? 0 : smoothStep(-band, 0, d);
 
   if (polar) {
     // Swirl the pull slightly around the center for the "polar" visual mode.
