@@ -645,10 +645,30 @@ export interface LiquidGlassCursorButtonProps
   children?: React.ReactNode;
   labelClassName?: string;
   onClick?: () => void;
+  /**
+   * Set true for icon-only circular buttons (search, theme toggle, settings,
+   * mobile menu). Uses equal padding on every side so cornerRadius=9999
+   * actually renders a perfect circle instead of a stretched pill — icon
+   * buttons need a square box, text+icon nav pills don't.
+   */
+  iconOnly?: boolean;
 }
 
 export const LiquidGlassCursorButton = React.forwardRef<HTMLButtonElement, LiquidGlassCursorButtonProps>(
-  ({ children, className, labelClassName, onClick, "aria-label": ariaLabel, "aria-haspopup": ariaHaspopup, "aria-expanded": ariaExpanded, style }, ref) => {
+  (
+    {
+      children,
+      className,
+      labelClassName,
+      onClick,
+      iconOnly = false,
+      "aria-label": ariaLabel,
+      "aria-haspopup": ariaHaspopup,
+      "aria-expanded": ariaExpanded,
+      style,
+    },
+    ref
+  ) => {
     // LiquidGlassCursor already renders a div with role="button"/keyboard
     // handling when onClick is passed, so we skip wrapping it in a native
     // <button> to avoid nesting a div inside a button (invalid HTML).
@@ -656,7 +676,8 @@ export const LiquidGlassCursorButton = React.forwardRef<HTMLButtonElement, Liqui
     return (
       <LiquidGlassCursor
         cornerRadius={9999}
-        padding="0.625rem 1.25rem"
+        padding={iconOnly ? "0.625rem" : "0.625rem 1.25rem"}
+        minSize={iconOnly ? 40 : undefined}
         className={cn("text-sm font-semibold", className)}
         onClick={onClick}
         style={style}
@@ -675,19 +696,23 @@ export interface LiquidGlassCursorLinkProps extends React.AnchorHTMLAttributes<H
   href: string;
   children?: React.ReactNode;
   labelClassName?: string;
+  /** See LiquidGlassCursorButtonProps.iconOnly. */
+  iconOnly?: boolean;
 }
 
 export const LiquidGlassCursorLink = React.forwardRef<HTMLAnchorElement, LiquidGlassCursorLinkProps>(
-  ({ children, className, labelClassName, href, ...rest }, ref) => {
+  ({ children, className, labelClassName, href, iconOnly = false, ...rest }, ref) => {
     return (
       <Link ref={ref} href={href} className="contents" {...rest}>
         <LiquidGlassCursor
           cornerRadius={9999}
-          padding="0.625rem 1.25rem"
+          padding={iconOnly ? "0.625rem" : "0.625rem 1.25rem"}
+          minSize={iconOnly ? 40 : undefined}
           className={cn("text-sm font-semibold", className)}
         >
           <span className={cn("flex items-center justify-center gap-2", labelClassName)}>{children}</span>
         </LiquidGlassCursor>
+
       </Link>
     );
   }
