@@ -229,7 +229,7 @@ export default function TopNavbar() {
                 <GlassLink
                   key={link.href}
                   href={link.href}
-                  className="group !rounded-full"
+                  className="group !rounded-full !px-3.5 !py-2"
                   labelClassName="!text-primary dark:!text-accent"
                 >
                   {link.icon} {link.label}
@@ -261,7 +261,7 @@ export default function TopNavbar() {
                 <GlassLink
                   key={link.href}
                   href={link.href}
-                  className="group !rounded-full"
+                  className="group !rounded-full !px-3.5 !py-2"
                   labelClassName="!text-primary dark:!text-accent"
                 >
                   {link.icon} {link.label}
