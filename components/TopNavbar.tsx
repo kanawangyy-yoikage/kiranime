@@ -202,6 +202,7 @@ export default function TopNavbar() {
               <GlassButton
                 onClick={() => setDrawerOpen(!drawerOpen)}
                 className="lg:hidden !rounded-full text-[var(--color-text)]"
+                iconOnly
                 aria-label={t('nav.openMenu')}
               >
                 {drawerOpen ? <X size={22} /> : <Menu size={22} />}
@@ -295,6 +296,7 @@ export default function TopNavbar() {
               <GlassButton
                 onClick={() => setSearchOpen(!searchOpen)}
                 className="!rounded-full text-[var(--color-text)]"
+                iconOnly
                 aria-label={t('nav.search')}
               >
                 <Search size={20} aria-hidden="true" />
@@ -313,6 +315,7 @@ export default function TopNavbar() {
               <GlassButton
                 onClick={toggleTheme}
                 className="!rounded-full text-[var(--color-text)]"
+                iconOnly
                 aria-label={t('nav.toggleTheme')}
               >
                 <AnimatePresence mode="wait" initial={false}>
@@ -379,6 +382,7 @@ export default function TopNavbar() {
               <GlassLink
                 href="/settings"
                 className="!rounded-full"
+                iconOnly
                 aria-label={t('nav.settings')}
               >
                 <Settings size={20} aria-hidden="true" />
