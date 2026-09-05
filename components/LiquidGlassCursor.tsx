@@ -64,7 +64,10 @@ export interface LiquidGlassCursorProps {
   /**
    * Minimum width/height guarantee in px, applied via `min-width`/`min-height`
    * (not padding), so the glass box always keeps a real footprint even if a
-   * caller's className overrides `padding` with `!important`. Default 40.
+   * caller's className overrides `padding` with `!important`. Default 0
+   * (no minimum — the box sizes naturally from padding + content). Pass an
+   * explicit value only for small icon-only buttons that need a guaranteed
+   * circular footprint.
    */
   minSize?: number;
   /** CSS padding around children, e.g. "10px 20px". Default "1rem 1.5rem". */
@@ -238,7 +241,7 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
       aberrationIntensity = 2,
       elasticity = 0.25,
       cornerRadius = 24,
-      minSize = 40,
+      minSize = 0,
       padding = "1rem 1.5rem",
       overLight = false,
       mode = "standard",
