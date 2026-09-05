@@ -404,7 +404,7 @@ export default function TopNavbar() {
                 {liquidGlass ? (
                   <GlassButton
                     onClick={() => setProfileMenuOpen((v) => !v)}
-                    className="!rounded-full"
+                    className="!rounded-full !pl-1 !pr-2 !py-1"
                     aria-haspopup="menu"
                     aria-expanded={profileMenuOpen}
                   >
