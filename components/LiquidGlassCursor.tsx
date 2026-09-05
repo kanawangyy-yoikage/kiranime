@@ -61,6 +61,12 @@ export interface LiquidGlassCursorProps {
   elasticity?: number;
   /** Corner radius in px. Default 24. */
   cornerRadius?: number;
+  /**
+   * Minimum width/height guarantee in px, applied via `min-width`/`min-height`
+   * (not padding), so the glass box always keeps a real footprint even if a
+   * caller's className overrides `padding` with `!important`. Default 40.
+   */
+  minSize?: number;
   /** CSS padding around children, e.g. "10px 20px". Default "1rem 1.5rem". */
   padding?: string;
   /** Flip highlight polarity for use over light backgrounds. */
@@ -232,6 +238,7 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
       aberrationIntensity = 2,
       elasticity = 0.25,
       cornerRadius = 24,
+      minSize = 40,
       padding = "1rem 1.5rem",
       overLight = false,
       mode = "standard",
@@ -473,6 +480,15 @@ export const LiquidGlassCursor = React.forwardRef<HTMLDivElement, LiquidGlassCur
         style={{
           borderRadius: cornerRadius,
           padding,
+          // Guaranteed floor so the glass box never collapses to ~0×0 when a
+          // caller passes an `!important` Tailwind padding override (e.g.
+          // leftover `!p-2` classes from an older glass-button variant).
+          // min-width/min-height target a different property than padding,
+          // so they can't be fought over by the same specificity war — the
+          // box keeps enough room for the lens to actually bulge even if
+          // its padding gets stomped on from outside.
+          minWidth: minSize,
+          minHeight: minSize,
           transform: `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translate3d(${
             renderOffset.x * 0.35
           }px, ${renderOffset.y * 0.35}px, 0) scale(${pressScale})`,
