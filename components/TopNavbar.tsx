@@ -201,7 +201,7 @@ export default function TopNavbar() {
             {liquidGlass ? (
               <GlassButton
                 onClick={() => setDrawerOpen(!drawerOpen)}
-                className="lg:hidden !p-2 !rounded-full text-[var(--color-text)]"
+                className="lg:hidden !rounded-full text-[var(--color-text)]"
                 aria-label={t('nav.openMenu')}
               >
                 {drawerOpen ? <X size={22} /> : <Menu size={22} />}
@@ -228,7 +228,7 @@ export default function TopNavbar() {
                 <GlassLink
                   key={link.href}
                   href={link.href}
-                  className="group !px-3.5 !py-2 !rounded-full"
+                  className="group !rounded-full"
                   labelClassName="!text-primary dark:!text-accent"
                 >
                   {link.icon} {link.label}
@@ -260,7 +260,7 @@ export default function TopNavbar() {
                 <GlassLink
                   key={link.href}
                   href={link.href}
-                  className="group !px-3.5 !py-2 !rounded-full"
+                  className="group !rounded-full"
                   labelClassName="!text-primary dark:!text-accent"
                 >
                   {link.icon} {link.label}
@@ -294,7 +294,7 @@ export default function TopNavbar() {
             {liquidGlass ? (
               <GlassButton
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="!p-2 !rounded-full text-[var(--color-text)]"
+                className="!rounded-full text-[var(--color-text)]"
                 aria-label={t('nav.search')}
               >
                 <Search size={20} aria-hidden="true" />
@@ -312,7 +312,7 @@ export default function TopNavbar() {
             {liquidGlass ? (
               <GlassButton
                 onClick={toggleTheme}
-                className="!p-2 !rounded-full text-[var(--color-text)]"
+                className="!rounded-full text-[var(--color-text)]"
                 aria-label={t('nav.toggleTheme')}
               >
                 <AnimatePresence mode="wait" initial={false}>
@@ -378,7 +378,7 @@ export default function TopNavbar() {
             {liquidGlass ? (
               <GlassLink
                 href="/settings"
-                className="!p-2 !rounded-full"
+                className="!rounded-full"
                 aria-label={t('nav.settings')}
               >
                 <Settings size={20} aria-hidden="true" />
@@ -400,7 +400,7 @@ export default function TopNavbar() {
                 {liquidGlass ? (
                   <GlassButton
                     onClick={() => setProfileMenuOpen((v) => !v)}
-                    className="!pl-1 !pr-3 !py-1 !rounded-full"
+                    className="!rounded-full"
                     aria-haspopup="menu"
                     aria-expanded={profileMenuOpen}
                   >
